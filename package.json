@@ -11,18 +11,19 @@
     "tauri": "tauri",
     "lint": "eslint src/**/*.ts",
     "tauri:dev": "tauri dev",
-    "tauri:dev:build": "bun tsc src/injection.ts --outDir dist && tauri dev"
+    "tauri:dev:build": "bun esbuild src/injection.ts --bundle --outfile=dist/injection.js && tauri dev"
   },
   "dependencies": {
     "@eslint/js": "^10.0.1",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
-    "eslint": "^10.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.56.0"
+    "@typescript-eslint/eslint-plugin": "^8.56.0",
+    "eslint": "^10.0.1"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
-    "vite": "^7.3.1",
-    "typescript": "~5.9.3"
+    "esbuild": "^0.27.3",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1"
   }
 }
