@@ -5,7 +5,7 @@ pub fn run() {
     #[cfg(target_os = "windows")]
     std::env::set_var(
         "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", 
-        "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared --disable-web-security --allow-running-insecure-content"
+        "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared"
     );
 
     tauri::Builder::default()
