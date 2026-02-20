@@ -1,31 +1,6 @@
 import easyLogger from "./easy-logger";
 import { initialize, connectToDevTools } from "react-devtools-core";
 
-console.log("[Custom Teams] Booting up native React DevTools connection...");
-
-try {
-  // 1. MUST be called first to create the global hook before Teams loads React
-  initialize({});
-
-  // 2. We create our own WebSocket to ensure it fires properly
-  const ws = new window.WebSocket("ws://localhost:8097");
-
-  ws.onopen = () => {
-    console.log("[Custom Teams] WebSocket connected to Standalone App!");
-  };
-
-  ws.onerror = (err) => {
-    console.error("[Custom Teams] WebSocket Error (Check Mixed Content):", err);
-  };
-
-  // 3. Pass the custom WebSocket directly to the DevTools connector
-  connectToDevTools({
-    websocket: ws,
-  });
-} catch (e) {
-  console.error("[Custom Teams] DevTools failed to initialize:", e);
-}
-
 /*const WEBPACK_CHUNK_NAME = "webpackChunk_msteams_react_web_client";
 
 console.log("[Custom Teams] Initializing Webpack Interceptor...");
@@ -102,6 +77,28 @@ window.addEventListener("DOMContentLoaded", () => {
   if (!window.location.hostname.includes("teams.microsoft.com")) {
     easyLogger(`Skipping injection on ${window.location.hostname}`);
     return;
+  }
+
+  easyLogger("[Custom Teams] Booting up native React DevTools connection...");
+
+  try {
+    initialize({});
+
+    const ws = new window.WebSocket("ws://localhost:8097");
+
+    ws.onopen = () => {
+      easyLogger("WebSocket connected to Standalone App!");
+    };
+
+    ws.onerror = (err) => {
+      easyLogger("WebSocket Error (Check Mixed Content):", err);
+    };
+
+    connectToDevTools({
+      websocket: ws,
+    });
+  } catch (e) {
+    easyLogger("DevTools failed to initialize:", e);
   }
 
   easyLogger("TypeScript Injection Successful!");
