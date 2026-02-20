@@ -1,0 +1,28 @@
+{
+  "name": "teams-but-good",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "author": "LeonimusT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "lint": "eslint src/**/*.ts",
+    "tauri:dev": "tauri dev",
+    "tauri:dev:build": "bun tsc src/injection.ts --outDir dist && tauri dev"
+  },
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "eslint": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.56.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "vite": "^7.3.1",
+    "typescript": "~5.9.3"
+  }
+}
