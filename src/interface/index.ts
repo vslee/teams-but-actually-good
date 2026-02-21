@@ -23,4 +23,21 @@ export interface Patch {
     replace: string;
   }[];
   name?: string;
+  plugin?: string;
+}
+
+export interface Plugin {
+  name: string;
+  patches: Patch[];
+  [key: string]: any;
+}
+
+// Global plugin registry
+export const pluginRegistry: Record<string, Plugin> = {};
+
+export function registerPlugin(plugin: Plugin) {
+  pluginRegistry[plugin.name] = plugin;
+  // Make plugin accessible globally for patched code
+  (window as any).__TEAMS_PLUGINS__ = (window as any).__TEAMS_PLUGINS__ || {};
+  (window as any).__TEAMS_PLUGINS__[plugin.name] = plugin;
 }

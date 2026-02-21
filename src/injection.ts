@@ -6,11 +6,17 @@ import {
   SYM_ORIGINAL_FACTORY,
   WebpackRequire,
   PatchedModuleFactory,
+  pluginRegistry,
+  registerPlugin,
 } from "./interface";
 // TODO add an auto plugin loader system so we don't have to hardcode patches here
-import { settingsPatch } from "./teams-plugin/settings";
+import SettingsPlugin from "./teams-plugin/settings/index.ts";
 
 easyLogger("info", "Booting up...");
+
+// Register plugins
+registerPlugin(SettingsPlugin);
+easyLogger("info", `Registered plugin: ${SettingsPlugin.name}`);
 
 const teamsWindow = window as any;
 
@@ -237,8 +243,12 @@ function patchFactory(
   let patchedFactory = originalFactory;
   let wasPatched = false;
 
-  // TODO auto plugin loader system so we don't have to hardcode patches here
-  for (const patch of settingsPatch) {
+  // Gather all patches from registered plugins
+  const allPatches = Object.values(pluginRegistry).flatMap(
+    (plugin) => plugin.patches,
+  );
+
+  for (const patch of allPatches) {
     const moduleMatches =
       typeof patch.find === "string"
         ? code.includes(patch.find)
@@ -262,7 +272,16 @@ function patchFactory(
           replacement.match.lastIndex = 0;
         }
 
-        const newCode = code.replace(replacement.match, replacement.replace);
+        // Replace $self with plugin reference if patch has a plugin name
+        let replaceString = replacement.replace;
+        if (patch.plugin) {
+          replaceString = replaceString.replace(
+            /\$self/g,
+            `window.__TEAMS_PLUGINS__["${patch.plugin}"]`,
+          );
+        }
+
+        const newCode = code.replace(replacement.match, replaceString);
 
         if (newCode === code) {
           easyLogger(
