@@ -1,46 +1,58 @@
 import { Plugin } from "../../interface";
 
-// Plugin definition without JSX
 const SettingsPlugin: Plugin = {
   name: "SettingsInjector",
   description: "Adds custom settings tabs to Teams settings panel",
 
-  // Plugin methods that can be called from patched code
   addNewChildren(elementsProp: any) {
     if (!elementsProp?.children || !Array.isArray(elementsProp.children)) {
       return elementsProp;
     }
 
-    // Check if this is the settings section we want to modify
     if (elementsProp.children[0]?.key !== "general") {
       return elementsProp;
     }
 
-    console.log("[Settings] Found settings children!");
-
-    // Get the template from existing child
     const template = elementsProp.children[0];
 
-    // Create new child by cloning the structure properly
     const newChild = {
       ...template,
       key: "plugin_settings",
       ref: null,
       props: {
         ...template.props,
-        category: "plugin_settings",
+        category: "Plugin Settings",
         isActive: false,
       },
     };
 
-    // DON'T mutate directly! Create new array
     const newChildren = [newChild, ...elementsProp.children];
 
-    // Return modified props object
     return {
       ...elementsProp,
       children: newChildren,
     };
+  },
+
+  changeName(value: string) {
+    console.log("[Settings] Changing name for value:", value);
+    if (value === "plugin_settings") {
+      return "Teams But Good Settings";
+    }
+    return value;
+  },
+
+  addCustomContent(React: any) {
+    console.log("[Settings] Adding custom content to settings tab");
+    // Now we can use JSX! Much cleaner :)
+    return (
+      <div style={{ padding: "20px" }}>
+        <h2>Custom Settings</h2>
+        <div>Custom content goes here</div>
+        <button onClick={() => alert("Clicked!")}>Test Button</button>
+        <input type="text" />
+      </div>
+    );
   },
 
   // Plugin patches
@@ -54,6 +66,23 @@ const SettingsPlugin: Plugin = {
           "$1.createElement($2,{value:$3.current},($self.addNewChildren($4)||$4).children)",
       },
     },
+    {
+      find: "category content goes here",
+      replacement: {
+        match:
+          /=>\(0,\w+\.Y\)\("div",\{children:`\$\{\w+\} category content goes here`\}\),(\w+=(\w+)\.memo)/,
+        replace: "=>$self.addCustomContent($2),$1",
+      },
+    },
+    // Allow you to change the displayed name of the settings tab
+    // by modifying the local files with the translation key
+    /*{
+      find: /app_title:"{{title}}",/,
+      replacement: {
+        match: /(app_title:"{{title}}",)/,
+        replace: '$1plugin_settings:"Plugin Settings",',
+      },
+    },*/
   ],
 };
 
