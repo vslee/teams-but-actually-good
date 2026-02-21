@@ -117,10 +117,6 @@ define(Function.prototype, "m", {
       return;
     }
 
-    // We can't easily detect Teams bundle path like Discord's "/assets/",
-    // so we'll patch any webpack instance that looks legitimate
-    // You could add more validation here if needed
-
     const patchThisInstance = () => {
       logger(
         "info",
@@ -170,15 +166,9 @@ define(Function.prototype, "m", {
         };
       }
     };
-
-    // Patch immediately (Teams doesn't have the same bundlePath detection as Discord)
     patchThisInstance();
   },
 });
-
-// ============================================================================
-// MODULE FACTORY PROXYING
-// ============================================================================
 
 function proxyModuleFactory(
   moduleFactories: Record<PropertyKey, AnyModuleFactory>,
