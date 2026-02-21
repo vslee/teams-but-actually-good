@@ -3,6 +3,7 @@ import { Plugin } from "../../interface";
 // Plugin definition without JSX
 const SettingsPlugin: Plugin = {
   name: "SettingsInjector",
+  description: "Adds custom settings tabs to Teams settings panel",
 
   // Plugin methods that can be called from patched code
   addNewChildren(elementsProp: any) {
@@ -36,11 +37,11 @@ const SettingsPlugin: Plugin = {
     // Create new child by cloning the structure properly
     const newChild = {
       ...template,
-      key: "plugin-settings",
+      key: "plugin_settings",
       ref: null,
       props: {
         ...template.props,
-        category: "plugin-settings",
+        category: "plugin_settings",
         isActive: false,
       },
     };
@@ -58,17 +59,13 @@ const SettingsPlugin: Plugin = {
   // Plugin patches
   patches: [
     {
-      name: "Settings",
-      plugin: "SettingsInjector", // Must match the plugin name above
       find: /\{value:\w+,version:\w+,listeners:\[\]\}/,
-      replace: [
-        {
-          match:
-            /(\w+)\.createElement\((\w+),\{value:(\w+)\.current\},(\w+)\.children\)/,
-          replace:
-            "$1.createElement($2,{value:$3.current},($self.addNewChildren($4)||$4).children)",
-        },
-      ],
+      replacement: {
+        match:
+          /(\w+)\.createElement\((\w+),\{value:(\w+)\.current\},(\w+)\.children\)/,
+        replace:
+          "$1.createElement($2,{value:$3.current},($self.addNewChildren($4)||$4).children)",
+      },
     },
   ],
 };

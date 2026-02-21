@@ -259,12 +259,18 @@ function patchFactory(
       continue;
     }
 
+    const patchPlugin = (patch as any).plugin;
     easyLogger(
       "info",
-      `Module ${String(moduleId)} matches patch: ${patch.name || patch.find}`,
+      `Module ${String(moduleId)} matches patch from ${patchPlugin}: ${patch.find}`,
     );
 
-    for (const replacement of patch.replace) {
+    // Handle both single replacement and array of replacements
+    const replacements = Array.isArray(patch.replacement)
+      ? patch.replacement
+      : [patch.replacement];
+
+    for (const replacement of replacements) {
       const lastCode = code;
 
       try {
@@ -274,10 +280,10 @@ function patchFactory(
 
         // Replace $self with plugin reference if patch has a plugin name
         let replaceString = replacement.replace;
-        if (patch.plugin) {
+        if (patchPlugin) {
           replaceString = replaceString.replace(
             /\$self/g,
-            `window.__TEAMS_PLUGINS__["${patch.plugin}"]`,
+            `window.__TEAMS_PLUGINS__["${patchPlugin}"]`,
           );
         }
 
@@ -286,7 +292,7 @@ function patchFactory(
         if (newCode === code) {
           easyLogger(
             "warn",
-            `Patch ${patch.name || ""} had no effect on module ${String(moduleId)}`,
+            `Patch from ${patchPlugin || "unknown"} had no effect on module ${String(moduleId)}`,
           );
           continue;
         }
@@ -342,14 +348,14 @@ try {
 
         easyLogger(
           "info",
-          `✓ Successfully patched module ${String(moduleId)} with ${patch.name || "patch"}`,
+          `✓ Successfully patched module ${String(moduleId)} with ${patchPlugin || "patch"}`,
         );
 
         wasPatched = true;
       } catch (err) {
         easyLogger(
           "error",
-          `Failed to apply patch ${patch.name || ""} to module ${String(moduleId)}:`,
+          `Failed to apply patch from ${patchPlugin || "unknown"} to module ${String(moduleId)}:`,
           err,
         );
         code = lastCode;

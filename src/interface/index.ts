@@ -16,18 +16,19 @@ export interface WebpackRequire {
   d?: (exports: any, definition: any) => void;
 }
 
+export interface PatchReplacement {
+  match: string | RegExp;
+  replace: string;
+}
+
 export interface Patch {
   find: string | RegExp;
-  replace: {
-    match: string | RegExp;
-    replace: string;
-  }[];
-  name?: string;
-  plugin?: string;
+  replacement: PatchReplacement | PatchReplacement[];
 }
 
 export interface Plugin {
   name: string;
+  description?: string;
   patches: Patch[];
   [key: string]: any;
 }
@@ -37,6 +38,12 @@ export const pluginRegistry: Record<string, Plugin> = {};
 
 export function registerPlugin(plugin: Plugin) {
   pluginRegistry[plugin.name] = plugin;
+
+  // Add plugin name to each patch for reference
+  plugin.patches.forEach((patch) => {
+    (patch as any).plugin = plugin.name;
+  });
+
   // Make plugin accessible globally for patched code
   (window as any).__TEAMS_PLUGINS__ = (window as any).__TEAMS_PLUGINS__ || {};
   (window as any).__TEAMS_PLUGINS__[plugin.name] = plugin;
