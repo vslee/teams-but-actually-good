@@ -15,7 +15,7 @@ pub fn run() {
             WebviewWindowBuilder::new(
                 app,
                 "main",
-                WebviewUrl::External("https://teams.microsoft.com".parse().unwrap())
+                WebviewUrl::External("https://teams.microsoft.com/v2".parse().unwrap())
             )
             .title("Teams But (actually) Good")
             .inner_size(1800.0, 800.0) 
