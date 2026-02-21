@@ -42,6 +42,30 @@ const SettingsPlugin: Plugin = {
     return value;
   },
 
+  addCustomContent(React: any) {
+    console.log("[Settings] Adding custom content to settings tab");
+    // React is the actual React module, so we can use normal syntax
+    return React.createElement(
+      "div",
+      {
+        style: { padding: "20px" },
+      },
+      [
+        React.createElement("h2", { key: "title" }, "Custom Settings"),
+        React.createElement(
+          "div",
+          { key: "content" },
+          "Custom content goes here",
+        ),
+        React.createElement(
+          "button",
+          { key: "btn", onClick: () => alert("Clicked!") },
+          "Test Button",
+        ),
+      ],
+    );
+  },
+
   // Plugin patches
   patches: [
     {
@@ -51,6 +75,14 @@ const SettingsPlugin: Plugin = {
           /(\w+)\.createElement\((\w+),\{value:(\w+)\.current\},(\w+)\.children\)/,
         replace:
           "$1.createElement($2,{value:$3.current},($self.addNewChildren($4)||$4).children)",
+      },
+    },
+    {
+      find: "category content goes here",
+      replacement: {
+        match:
+          /=>\(0,\w+\.Y\)\("div",\{children:`\$\{\w+\} category content goes here`\}\),(\w+=(\w+)\.memo)/,
+        replace: "=>$self.addCustomContent($2),$1",
       },
     },
     // Allow you to change the displayed name of the settings tab
