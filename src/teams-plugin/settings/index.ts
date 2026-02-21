@@ -5,7 +5,7 @@ const SettingsPlugin: Plugin = {
   name: "SettingsInjector",
 
   // Plugin methods that can be called from patched code
-  addNewChildren(elementsProp: any, React: any) {
+  addNewChildren(elementsProp: any) {
     if (!elementsProp?.children || !Array.isArray(elementsProp.children)) {
       return elementsProp;
     }
@@ -15,43 +15,44 @@ const SettingsPlugin: Plugin = {
       return elementsProp;
     }
 
-    // Get the component type from an existing child to use as a template
-    const firstChild = elementsProp.children[0];
-    const MemoizedComponent = firstChild?.type;
-    const InnerComponent = MemoizedComponent?.type; // Get the actual component from memo wrapper
+    console.log("[Settings] Found settings children!");
+    console.log(
+      "[Settings] First child structure:",
+      JSON.stringify(
+        elementsProp.children[0],
+        (key, val) => {
+          if (key === "$$typeof") return val?.toString();
+          if (typeof val === "function") return "[Function]";
+          if (typeof val === "symbol") return val.toString();
+          return val;
+        },
+        2,
+      ),
+    );
 
-    if (!InnerComponent) {
-      console.error("[Settings] Could not find component type");
-      return elementsProp;
-    }
+    // Get the template from existing child
+    const template = elementsProp.children[0];
 
-    // Create a new settings item
-    // You can either create a memoized component or a regular one
-    const newChild = React.createElement(InnerComponent, {
-      category: "general",
-      isActive: false,
-      key: "general",
-    });
+    // Create new child by cloning the structure properly
+    const newChild = {
+      ...template,
+      key: "plugin-settings",
+      ref: null,
+      props: {
+        ...template.props,
+        category: "plugin-settings",
+        isActive: false,
+      },
+    };
 
-    // Wrap in memo like the others (optional, but matches their pattern)
-    const memoizedChild = React.memo
-      ? {
-          $$typeof: MemoizedComponent.$$typeof,
-          type: { type: {}, compare: null },
-          key: "general",
-          props: {
-            category: "general",
-            isActive: false,
-          },
-        }
-      : newChild;
+    // DON'T mutate directly! Create new array
+    const newChildren = [newChild, ...elementsProp.children];
 
-    // Add the new child to the array
-    elementsProp.children = [memoizedChild, ...elementsProp.children];
-
-    console.log("[Settings] ", elementsProp.children);
-
-    return elementsProp;
+    // Return modified props object
+    return {
+      ...elementsProp,
+      children: newChildren,
+    };
   },
 
   // Plugin patches
@@ -59,14 +60,13 @@ const SettingsPlugin: Plugin = {
     {
       name: "Settings",
       plugin: "SettingsInjector", // Must match the plugin name above
-      // Matches the unique object structure: {value: i, version: M, listeners: []}
       find: /\{value:\w+,version:\w+,listeners:\[\]\}/,
       replace: [
         {
           match:
             /(\w+)\.createElement\((\w+),\{value:(\w+)\.current\},(\w+)\.children\)/,
           replace:
-            "$self.addNewChildren($4,$1),$1.createElement($2,{value:$3.current},$4.children)",
+            "$1.createElement($2,{value:$3.current},($self.addNewChildren($4)||$4).children)",
         },
       ],
     },
