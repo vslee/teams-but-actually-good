@@ -9,7 +9,6 @@ pub fn run() {
     );
 
     tauri::Builder::default()
-        .plugin(tauri_plugin_store::Builder::new().build())
         .setup(|app| {
             let js_injection = include_str!("../../dist/injection.js");
 
