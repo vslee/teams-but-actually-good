@@ -1,4 +1,5 @@
 import { Plugin } from "../../interface";
+import * as React from "react";
 
 const SettingsPlugin: Plugin = {
   name: "SettingsInjector",
@@ -42,15 +43,21 @@ const SettingsPlugin: Plugin = {
     return value;
   },
 
-  addCustomContent(React: any) {
+  addCustomContent(ReactLib: typeof React) {
+    const [inputValue, setInputValue] = ReactLib.useState("");
     console.log("[Settings] Adding custom content to settings tab");
-    // Now we can use JSX! Much cleaner :)
+    // We basically say that we wanna use ReactLib to create the elements instead of our React.
+    /** @jsx ReactLib.createElement */
     return (
       <div style={{ padding: "20px" }}>
         <h2>Custom Settings</h2>
         <div>Custom content goes here</div>
         <button onClick={() => alert("Clicked!")}>Test Button</button>
-        <input type="text" />
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
       </div>
     );
   },
