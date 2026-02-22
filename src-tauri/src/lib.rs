@@ -4,21 +4,22 @@ use tauri::{WebviewUrl, WebviewWindowBuilder};
 pub fn run() {
     #[cfg(target_os = "windows")]
     std::env::set_var(
-        "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", 
-        "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared"
+        "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
+        "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared",
     );
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_store::Builder::new().build())
         .setup(|app| {
             let js_injection = include_str!("../../dist/injection.js");
 
             WebviewWindowBuilder::new(
                 app,
                 "main",
-                WebviewUrl::External("https://teams.microsoft.com/v2".parse().unwrap())
+                WebviewUrl::External("https://teams.microsoft.com/v2".parse().unwrap()),
             )
             .title("Teams But (actually) Good")
-            .inner_size(1800.0, 800.0) 
+            .inner_size(1800.0, 800.0)
             .min_inner_size(800.0, 600.0)
             .center()
             .initialization_script(js_injection) // Inject your compiled code!

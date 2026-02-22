@@ -9,10 +9,16 @@ import {
   pluginRegistry,
   registerPlugin,
 } from "./interface";
+import { initializeStorage } from "./utils/storage";
 // TODO add an auto plugin loader system so we don't have to hardcode patches here
 import SettingsPlugin from "./teams-plugin/settings/index.tsx";
 
 easyLogger("info", "Booting up...");
+
+// Initialize storage system
+initializeStorage()
+  .then(() => easyLogger("info", "Storage system initialized"))
+  .catch((err) => easyLogger("error", "Failed to initialize storage:", err));
 
 // Register plugins
 registerPlugin(SettingsPlugin);
