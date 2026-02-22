@@ -11,7 +11,7 @@
     "tauri": "tauri",
     "lint": "eslint src/**/*.ts",
     "tauri:dev": "tauri dev",
-    "tauri:dev:build": "bun esbuild src/injection.ts --bundle --outfile=dist/injection.js && tauri dev"
+    "tauri:dev:build": "bun esbuild src/injection.ts --bundle --loader:.css=text --outfile=dist/injection.js && tauri dev"
   },
   "dependencies": {
     "@eslint/js": "^10.0.1",

@@ -1,5 +1,10 @@
 import { Plugin } from "../../interface";
 import * as React from "react";
+import { injectStyles } from "../../utils/styles";
+import styles from "./index.css";
+
+// Inject the CSS into the page (will wait for DOM if needed)
+injectStyles(styles, "teams-but-good-settings");
 
 const SettingsPlugin: Plugin = {
   name: "SettingsInjector",
@@ -49,7 +54,12 @@ const SettingsPlugin: Plugin = {
     // We basically say that we wanna use ReactLib to create the elements instead of our React.
     /** @jsx ReactLib.createElement */
     return (
-      <div style={{ padding: "20px" }}>
+      <div
+        style={{
+          padding: "20px",
+        }}
+        className="container-tbag"
+      >
         <h2>Custom Settings</h2>
         <div>Custom content goes here</div>
         <button onClick={() => alert("Clicked!")}>Test Button</button>
