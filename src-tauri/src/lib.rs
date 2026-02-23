@@ -2,6 +2,7 @@ use tauri::{WebviewUrl, WebviewWindowBuilder};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    #[cfg(target_os = "windows")]
     std::env::set_var(
         "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
         "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared",
@@ -17,7 +18,7 @@ pub fn run() {
             let mut builder = WebviewWindowBuilder::new(
                 app,
                 "main",
-                WebviewUrl::External("https://teams.microsoft.com/v2/?clientType=edge".parse().unwrap()),
+                WebviewUrl::External("https://teams.microsoft.com/v2/?clientType=chrome".parse().unwrap()),
             )
             .title("Teams But (actually) Good")
             .inner_size(1800.0, 800.0)
