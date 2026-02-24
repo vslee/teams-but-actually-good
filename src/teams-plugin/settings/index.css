@@ -1,3 +1,14 @@
 .container-tbag {
-  border: 1px solid var(--colorNeutralStroke1)
+  border: 1px solid var(--colorNeutralStroke1);
+  border-radius: var(--borderRadiusXLarge);
+  margin-top: 12px;
+  padding: 20px 12px;
+
+  width: 100%;
+}
+
+.default-display-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

@@ -49,7 +49,7 @@ const SettingsPlugin: Plugin = {
   },
 
   addCustomContent(ReactLib: typeof React) {
-    const [inputValue, setInputValue] = ReactLib.useState("");
+    //const [inputValue, setInputValue] = ReactLib.useState("");
     console.log("[Settings] Adding custom content to settings tab");
     // We basically say that we wanna use ReactLib to create the elements instead of our React.
     /** @jsx ReactLib.createElement */
@@ -60,14 +60,9 @@ const SettingsPlugin: Plugin = {
         }}
         className="container-tbag"
       >
-        <h2>Custom Settings</h2>
-        <div>Custom content goes here</div>
-        <button onClick={() => alert("Clicked!")}>Test Button</button>
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
+        <div className="default-display-flex">
+          <span>Custom Settings</span>
+        </div>
       </div>
     );
   },
