@@ -11,11 +11,9 @@ pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
             let js_injection = include_str!("../../dist/injection.js");
+            let _user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.3800.70";
 
-            #[cfg(target_os = "macos")]
-            let user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.3800.70";
-
-            let mut builder = WebviewWindowBuilder::new(
+            WebviewWindowBuilder::new(
                 app,
                 "main",
                 WebviewUrl::External("https://teams.microsoft.com/v2/?clientType=chrome".parse().unwrap()),
@@ -24,14 +22,9 @@ pub fn run() {
             .inner_size(1800.0, 800.0)
             .min_inner_size(800.0, 600.0)
             .center()
-            .initialization_script(js_injection); // Inject your compiled code!
-
-            #[cfg(target_os = "macos")]
-            {
-                builder = builder.user_agent(user_agent);
-            }
-
-            builder.build()?;
+            .initialization_script(js_injection)
+            .user_agent(_user_agent)
+            .build()?;
 
             Ok(())
         })
