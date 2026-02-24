@@ -5,13 +5,10 @@
   "type": "module",
   "author": "LeonimusT",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
+    "build": "bun esbuild src/injection.ts --bundle --loader:.css=text --outfile=dist/injection.js",
     "tauri": "tauri",
     "lint": "eslint src/**/*.ts",
-    "tauri:dev": "tauri dev",
-    "tauri:dev:build": "bun esbuild src/injection.ts --bundle --loader:.css=text --outfile=dist/injection.js && tauri dev"
+    "dev": "bun esbuild src/injection.ts --bundle --loader:.css=text --outfile=dist/injection.js && tauri dev"
   },
   "dependencies": {
     "@eslint/js": "^10.0.1",
