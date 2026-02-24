@@ -11,12 +11,13 @@ import {
 } from "./interface";
 // TODO add an auto plugin loader system so we don't have to hardcode patches here
 import SettingsPlugin from "./teams-plugin/settings/index.tsx";
+import TestPlugin from "./teams-plugin/test";
 
 easyLogger("info", "Booting up...");
 
 // Register plugins
 registerPlugin(SettingsPlugin);
-easyLogger("info", `Registered plugin: ${SettingsPlugin.name}`);
+registerPlugin(TestPlugin);
 
 const teamsWindow = window as any;
 
