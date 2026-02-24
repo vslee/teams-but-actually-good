@@ -25,3 +25,4 @@ dist-ssr
 
 bun.lock
 .vscode
+/extension/injection.js

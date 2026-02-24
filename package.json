@@ -5,10 +5,11 @@
   "type": "module",
   "author": "LeonimusT",
   "scripts": {
-    "build": "bun esbuild src/injection.ts --bundle --loader:.css=text --outfile=dist/injection.js",
+    "build": "bun esbuild src/injection.ts --bundle --loader:.css=text --outfile=dist/injection.js && cp dist/injection.js extension/injection.js",
     "tauri": "tauri",
-    "lint": "eslint src/**/*.ts",
-    "dev": "bun esbuild src/injection.ts --bundle --loader:.css=text --outfile=dist/injection.js && tauri dev"
+    "tauri:dev": "tauri dev",
+    "dev": "bun run build && bun run tauri:dev",
+    "lint": "eslint src/**/*.ts"
   },
   "dependencies": {
     "@eslint/js": "^10.0.1",
