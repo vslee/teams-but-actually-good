@@ -5,7 +5,8 @@
   "type": "module",
   "author": "LeonimusT",
   "scripts": {
-    "build": "bun esbuild src/injection.ts --bundle --loader:.css=text --outfile=dist/injection.js && cp dist/injection.js extension/injection.js",
+    "generate:plugins": "bun run scripts/generate-plugins.ts",
+    "build": "bun run generate:plugins && bun esbuild src/injection.ts --bundle --loader:.css=text --outfile=dist/injection.js && cp dist/injection.js extension/injection.js",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "dev": "bun run build && bun run tauri:dev",

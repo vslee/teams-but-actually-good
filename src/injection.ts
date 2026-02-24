@@ -7,17 +7,19 @@ import {
   WebpackRequire,
   PatchedModuleFactory,
   pluginRegistry,
-  registerPlugin,
 } from "./interface";
-// TODO add an auto plugin loader system so we don't have to hardcode patches here
-import SettingsPlugin from "./teams-plugin/settings/index.tsx";
-import TestPlugin from "./teams-plugin/test";
+import PluginLoader from "./utils/plugin-loader";
 
 easyLogger("info", "Booting up...");
 
-// Register plugins
-registerPlugin(SettingsPlugin);
-registerPlugin(TestPlugin);
+// Load all plugins dynamically
+PluginLoader().then((success) => {
+  if (success) {
+    easyLogger("info", "All plugins loaded successfully");
+  } else {
+    easyLogger("error", "Something went wrong when loading plugins");
+  }
+});
 
 const teamsWindow = window as any;
 
