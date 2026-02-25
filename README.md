@@ -1,4 +1,4 @@
-# Teams But Good
+# Teams But Good - PROJECT STILL IN DEV
 
 A browser extension (and optional Tauri desktop wrapper) that patches Microsoft Teams at runtime to improve the user experience.
 
