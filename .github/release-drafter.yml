@@ -9,7 +9,7 @@ include-labels: []
 include-paths: []
 exclude-paths: []
 exclude-contributors: []
-no-contributors-template: ""
+no-contributors-template: "No contributors"
 sort-by: "merged_at"
 sort-direction: "descending"
 filter-by-commitish: false
