@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "teams-but-good",
-  "version": "0.1.0",
-  "identifier": "com.leonimust.teams-but-good",
+  "productName": "teams-but-actually-good",
+  "version": "../__cargo_version__",
+  "identifier": "com.leonimust.teams-but-actually-good",
   "build": {
     "frontendDist": "../dist"
   },

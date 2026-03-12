@@ -1,0 +1,13 @@
+name-template: "Teams But Actually Good v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+change-template: "- $TITLE (#$NUMBER)"
+categories:
+  - title: "🚀 Features"
+    labels: ["feat"]
+  - title: "🐛 Bug Fixes"
+    labels: ["fix"]
+  - title: "🧹 Maintenance"
+    labels: ["chore"]
+template: |
+  ## What's Changed
+  $CHANGES
