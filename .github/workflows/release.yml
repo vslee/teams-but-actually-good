@@ -9,7 +9,35 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-extensions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install deps
+        run: bun install
+
+      - name: Build Chrome extension
+        run: bun run build:ext
+
+      - name: Build Firefox extension
+        run: bun run build:ext:firefox
+
+      - name: Upload extensions
+        uses: actions/upload-artifact@v4
+        with:
+          name: extensions
+          path: |
+            dist/extension-chrome.zip
+            dist/extension-firefox.zip
+
+  # Build desktop apps
+  build-desktop:
     strategy:
       fail-fast: false
       matrix:
@@ -45,22 +73,40 @@ jobs:
       - name: Install frontend deps
         run: bun install
 
+      - name: Build frontend (dist/)
+        run: bun run build # ← génère le dist/ pour Tauri
+
       - name: Build & Release
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # macOS signing
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          # Windows signing (SignPath plus tard)
-          # TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: "Teams But Actually Good ${{ github.ref_name }}"
           releaseDraft: true
           prerelease: false
           args: --target ${{ matrix.target }}
+
+  attach-extensions:
+    needs: [build-desktop, build-extensions]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download extensions
+        uses: actions/download-artifact@v4
+        with:
+          name: extensions
+          path: dist/
+
+      - name: Attach extensions to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/extension-chrome.zip
+            dist/extension-firefox.zip
+          draft: true
