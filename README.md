@@ -1,67 +1,44 @@
-# Teams But Good - PROJECT STILL IN DEV
+# Teams But (actually) Good - The Vencord for Teams
 
-A browser extension (and optional Tauri desktop wrapper) that patches Microsoft Teams at runtime to improve the user experience.
+![GitHub Tag](https://img.shields.io/github/v/tag/LeonimusTTV/teams-but-actually-good?style=for-the-badge&logo=github&logoColor=white&label=&color=1d2021&labelColor=282828)
+![Chrome web store](https://img.shields.io/chrome-web-store/v/TODO?style=for-the-badge&logo=googlechrome&logoColor=white&label=&color=1d2021&labelColor=282828)
+![Firefox add-ons](https://img.shields.io/amo/v/teams-but-good?style=for-the-badge&logo=firefox&logoColor=white&label=&color=1d2021&labelColor=282828)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=for-the-badge&logo=typescript&logoColor=white&label=&color=1d2021&labelColor=282828)
+![Tauri](https://img.shields.io/badge/Tauri-24C8D8?style=for-the-badge&logo=tauri&logoColor=white&label=&color=1d2021&labelColor=282828)
+![Bun](https://img.shields.io/badge/Bun-fbf0df?style=for-the-badge&logo=bun&logoColor=white&label=&color=1d2021&labelColor=282828)
 
----
+A browser extension (and optional Tauri desktop wrapper) that patches Microsoft Teams at runtime to improve the user experience. It's basically like Vencord but for Teams
 
-## How it works
+## Features
 
-### 1. Entry point — the content script
+- Easy to install and use
+- Extension available in the Chrome web store and firefox add-ons
+- Custom themes
+- Maintenaned
+- Removed Teams telemetry and analytics
 
-`extension/injection.js` (compiled from `src/injection.ts`) is injected into every `teams.microsoft.com` page at `document_start` in the **MAIN** world, meaning it shares the same JavaScript context as Teams itself.
+## Documentation
 
-### 2. Webpack interception
+The documentation is available here at https://docs.teamsbutactuallygood.dev
 
-Teams is a React/Webpack app. The injection script hooks `Function.prototype.m`, a property that Webpack sets on every module registry object. This lets the patcher intercept **all** Webpack instances before any module factory runs.
+## Discord server
 
-For each detected Webpack instance the patcher:
+todo :3
 
-- Wraps every module factory in a `Proxy`.
-- On the first call to a factory, it runs all registered patches against that module's source code (string find/replace via regex).
-- The patched source is re-evaluated with `eval()` and replaces the original factory.
+## Star History
 
-### 3. CSP / Trusted Types bypass
+<a href="https://www.star-history.com/?repos=LeonimusTTV%2Fteams-but-actually-good&type=timeline&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=LeonimusTTV/teams-but-actually-good&type=timeline&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=LeonimusTTV/teams-but-actually-good&type=timeline&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/image?repos=LeonimusTTV/teams-but-actually-good&type=timeline&legend=top-left" />
+ </picture>
+</a>
 
-Teams enforces a strict Content Security Policy with Trusted Types, which normally blocks `eval()`. The injection script works around this by stealing Microsoft's own privileged Trusted Types policy (`@msteams/frameworks-loader#load-build-chunk`) from the whitelist before Teams can claim it, then re-using it to create trusted scripts.
+## Credits
 
-### 4. Plugin system
+Thanks a lot do the [Vencord mod](https://github.com/Vendicated/Vencord) for Discord which gave me that idea for Teams and helped to make my mod work on Teams :3
 
-Plugins live in `src/teams-plugin/`. Each plugin exports a `Plugin` object with:
+## Disclaimer
 
-- `name` — unique identifier.
-- `description` — optional human-readable description.
-- `patches` — one or more `{ find, replacement }` objects that describe a regex/string search and the replacement to apply to matching Webpack module sources.
-- Any additional methods the patched code can call back into at runtime (the plugin object is exposed on `window.__TEAMS_PLUGINS__`).
-
-The file `src/utils/plugin-registry.ts` is **auto-generated** by `scripts/generate-plugins.ts` and re-exports every plugin found under `src/teams-plugin/`. Running `bun run generate:plugins` regenerates it.
-
-### 5. Build pipeline
-
-```
-bun run build
-```
-
-1. Regenerates `src/utils/plugin-registry.ts`.
-2. Bundles `src/injection.ts` (with all plugins) into a single `dist/injection.js` using esbuild (CSS files are inlined as text).
-3. Copies the result to `extension/injection.js` so the browser extension is ready to load.
-
-### 6. Tauri wrapper (optional)
-
-The `src-tauri/` directory contains a Tauri v2 app that can wrap the extension in a standalone desktop application. Run `bun run tauri:dev` to start it.
-
----
-
-## Getting started
-
-```bash
-# Install dependencies
-bun install
-
-# Build the extension
-bun run build
-
-# Then load extension/ as an unpacked extension in Chrome/Edge
-
-# Or start the Tauri dev app
-bun run dev
-```
+This extension _pretty sure_ does breaks the Teams TOS, even tho nobody got banned from using it, use it at your own risk. (I doubt Microslop can do anything about it since the account are managed by your company / school, but we never know)

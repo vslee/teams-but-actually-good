@@ -1,13 +1,46 @@
 name-template: "Teams But Actually Good v$RESOLVED_VERSION"
 tag-template: "v$RESOLVED_VERSION"
+version-template: "$MAJOR.$MINOR.$PATCH"
 change-template: "- $TITLE (#$NUMBER)"
+no-changes-template: "* No changes"
+category-template: "## $TITLE"
+exclude-labels: []
+include-labels: []
+include-paths: []
+exclude-paths: []
+exclude-contributors: []
+no-contributors-template: ""
+sort-by: "merged_at"
+sort-direction: "descending"
+filter-by-commitish: false
+pull-request-limit: 100
+history-limit: 10
+replacers: []
 categories:
   - title: "🚀 Features"
     labels: ["feat"]
+    collapse-after: 5
   - title: "🐛 Bug Fixes"
     labels: ["fix"]
+    collapse-after: 5
   - title: "🧹 Maintenance"
     labels: ["chore"]
+    collapse-after: 5
 template: |
   ## What's Changed
   $CHANGES
+
+version-resolver:
+  major:
+    labels:
+      - "breaking"
+  minor:
+    labels:
+      - "feature"
+      - "enhancement"
+  patch:
+    labels:
+      - "bug"
+      - "fix"
+      - "chore"
+  default: patch
