@@ -3,9 +3,10 @@ const devModeToggle = document.getElementById("devModeToggle");
 const autoReloadToggle = document.getElementById("autoReloadToggle");
 const devRows = document.getElementById("devRows");
 
-// On Firefox, hide dev options and show a notice instead.
+// On Firefox/Safari, hide dev options and show a notice instead.
 const isFirefox = navigator.userAgent.includes("Firefox");
-if (isFirefox) {
+const isSafari = navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome") && !navigator.userAgent.includes("Firefox");
+if (isFirefox || isSafari) {
   document.getElementById("devSection").style.display = "none";
   document.getElementById("firefoxDevNotice").style.display = "";
 }
