@@ -9,9 +9,18 @@ import {
   pluginRegistry,
 } from "./interface";
 import PluginLoader from "./utils/plugin-loader";
+import ThemeLoader from "./utils/theme-loader";
+import { themeManager } from "./utils/themes";
 
 easyLogger("info", "Booting up...");
 
+ThemeLoader().then((success) => {
+  if (success) {
+    easyLogger("info", "Themes loaded successfully");
+  } else {
+    easyLogger("error", "Something went wrong when loading themes");
+  }
+});
 // Load all plugins dynamically
 PluginLoader().then((success) => {
   if (success) {
@@ -82,6 +91,19 @@ function logger(level: "info" | "warn" | "error", ...args: any[]) {
 
 function getCspNonce(): string | undefined {
   if (cachedNonce) return cachedNonce;
+
+  // Priority 1: document.currentScript — when the Function.prototype.m setter fires
+  // we are synchronously inside the Teams bundle execution, so currentScript still
+  // points to its <script nonce="…"> element before Firefox hides the attribute.
+  const current = document.currentScript as HTMLScriptElement | null;
+  if (current?.nonce) {
+    cachedNonce = current.nonce;
+    logger("info", `Found CSP nonce from currentScript: ${cachedNonce}`);
+    return cachedNonce;
+  }
+
+  // Priority 2: scan already-inserted scripts (works on Chrome; may fail on Firefox
+  // after nonce-hiding clears the attribute, but try anyway as a fallback).
   const scripts = document.getElementsByTagName("script");
   for (let i = 0; i < scripts.length; i++) {
     if (scripts[i].nonce) {
@@ -93,6 +115,35 @@ function getCspNonce(): string | undefined {
 
   logger("warn", "No CSP nonce found in document");
   return undefined;
+}
+
+// Firefox hides the nonce attribute shortly after a script executes, making
+// element.nonce unreliable when scanned later. Capture it the moment the first
+// <script nonce="…"> element is inserted — before any hiding can occur.
+{
+  const nonceCapture = new MutationObserver((mutations) => {
+    if (cachedNonce) {
+      nonceCapture.disconnect();
+      return;
+    }
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node instanceof HTMLScriptElement && node.nonce) {
+          cachedNonce = node.nonce;
+          logger(
+            "info",
+            `Captured CSP nonce early via MutationObserver: ${cachedNonce}`,
+          );
+          nonceCapture.disconnect();
+          return;
+        }
+      }
+    }
+  });
+  nonceCapture.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+  });
 }
 
 // Hook Function.prototype.m to intercept webpack module registry initialization
@@ -247,8 +298,8 @@ function patchFactory(
   let wasPatched = false;
 
   // Gather all patches from registered plugins
-  const allPatches = Object.values(pluginRegistry).flatMap(
-    (plugin) => plugin.patches,
+  const allPatches = Object.values(pluginRegistry).flatMap((plugin) =>
+    plugin.patches && plugin.enable !== false ? plugin.patches : [],
   );
 
   for (const patch of allPatches) {
@@ -407,6 +458,23 @@ function runPatchedFactory(
   }
 }
 
+new MutationObserver(() => {
+  themeManager();
+
+  Object.values(pluginRegistry).forEach((plugin) => {
+    if (typeof plugin.onChangeObserved === "function" && plugin.enable) {
+      try {
+        plugin.onChangeObserved();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  });
+}).observe(document, {
+  childList: true,
+  subtree: true,
+});
+
 window.addEventListener("DOMContentLoaded", () => {
   if (!window.location.hostname.includes("teams.microsoft.com")) {
     easyLogger("info", `Skipping injection on ${window.location.hostname}`);
@@ -432,6 +500,25 @@ window.addEventListener("DOMContentLoaded", () => {
   } catch (e) {
     easyLogger("error", "DevTools failed to initialize:", e);
   }
+
+  // execute mainEntry of plugins
+  Object.values(pluginRegistry).forEach((plugin) => {
+    if (typeof plugin.mainEntry === "function" && plugin.enable) {
+      try {
+        plugin.mainEntry();
+        easyLogger(
+          "info",
+          `Executed main entry of plugin ${plugin.name || "unknown"}`,
+        );
+      } catch (err) {
+        easyLogger(
+          "error",
+          `Error executing main entry of plugin ${plugin.name || "unknown"}:`,
+          err,
+        );
+      }
+    }
+  });
 
   easyLogger("info", "TypeScript Injection Successful!");
 });

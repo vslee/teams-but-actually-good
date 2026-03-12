@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teams But Good</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0a0a0a;
+        color: #e8e8e8;
+        width: 260px;
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 11px;
+        font-weight: 500;
+        color: #555;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      .rows {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 11px 13px;
+        border-radius: 8px;
+        background: #111;
+        border: 1px solid #1f1f1f;
+      }
+
+      .row-label {
+        font-size: 13px;
+        font-weight: 450;
+        line-height: 1.4;
+        color: #d4d4d4;
+      }
+
+      .row-label small {
+        display: block;
+        font-size: 11px;
+        color: #444;
+        margin-top: 2px;
+        font-weight: 400;
+      }
+
+      /* Dev sub-options: visually nested under the dev mode row */
+      .dev-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding-left: 10px;
+        border-left: 2px solid #1f1f1f;
+      }
+
+      /* Toggle switch */
+      .toggle {
+        position: relative;
+        width: 38px;
+        height: 21px;
+        flex-shrink: 0;
+      }
+
+      .toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
+
+      .slider {
+        position: absolute;
+        inset: 0;
+        background: #222;
+        border: 1px solid #2e2e2e;
+        border-radius: 21px;
+        cursor: pointer;
+        transition: background 0.2s, border-color 0.2s;
+      }
+
+      .slider::before {
+        content: "";
+        position: absolute;
+        height: 15px;
+        width: 15px;
+        left: 2px;
+        bottom: 2px;
+        background: #555;
+        border-radius: 50%;
+        transition: transform 0.2s, background 0.2s;
+      }
+
+      .toggle input:checked + .slider {
+        background: #fff;
+        border-color: #fff;
+      }
+
+      .toggle input:checked + .slider::before {
+        transform: translateX(17px);
+        background: #0a0a0a;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Teams But Good</h1>
+    <div class="rows">
+      <!-- Extension on/off -->
+      <div class="row">
+        <div class="row-label">
+          Extension Enabled
+          <small>Load Teams But Good on Microsoft Teams</small>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="extensionToggle" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Developer mode toggle -->
+      <div id="devSection">
+        <div class="row">
+          <div class="row-label">
+            Developer Mode
+            <small>Enable WebSocket dev server connection</small>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="devModeToggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Dev sub-options (hidden until dev mode is on) -->
+        <div class="dev-rows" id="devRows" style="display: none;">
+          <div class="row">
+            <div class="row-label">
+              Auto-reload on build
+              <small>Reload Teams when a new build is ready</small>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="autoReloadToggle" />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shown instead of dev section on Firefox -->
+      <div id="firefoxDevNotice" style="display: none;">
+        <div class="row">
+          <div class="row-label">
+            Dev mode unavailable
+            <small>Use Chrome for development</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

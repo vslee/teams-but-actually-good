@@ -57,3 +57,12 @@ export function injectStyles(
 export function loadStyle(_path: string) {
   console.warn("loadStyle is deprecated, use injectStyles instead");
 }
+
+export function applyStyles(theme: Record<string, string>) {
+  for (const [id, classes] of Object.entries(theme)) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.className = classes;
+    }
+  }
+}

@@ -5,8 +5,12 @@
   "type": "module",
   "author": "LeonimusT",
   "scripts": {
-    "generate:plugins": "bun run scripts/generate-plugins.ts",
-    "build": "bun run generate:plugins && bun esbuild src/injection.ts --bundle --loader:.css=text --outfile=dist/injection.js && cp dist/injection.js extension/injection.js",
+    "generate": "bun run scripts/generate-all.ts",
+    "build": "bun run generate && bun esbuild src/injection.ts --bundle --loader:.css=text --loader:.svg=dataurl --outfile=dist/injection.js && cp dist/injection.js extension/injection.js && cp extension/manifest.chrome.json extension/manifest.json",
+    "build:firefox": "bun run generate && bun esbuild src/injection.ts --bundle --loader:.css=text --loader:.svg=dataurl --outfile=dist/injection.js && cp dist/injection.js extension/injection.js && cp extension/manifest.firefox.json extension/manifest.json",
+    "build:ext": "bun run build && cd extension && zip -r ../dist/extension-chrome.zip . --exclude '*.chrome.json' --exclude '*.firefox.json'",
+    "build:ext:firefox": "bun run build:firefox && cd extension && zip -r ../dist/extension-firefox.zip . --exclude '*.chrome.json' --exclude '*.firefox.json'",
+    "watch": "bun run scripts/dev.ts",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "dev": "bun run build && bun run tauri:dev",
@@ -16,6 +20,7 @@
     "@eslint/js": "^10.0.1",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
+    "@types/bun": "^1.3.9",
     "@typescript-eslint/eslint-plugin": "^8.56.0",
     "eslint": "^10.0.1",
     "react-devtools-core": "^7.0.1"

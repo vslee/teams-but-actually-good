@@ -4,8 +4,13 @@
   "version": "0.0.1",
   "description": "A Microsoft Teams extension that actually improves the user experience.",
   "author": "LeonimusT",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "teams-but-good@leonimust",
+      "strict_min_version": "128.0"
+    }
+  },
   "permissions": [
-    "alarms",
     "storage",
     "scripting"
   ],
@@ -18,6 +23,8 @@
     "default_title": "Teams But Good"
   },
   "background": {
-    "service_worker": "background.js"
+    "scripts": [
+      "background.js"
+    ]
   }
 }

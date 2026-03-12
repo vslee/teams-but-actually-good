@@ -1,4 +1,5 @@
 import { AnyModuleFactory } from "../types/modules";
+import { Author, SettingsDefinition } from "../types/types";
 
 export const SYM_IS_PROXIED_FACTORY = Symbol("TeamsPatcher.isProxiedFactory");
 export const SYM_ORIGINAL_FACTORY = Symbol("TeamsPatcher.originalFactory");
@@ -29,8 +30,27 @@ export interface Patch {
 export interface Plugin {
   name: string;
   description?: string;
+  enableByDefault?: boolean;
+  enable?: boolean;
+  /** Schema: types, descriptions, options — used by the UI to render controls */
+  settingsDef?: SettingsDefinition;
+  /** Current runtime values — populated by plugin-loader from storage or defaults */
+  settings?: Record<string, unknown>;
+  author?: Author | Author[];
   patches: Patch[];
+  mainEntry?: () => void;
+  onChangeObserved?: () => void;
   [key: string]: any;
+}
+
+export interface Styles {
+  [key: string]: string;
+}
+
+export interface Theme {
+  name: string;
+  styles?: Styles;
+  enable?: boolean;
 }
 
 // Global plugin registry
@@ -47,4 +67,10 @@ export function registerPlugin(plugin: Plugin) {
   // Make plugin accessible globally for patched code
   (window as any).__TEAMS_PLUGINS__ = (window as any).__TEAMS_PLUGINS__ || {};
   (window as any).__TEAMS_PLUGINS__[plugin.name] = plugin;
+}
+
+export const themeRegistry: Record<string, Theme> = {};
+
+export function registerTheme(theme: Theme) {
+  themeRegistry[theme.name] = theme;
 }

@@ -1,8 +1,10 @@
+import { SettingsDefinition, OptionType } from "../types/types";
+
 const STORAGE_PREFIX = "teams-but-good:";
 const MAIN_SETTINGS_KEY = `${STORAGE_PREFIX}main`;
 const PLUGIN_SETTINGS_PREFIX = `${STORAGE_PREFIX}plugin:`;
 
-export async function getMainSetting<T = any>(key: string): Promise<T | null> {
+export async function getMainSetting(key: string): Promise<string | null> {
   try {
     const mainSettings = localStorage.getItem(MAIN_SETTINGS_KEY);
     if (!mainSettings) return null;
@@ -139,4 +141,40 @@ export async function clearAllSettings(): Promise<void> {
 
   keys.forEach((key) => localStorage.removeItem(key));
   console.log("[Storage] Cleared all settings");
+}
+
+const FALLBACK_DEFAULTS: Partial<Record<OptionType, unknown>> = {
+  [OptionType.STRING]: "",
+  [OptionType.NUMBER]: 0,
+  [OptionType.BOOLEAN]: false,
+  [OptionType.BIGINT]: BigInt(0),
+};
+
+/**
+ * Initialise settings for a plugin from its schema.
+ * - If the plugin already has settings stored, those are returned as-is (user values preserved).
+ * - If no settings exist yet, default values are derived from the schema, saved, and returned.
+ */
+export async function initPluginSettings(
+  pluginName: string,
+  settingsDef: SettingsDefinition,
+): Promise<Record<string, unknown>> {
+  const existing = await getPluginSettings(pluginName);
+  if (existing) return existing;
+
+  const defaultSettings: Record<string, unknown> = {};
+
+  for (const [key, def] of Object.entries(settingsDef)) {
+    if ("default" in def) {
+      defaultSettings[key] = def.default;
+    } else if (def.type === OptionType.SELECT) {
+      defaultSettings[key] =
+        def.options.find((opt) => opt.default)?.value ?? null;
+    } else {
+      defaultSettings[key] = FALLBACK_DEFAULTS[def.type] ?? null;
+    }
+  }
+
+  await setPluginSettings(pluginName, defaultSettings);
+  return defaultSettings;
 }

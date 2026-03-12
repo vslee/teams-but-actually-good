@@ -1,25 +1,45 @@
-import { Plugin } from "../../interface";
+import { Plugin, pluginRegistry } from "../../interface";
 import * as React from "react";
 import { injectStyles } from "../../utils/styles";
 import styles from "./index.css";
+import cogwheelUrl from "../../svgs/cogwheel.svg";
+import infoUrl from "../../svgs/info.svg";
+import { updatePluginSettings } from "../../utils/storage";
+import SettingModal from "./modal";
+import { Devs } from "../../data/devs";
+import { OptionType } from "../../types/types";
+import Themes from "./themes";
 
-// Inject the CSS into the page (will wait for DOM if needed)
 injectStyles(styles, "teams-but-good-settings");
 
 const SettingsPlugin: Plugin = {
-  name: "SettingsInjector",
+  name: "Settings",
   description: "Adds custom settings tabs to Teams settings panel",
+  enableByDefault: true,
+  author: Devs.LeonimusT,
+  settingsDef: {
+    enableThemes: {
+      type: OptionType.BOOLEAN,
+      description: "Enable custom themes",
+      default: true,
+      restartNeeded: true,
+    },
+  },
 
   addNewChildren(elementsProp: any) {
-    if (!elementsProp?.children || !Array.isArray(elementsProp.children)) {
+    if (
+      !elementsProp?.children ||
+      !Array.isArray(elementsProp.children) ||
+      !elementsProp["aria-label"]
+    ) {
       return elementsProp;
     }
 
-    if (elementsProp.children[0]?.key !== "general") {
+    if (elementsProp.children[2]?.props?.children[0]?.key !== "general") {
       return elementsProp;
     }
 
-    const template = elementsProp.children[0];
+    const template = elementsProp.children[2]?.props?.children[0];
 
     const newChild = {
       ...template,
@@ -27,21 +47,44 @@ const SettingsPlugin: Plugin = {
       ref: null,
       props: {
         ...template.props,
-        category: "Plugin Settings",
-        isActive: false,
+        category: "plugin_settings",
+        isActive: elementsProp.children[2].key === "plugin_settings",
       },
     };
 
-    const newChildren = [newChild, ...elementsProp.children];
+    const newChildrenTwo = [
+      newChild,
+      ...elementsProp.children[2].props.children,
+    ];
+
+    const newChildrenOne = [
+      newChild,
+      ...elementsProp.children[1].props.children,
+    ];
 
     return {
       ...elementsProp,
-      children: newChildren,
+      children: [
+        elementsProp.children[0],
+        {
+          ...elementsProp.children[1],
+          props: {
+            ...elementsProp.children[1].props,
+            children: newChildrenOne,
+          },
+        },
+        {
+          ...elementsProp.children[2],
+          props: {
+            ...elementsProp.children[2].props,
+            children: newChildrenTwo,
+          },
+        },
+      ],
     };
   },
 
   changeName(value: string) {
-    console.log("[Settings] Changing name for value:", value);
     if (value === "plugin_settings") {
       return "Teams But Good Settings";
     }
@@ -49,20 +92,155 @@ const SettingsPlugin: Plugin = {
   },
 
   addCustomContent(ReactLib: typeof React) {
-    //const [inputValue, setInputValue] = ReactLib.useState("");
-    console.log("[Settings] Adding custom content to settings tab");
+    const [needRestart, setNeedRestart] = ReactLib.useState(false);
+    const [activePlugin, setActivePlugin] = ReactLib.useState<Plugin | null>(
+      null,
+    );
+    function handleCheckboxChange(checked: boolean, pluginName: string) {
+      setNeedRestart(true);
+      updatePluginSettings(pluginName, {
+        enabled: checked,
+      });
+    }
     // We basically say that we wanna use ReactLib to create the elements instead of our React.
     /** @jsx ReactLib.createElement */
     return (
-      <div
-        style={{
-          padding: "20px",
-        }}
-        className="container-tbag"
-      >
-        <div className="default-display-flex">
-          <span>Custom Settings</span>
+      <div>
+        <div className="tbg-container">
+          <div className="tbg-default-display-flex">
+            <img
+              src={cogwheelUrl}
+              style={{
+                height: "17px",
+                filter: "brightness(0) invert(1)",
+              }}
+              aria-hidden="true"
+            />
+            <span>Plugins</span>
+          </div>
+          <div className="tbg-plugin-container">
+            {Object.values(pluginRegistry).flatMap((plugin) => (
+              <div className="tbg-plugins-grid">
+                <div className="tbg-box-basic">
+                  <div className="tbg-plugin-header">
+                    <span className="tbg-plugin-name">{plugin.name}</span>
+                    <div className="tbg-plugin-controls">
+                      {plugin.settingsDef &&
+                      Object.keys(plugin.settingsDef).length > 0 ? (
+                        <button
+                          className="tbg-cog-button"
+                          aria-label="Plugin settings"
+                          title="Configure plugin"
+                          onClick={() => setActivePlugin(plugin)}
+                        >
+                          <img
+                            src={cogwheelUrl}
+                            style={{
+                              width: "1em",
+                              filter: "brightness(0) invert(1)",
+                            }}
+                            aria-hidden="true"
+                          />
+                        </button>
+                      ) : (
+                        <button
+                          className="tbg-cog-button"
+                          aria-label="Plugin settings"
+                          title="Configure plugin"
+                          onClick={() => setActivePlugin(plugin)}
+                        >
+                          <img
+                            src={infoUrl}
+                            style={{
+                              width: "1em",
+                              filter: "brightness(0) invert(1)",
+                            }}
+                            aria-hidden="true"
+                          />
+                        </button>
+                      )}
+                      <div
+                        className={
+                          "tbg-switch" +
+                          (plugin.enableByDefault ? " tbg-switch-disabled" : "")
+                        }
+                        role="switch"
+                        tabIndex={0}
+                        data-checked={String(
+                          pluginRegistry[plugin.name]?.enable === true,
+                        )}
+                        onClick={(e: any) => {
+                          if (plugin.enableByDefault) {
+                            return;
+                          }
+                          const target = e.currentTarget;
+                          const next = target.dataset.checked !== "true";
+                          target.dataset.checked = String(next);
+                          handleCheckboxChange(next, plugin.name);
+                        }}
+                        onKeyDown={(e: any) => {
+                          if (e.key === " " || e.key === "Enter") {
+                            e.preventDefault();
+                            e.currentTarget.click();
+                          }
+                        }}
+                      >
+                        <div className="tbg-switch__indicator">
+                          <svg
+                            fill="currentColor"
+                            aria-hidden="true"
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Z"
+                              fill="currentColor"
+                            ></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="tbg-plugin-description">{plugin.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          {needRestart && (
+            <div
+              className="tbg-modal-footer"
+              style={{
+                border: "none",
+                paddingRight: 0,
+                paddingLeft: 0,
+                paddingBottom: 0,
+                paddingTop: "15px",
+              }}
+            >
+              <button
+                className="tbg-button-primary"
+                onClick={() => window.location.reload()}
+              >
+                Restart Teams to apply changes
+              </button>
+            </div>
+          )}
+          {activePlugin && (
+            <SettingModal
+              ReactLib={ReactLib}
+              plugin={activePlugin}
+              onClose={() => setActivePlugin(null)}
+            />
+          )}
         </div>
+        {Boolean(
+          pluginRegistry["Settings"]?.settings &&
+          typeof pluginRegistry["Settings"].settings.enableThemes ===
+            "boolean" &&
+          pluginRegistry["Settings"].settings.enableThemes,
+        ) && <Themes ReactLib={ReactLib} />}
       </div>
     );
   },
@@ -70,12 +248,10 @@ const SettingsPlugin: Plugin = {
   // Plugin patches
   patches: [
     {
-      find: /\{value:\w+,version:\w+,listeners:\[\]\}/,
+      find: 'smaller:"8px",small:"10px",medium:"15px",large:"30px"',
       replacement: {
-        match:
-          /(\w+)\.createElement\((\w+),\{value:(\w+)\.current\},(\w+)\.children\)/,
-        replace:
-          "$1.createElement($2,{value:$3.current},($self.addNewChildren($4)||$4).children)",
+        match: /(forwardRef\(function\((\w+),\w+\)\{)/,
+        replace: "$1$2=$self.addNewChildren($2);",
       },
     },
     {
@@ -88,13 +264,13 @@ const SettingsPlugin: Plugin = {
     },
     // Allow you to change the displayed name of the settings tab
     // by modifying the local files with the translation key
-    /*{
+    {
       find: /app_title:"{{title}}",/,
       replacement: {
         match: /(app_title:"{{title}}",)/,
-        replace: '$1plugin_settings:"Plugin Settings",',
+        replace: '$1plugin_settings:"Teams But (actually) Good Settings",',
       },
-    },*/
+    },
   ],
 };
 
