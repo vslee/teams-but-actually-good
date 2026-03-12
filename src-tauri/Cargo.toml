@@ -1,6 +1,6 @@
 [package]
 name = "teams-but-actually-good"
-version = "0.0.1-test"
+version = "0.0.1"
 description = "Makes Teams actually good"
 authors = ["LeonimusT"]
 edition = "2024"
