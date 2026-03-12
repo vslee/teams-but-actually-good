@@ -9,4 +9,4 @@ sed -i '' "s/^version = .*/version = \"$VERSION\"/" src-tauri/Cargo.toml
 git add src-tauri/Cargo.toml
 git commit -m "chore: release v$VERSION"
 git tag "v$VERSION"
-git push origin main --tags
+git push origin main "v$VERSION"
