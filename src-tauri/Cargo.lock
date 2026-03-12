@@ -3648,8 +3648,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "teams-but-good"
-version = "0.0.1"
+name = "teams-but-actually-good"
+version = "0.0.1-test"
 dependencies = [
  "serde",
  "serde_json",
