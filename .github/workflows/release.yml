@@ -74,18 +74,7 @@ jobs:
         run: bun install
 
       - name: Build frontend (dist/)
-        run: bun run build # ← génère le dist/ pour Tauri
-
-      - name: Debug certificate import
-        if: matrix.os == 'macos-latest'
-        env:
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-        run: |
-          echo "$APPLE_CERTIFICATE" | base64 --decode > /tmp/cert.p12
-          file /tmp/cert.p12
-          security import /tmp/cert.p12 -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign || echo "Import failed"
-          rm /tmp/cert.p12
+        run: bun run build
 
       - name: Build & Release
         uses: tauri-apps/tauri-action@v0
