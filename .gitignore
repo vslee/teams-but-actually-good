@@ -27,3 +27,4 @@ bun.lock
 .vscode
 /extension/injection.js
 *.old.css
+Cargo.lock
