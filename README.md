@@ -43,6 +43,6 @@ Thanks a lot do the [Vencord mod](https://github.com/Vendicated/Vencord) for Dis
 
 Yes the Logo is made with AI, I'm not good enough nor did wanted at the time of doing it to pay someone for that logo, but I'm always open for someone to redo the current logo themself (paid ofc ^^)
 
-## Disclaimer
+## Information
 
-This extension _pretty sure_ does breaks the Teams TOS, even tho nobody got banned from using it, use it at your own risk. (I doubt Microslop can do anything about it since the account are managed by your company / school, but we never know)
+This is a client-side mod. It doesn't violate Teams' terms of service. Use your judgment in corporate environments.

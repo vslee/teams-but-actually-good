@@ -8,12 +8,18 @@ const activeStatusValue = document.getElementById("activeStatusValue");
 const injectionStatusValue = document.getElementById("injectionStatusValue");
 
 const META_URL = "https://github.com/LeonimusTTV/teams-but-actually-good/releases/latest/download/injection.meta.json";
+const RELEASES_API_URL = "https://api.github.com/repos/LeonimusTTV/teams-but-actually-good/releases/latest";
 const TEAMS_HOST_PATTERN = /(^|\.)teams\.microsoft\.com$/i;
 
 function setStatus(el, text, kind) {
   el.textContent = text;
   el.classList.remove("ok", "warn", "pending");
   el.classList.add(kind);
+}
+
+function normalizeVersion(version) {
+  if (typeof version !== "string") return "";
+  return version.trim().replace(/^v/i, "");
 }
 
 function isTeamsUrl(url) {
@@ -51,21 +57,43 @@ async function getInjectionMarker(tabId) {
 }
 
 async function updateVersionInfo() {
-  const currentVersion = chrome.runtime.getManifest().version;
-  setStatus(currentVersionValue, currentVersion || "Unknown", "ok");
+  const currentVersionRaw = chrome.runtime.getManifest().version;
+  const currentVersion = normalizeVersion(currentVersionRaw);
+  setStatus(currentVersionValue, currentVersionRaw || "Unknown", "ok");
 
   try {
-    const response = await fetch(META_URL, { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+    let latest = "";
+
+    try {
+      const releaseResponse = await fetch(RELEASES_API_URL, {
+        cache: "no-store",
+        headers: { Accept: "application/vnd.github+json" }
+      });
+
+      if (!releaseResponse.ok) {
+        throw new Error(`HTTP ${releaseResponse.status}`);
+      }
+
+      const release = await releaseResponse.json();
+      latest = normalizeVersion(release?.tag_name || "");
+
+      if (!latest) {
+        throw new Error("Missing tag_name in latest release response");
+      }
+    } catch {
+      // Fallback for environments where API requests are blocked.
+      const response = await fetch(META_URL, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const metadata = await response.json();
+      latest = normalizeVersion(metadata?.version || "");
+      if (!latest) {
+        throw new Error("Missing version in metadata");
+      }
     }
 
-    const metadata = await response.json();
-    if (!metadata || typeof metadata.version !== "string" || metadata.version.length === 0) {
-      throw new Error("Missing version in metadata");
-    }
-
-    const latest = metadata.version;
     const kind = latest === currentVersion ? "ok" : "warn";
     setStatus(latestVersionValue, latest, kind);
   } catch {

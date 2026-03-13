@@ -8,7 +8,7 @@ function ChannelSelectorComponent({
   ReactLib,
 }: IPluginOptionComponentProps) {
   void ReactLib;
-  const plugin = (window as any).__TEAMS_PLUGINS__?.[Channel.name];
+  const plugin = (window as any).__TEAMS_PLUGINS__?.[betterAppBar.name];
   const channels: Array<{ key: string; label: string }> =
     plugin?.availableChannels ?? [];
   const selected: string[] = Array.isArray(value) ? value : [];
@@ -54,8 +54,8 @@ function ChannelSelectorComponent({
   );
 }
 
-const Channel: Plugin = {
-  name: "ChannelListChooser",
+const betterAppBar: Plugin = {
+  name: "BetterAppBar",
   description: "Shows only selected channels in the channel list.",
   availableChannels: [] as Array<{ key: string; label: string }>,
   settingsDef: {
@@ -102,4 +102,4 @@ const Channel: Plugin = {
   ],
 };
 
-export default Channel;
+export default betterAppBar;
