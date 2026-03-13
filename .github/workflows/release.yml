@@ -151,7 +151,7 @@ jobs:
         run: |
           xcodebuild archive \
             -project "safari-extension/Teams But Actually Good/Teams But Actually Good.xcodeproj" \
-            -target "Teams But Actually Good (macOS)" \
+            -scheme "Teams But Actually Good (macOS)" \
             -configuration Release \
             -archivePath "$RUNNER_TEMP/TeamsButActuallyGood.xcarchive" \
             CODE_SIGN_IDENTITY="$APPLE_SIGNING_IDENTITY" \
