@@ -1,5 +1,4 @@
 import easyLogger from "./utils/easy-logger";
-import { initialize, connectToDevTools } from "react-devtools-core";
 import { AnyModuleFactory } from "./types/modules";
 import {
   SYM_IS_PROXIED_FACTORY,
@@ -11,6 +10,8 @@ import {
 import PluginLoader from "./utils/plugin-loader";
 import ThemeLoader from "./utils/theme-loader";
 import { themeManager } from "./utils/themes";
+
+document.documentElement.setAttribute("data-tbg-injection", "booting");
 
 easyLogger("info", "Booting up...");
 
@@ -480,26 +481,6 @@ window.addEventListener("DOMContentLoaded", () => {
     easyLogger("info", `Skipping injection on ${window.location.hostname}`);
     return;
   }
-  easyLogger("info", "Booting up native React DevTools connection...");
-  try {
-    initialize({});
-
-    const ws = new window.WebSocket("ws://localhost:8097");
-
-    ws.onopen = () => {
-      easyLogger("info", "WebSocket connected to Standalone App!");
-    };
-
-    ws.onerror = (err: any) => {
-      easyLogger("error", "WebSocket Error (Check Mixed Content):", err);
-    };
-
-    connectToDevTools({
-      websocket: ws,
-    });
-  } catch (e) {
-    easyLogger("error", "DevTools failed to initialize:", e);
-  }
 
   // execute mainEntry of plugins
   Object.values(pluginRegistry).forEach((plugin) => {
@@ -520,5 +501,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  document.documentElement.setAttribute("data-tbg-injection", "ready");
   easyLogger("info", "TypeScript Injection Successful!");
 });

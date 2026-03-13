@@ -110,7 +110,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: "Teams But Actually Good ${{ github.ref_name }}"
+          releaseName: "Teams but (actually) good ${{ github.ref_name }}"
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.tauri_args }}
@@ -152,8 +152,8 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           xcodebuild archive \
-            -project "safari-extension/Teams But Actually Good/Teams But Actually Good.xcodeproj" \
-            -scheme "Teams But Actually Good (macOS)" \
+            -project "safari-extension/Teams but (actually) good/Teams but (actually) good.xcodeproj" \
+            -scheme "Teams but (actually) good (macOS)" \
             -configuration Release \
             -archivePath "$RUNNER_TEMP/TeamsButActuallyGood.xcarchive" \
             CODE_SIGN_IDENTITY="$APPLE_SIGNING_IDENTITY" \
@@ -186,7 +186,7 @@ jobs:
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          APP_PATH="$RUNNER_TEMP/safari-export/Teams But Actually Good.app"
+          APP_PATH="$RUNNER_TEMP/safari-export/Teams but (actually) good.app"
           zip -r "$RUNNER_TEMP/notarize.zip" "$APP_PATH"
           xcrun notarytool submit "$RUNNER_TEMP/notarize.zip" \
             --apple-id "$APPLE_ID" \
@@ -198,7 +198,7 @@ jobs:
       - name: Package macOS Safari app
         run: |
           mkdir -p dist
-          zip -r "dist/safari-extension-macos.zip" "$RUNNER_TEMP/safari-export/Teams But Actually Good.app"
+          zip -r "dist/safari-extension-macos.zip" "$RUNNER_TEMP/safari-export/Teams but (actually) good.app"
 
       - name: Upload Safari artifact
         uses: actions/upload-artifact@v4

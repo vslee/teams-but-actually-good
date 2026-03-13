@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Teams But Good</title>
+    <title>Teams but (actually) good</title>
     <style>
       * {
         box-sizing: border-box;
@@ -34,6 +34,20 @@
         gap: 6px;
       }
 
+      .info-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .link-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
       .row {
         display: flex;
         align-items: center;
@@ -58,6 +72,43 @@
         color: #444;
         margin-top: 2px;
         font-weight: 400;
+      }
+
+      .row-value {
+        font-size: 12px;
+        font-weight: 600;
+        color: #f2f2f2;
+        text-align: right;
+        min-width: 88px;
+      }
+
+      .row-value.ok {
+        color: #86efac;
+      }
+
+      .row-value.warn {
+        color: #fca5a5;
+      }
+
+      .row-value.pending {
+        color: #d1d5db;
+      }
+
+      .link-row {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .link-row .row-value {
+        color: #9ca3af;
+      }
+
+      .link-row:hover {
+        border-color: #3a3a3a;
+      }
+
+      .link-row:hover .row-value {
+        color: #f2f2f2;
       }
 
       /* Dev sub-options: visually nested under the dev mode row */
@@ -118,13 +169,13 @@
     </style>
   </head>
   <body>
-    <h1>Teams But Good</h1>
+    <h1>Teams but (actually) good</h1>
     <div class="rows">
       <!-- Extension on/off -->
       <div class="row">
         <div class="row-label">
           Extension Enabled
-          <small>Load Teams But Good on Microsoft Teams</small>
+          <small>Load Teams but (actually) good on Microsoft Teams</small>
         </div>
         <label class="toggle">
           <input type="checkbox" id="extensionToggle" />
@@ -168,6 +219,75 @@
             <small>Use Chrome for development</small>
           </div>
         </div>
+      </div>
+
+      <div class="info-rows">
+        <div class="row">
+          <div class="row-label">
+            Current Version
+            <small>Installed extension version</small>
+          </div>
+          <div class="row-value pending"
+            id="currentVersionValue">Loading...</div>
+        </div>
+
+        <div class="row">
+          <div class="row-label">
+            Latest Version
+            <small>From injection metadata endpoint</small>
+          </div>
+          <div class="row-value pending"
+            id="latestVersionValue">Loading...</div>
+        </div>
+
+        <div class="row">
+          <div class="row-label">
+            Extension Status
+            <small>Active only on a Teams tab when enabled</small>
+          </div>
+          <div class="row-value pending"
+            id="activeStatusValue">Checking...</div>
+        </div>
+
+        <div class="row">
+          <div class="row-label">
+            Injection Status
+            <small>Detected from page marker</small>
+          </div>
+          <div class="row-value pending"
+            id="injectionStatusValue">Checking...</div>
+        </div>
+      </div>
+
+      <div class="link-rows">
+        <a class="row link-row" href="https://docs.teamsbutactuallygood.dev"
+          target="_blank" rel="noopener noreferrer">
+          <div class="row-label">
+            Documentation
+            <small>Guides and setup docs</small>
+          </div>
+          <div class="row-value">Open</div>
+        </a>
+
+        <a class="row link-row"
+          href="https://github.com/LeonimusTTV/teams-but-actually-good/issues"
+          target="_blank" rel="noopener noreferrer">
+          <div class="row-label">
+            Report an Issue
+            <small>Open or track bug reports</small>
+          </div>
+          <div class="row-value">Open</div>
+        </a>
+
+        <a class="row link-row"
+          href="https://github.com/LeonimusTTV/teams-but-actually-good"
+          target="_blank" rel="noopener noreferrer">
+          <div class="row-label">
+            GitHub Repository
+            <small>Source code and releases</small>
+          </div>
+          <div class="row-value">Open</div>
+        </a>
       </div>
     </div>
     <script src="popup.js"></script>

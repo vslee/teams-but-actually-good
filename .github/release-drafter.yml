@@ -1,4 +1,4 @@
-name-template: "Teams But Actually Good v$RESOLVED_VERSION"
+name-template: "Teams but (actually) good v$RESOLVED_VERSION"
 tag-template: "v$RESOLVED_VERSION"
 version-template: "$MAJOR.$MINOR.$PATCH"
 change-template: "- $TITLE (#$NUMBER)"

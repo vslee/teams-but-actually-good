@@ -1,0 +1,1019 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B3D2ED4A2F64350E00548E98 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D2ED492F64350E00548E98 /* AppDelegate.swift */; };
+		B3D2ED4C2F64350E00548E98 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D2ED4B2F64350E00548E98 /* SceneDelegate.swift */; };
+		B3D2ED4F2F64350E00548E98 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED4D2F64350E00548E98 /* LaunchScreen.storyboard */; };
+		B3D2ED522F64350E00548E98 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED502F64350E00548E98 /* Main.storyboard */; };
+		B3D2ED5B2F64350E00548E98 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D2ED5A2F64350E00548E98 /* AppDelegate.swift */; };
+		B3D2ED5E2F64350E00548E98 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED5C2F64350E00548E98 /* Main.storyboard */; };
+		B3D2ED652F64350E00548E98 /* Teams but (actually) good Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3D2ED642F64350E00548E98 /* Teams but (actually) good Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3D2ED6F2F64350E00548E98 /* Teams but (actually) good Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3D2ED6E2F64350E00548E98 /* Teams but (actually) good Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3D2ED742F64350E00548E98 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED392F64350E00548E98 /* Main.html */; };
+		B3D2ED752F64350E00548E98 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED392F64350E00548E98 /* Main.html */; };
+		B3D2ED762F64350E00548E98 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED3B2F64350E00548E98 /* Icon.png */; };
+		B3D2ED772F64350E00548E98 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED3B2F64350E00548E98 /* Icon.png */; };
+		B3D2ED782F64350E00548E98 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED3C2F64350E00548E98 /* Style.css */; };
+		B3D2ED792F64350E00548E98 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED3C2F64350E00548E98 /* Style.css */; };
+		B3D2ED7A2F64350E00548E98 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED3D2F64350E00548E98 /* Script.js */; };
+		B3D2ED7B2F64350E00548E98 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED3D2F64350E00548E98 /* Script.js */; };
+		B3D2ED7C2F64350E00548E98 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D2ED3E2F64350E00548E98 /* ViewController.swift */; };
+		B3D2ED7D2F64350E00548E98 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D2ED3E2F64350E00548E98 /* ViewController.swift */; };
+		B3D2ED7E2F64350E00548E98 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED3F2F64350E00548E98 /* Assets.xcassets */; };
+		B3D2ED7F2F64350E00548E98 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED3F2F64350E00548E98 /* Assets.xcassets */; };
+		B3D2ED802F64350E00548E98 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D2ED412F64350E00548E98 /* SafariWebExtensionHandler.swift */; };
+		B3D2ED812F64350E00548E98 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D2ED412F64350E00548E98 /* SafariWebExtensionHandler.swift */; };
+		B3D2ED9C2F64350F00548E98 /* manifest.safari.json in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED932F64350F00548E98 /* manifest.safari.json */; };
+		B3D2ED9D2F64350F00548E98 /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED942F64350F00548E98 /* popup.js */; };
+		B3D2ED9E2F64350F00548E98 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED952F64350F00548E98 /* background.js */; };
+		B3D2ED9F2F64350F00548E98 /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED962F64350F00548E98 /* popup.html */; };
+		B3D2EDA02F64350F00548E98 /* injection.js in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED972F64350F00548E98 /* injection.js */; };
+		B3D2EDA12F64350F00548E98 /* manifest.firefox.json in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED982F64350F00548E98 /* manifest.firefox.json */; };
+		B3D2EDA22F64350F00548E98 /* manifest.chrome.json in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED992F64350F00548E98 /* manifest.chrome.json */; };
+		B3D2EDA32F64350F00548E98 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED9A2F64350F00548E98 /* icons */; };
+		B3D2EDA42F64350F00548E98 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED9B2F64350F00548E98 /* manifest.json */; };
+		B3D2EDA52F64350F00548E98 /* manifest.safari.json in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED932F64350F00548E98 /* manifest.safari.json */; };
+		B3D2EDA62F64350F00548E98 /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED942F64350F00548E98 /* popup.js */; };
+		B3D2EDA72F64350F00548E98 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED952F64350F00548E98 /* background.js */; };
+		B3D2EDA82F64350F00548E98 /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED962F64350F00548E98 /* popup.html */; };
+		B3D2EDA92F64350F00548E98 /* injection.js in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED972F64350F00548E98 /* injection.js */; };
+		B3D2EDAA2F64350F00548E98 /* manifest.firefox.json in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED982F64350F00548E98 /* manifest.firefox.json */; };
+		B3D2EDAB2F64350F00548E98 /* manifest.chrome.json in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED992F64350F00548E98 /* manifest.chrome.json */; };
+		B3D2EDAC2F64350F00548E98 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED9A2F64350F00548E98 /* icons */; };
+		B3D2EDAD2F64350F00548E98 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = B3D2ED9B2F64350F00548E98 /* manifest.json */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B3D2ED662F64350E00548E98 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3D2ED332F64350E00548E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3D2ED632F64350E00548E98;
+			remoteInfo = "Teams but (actually) good Extension (iOS)";
+		};
+		B3D2ED702F64350E00548E98 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3D2ED332F64350E00548E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3D2ED6D2F64350E00548E98;
+			remoteInfo = "Teams but (actually) good Extension (macOS)";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B3D2ED872F64350E00548E98 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B3D2ED652F64350E00548E98 /* Teams but (actually) good Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3D2ED8E2F64350E00548E98 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B3D2ED6F2F64350E00548E98 /* Teams but (actually) good Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		B3D2ED3A2F64350E00548E98 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		B3D2ED3B2F64350E00548E98 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		B3D2ED3C2F64350E00548E98 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		B3D2ED3D2F64350E00548E98 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		B3D2ED3E2F64350E00548E98 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		B3D2ED3F2F64350E00548E98 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B3D2ED412F64350E00548E98 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		B3D2ED462F64350E00548E98 /* Teams but (actually) good.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Teams but (actually) good.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3D2ED492F64350E00548E98 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B3D2ED4B2F64350E00548E98 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		B3D2ED4E2F64350E00548E98 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		B3D2ED512F64350E00548E98 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		B3D2ED532F64350E00548E98 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3D2ED582F64350E00548E98 /* Teams but (actually) good.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Teams but (actually) good.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3D2ED5A2F64350E00548E98 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B3D2ED5D2F64350E00548E98 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		B3D2ED5F2F64350E00548E98 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3D2ED642F64350E00548E98 /* Teams but (actually) good Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Teams but (actually) good Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3D2ED692F64350E00548E98 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3D2ED6E2F64350E00548E98 /* Teams but (actually) good Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Teams but (actually) good Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3D2ED732F64350E00548E98 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3D2ED932F64350F00548E98 /* manifest.safari.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.safari.json; path = ../../../extension/manifest.safari.json; sourceTree = "<group>"; };
+		B3D2ED942F64350F00548E98 /* popup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = popup.js; path = ../../../extension/popup.js; sourceTree = "<group>"; };
+		B3D2ED952F64350F00548E98 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = ../../../extension/background.js; sourceTree = "<group>"; };
+		B3D2ED962F64350F00548E98 /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = ../../../extension/popup.html; sourceTree = "<group>"; };
+		B3D2ED972F64350F00548E98 /* injection.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = injection.js; path = ../../../extension/injection.js; sourceTree = "<group>"; };
+		B3D2ED982F64350F00548E98 /* manifest.firefox.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.firefox.json; path = ../../../extension/manifest.firefox.json; sourceTree = "<group>"; };
+		B3D2ED992F64350F00548E98 /* manifest.chrome.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.chrome.json; path = ../../../extension/manifest.chrome.json; sourceTree = "<group>"; };
+		B3D2ED9A2F64350F00548E98 /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../../extension/icons; sourceTree = "<group>"; };
+		B3D2ED9B2F64350F00548E98 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../../extension/manifest.json; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B3D2ED432F64350E00548E98 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3D2ED552F64350E00548E98 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3D2ED612F64350E00548E98 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3D2ED6B2F64350E00548E98 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B3D2ED322F64350E00548E98 = {
+			isa = PBXGroup;
+			children = (
+				B3D2ED372F64350E00548E98 /* Shared (App) */,
+				B3D2ED402F64350E00548E98 /* Shared (Extension) */,
+				B3D2ED482F64350E00548E98 /* iOS (App) */,
+				B3D2ED592F64350E00548E98 /* macOS (App) */,
+				B3D2ED682F64350E00548E98 /* iOS (Extension) */,
+				B3D2ED722F64350E00548E98 /* macOS (Extension) */,
+				B3D2ED472F64350E00548E98 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B3D2ED372F64350E00548E98 /* Shared (App) */ = {
+			isa = PBXGroup;
+			children = (
+				B3D2ED3E2F64350E00548E98 /* ViewController.swift */,
+				B3D2ED3F2F64350E00548E98 /* Assets.xcassets */,
+				B3D2ED382F64350E00548E98 /* Resources */,
+			);
+			path = "Shared (App)";
+			sourceTree = "<group>";
+		};
+		B3D2ED382F64350E00548E98 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B3D2ED392F64350E00548E98 /* Main.html */,
+				B3D2ED3B2F64350E00548E98 /* Icon.png */,
+				B3D2ED3C2F64350E00548E98 /* Style.css */,
+				B3D2ED3D2F64350E00548E98 /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		B3D2ED402F64350E00548E98 /* Shared (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				B3D2ED922F64350F00548E98 /* Resources */,
+				B3D2ED412F64350E00548E98 /* SafariWebExtensionHandler.swift */,
+			);
+			path = "Shared (Extension)";
+			sourceTree = "<group>";
+		};
+		B3D2ED472F64350E00548E98 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B3D2ED462F64350E00548E98 /* Teams but (actually) good.app */,
+				B3D2ED582F64350E00548E98 /* Teams but (actually) good.app */,
+				B3D2ED642F64350E00548E98 /* Teams but (actually) good Extension.appex */,
+				B3D2ED6E2F64350E00548E98 /* Teams but (actually) good Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3D2ED482F64350E00548E98 /* iOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				B3D2ED492F64350E00548E98 /* AppDelegate.swift */,
+				B3D2ED4B2F64350E00548E98 /* SceneDelegate.swift */,
+				B3D2ED4D2F64350E00548E98 /* LaunchScreen.storyboard */,
+				B3D2ED502F64350E00548E98 /* Main.storyboard */,
+				B3D2ED532F64350E00548E98 /* Info.plist */,
+			);
+			path = "iOS (App)";
+			sourceTree = "<group>";
+		};
+		B3D2ED592F64350E00548E98 /* macOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				B3D2ED5A2F64350E00548E98 /* AppDelegate.swift */,
+				B3D2ED5C2F64350E00548E98 /* Main.storyboard */,
+				B3D2ED5F2F64350E00548E98 /* Info.plist */,
+			);
+			path = "macOS (App)";
+			sourceTree = "<group>";
+		};
+		B3D2ED682F64350E00548E98 /* iOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				B3D2ED692F64350E00548E98 /* Info.plist */,
+			);
+			path = "iOS (Extension)";
+			sourceTree = "<group>";
+		};
+		B3D2ED722F64350E00548E98 /* macOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				B3D2ED732F64350E00548E98 /* Info.plist */,
+			);
+			path = "macOS (Extension)";
+			sourceTree = "<group>";
+		};
+		B3D2ED922F64350F00548E98 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B3D2ED932F64350F00548E98 /* manifest.safari.json */,
+				B3D2ED942F64350F00548E98 /* popup.js */,
+				B3D2ED952F64350F00548E98 /* background.js */,
+				B3D2ED962F64350F00548E98 /* popup.html */,
+				B3D2ED972F64350F00548E98 /* injection.js */,
+				B3D2ED982F64350F00548E98 /* manifest.firefox.json */,
+				B3D2ED992F64350F00548E98 /* manifest.chrome.json */,
+				B3D2ED9A2F64350F00548E98 /* icons */,
+				B3D2ED9B2F64350F00548E98 /* manifest.json */,
+			);
+			name = Resources;
+			path = "Shared (Extension)";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B3D2ED452F64350E00548E98 /* Teams but (actually) good (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3D2ED882F64350E00548E98 /* Build configuration list for PBXNativeTarget "Teams but (actually) good (iOS)" */;
+			buildPhases = (
+				B3D2ED422F64350E00548E98 /* Sources */,
+				B3D2ED432F64350E00548E98 /* Frameworks */,
+				B3D2ED442F64350E00548E98 /* Resources */,
+				B3D2ED872F64350E00548E98 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B3D2ED672F64350E00548E98 /* PBXTargetDependency */,
+			);
+			name = "Teams but (actually) good (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "Teams but (actually) good (iOS)";
+			productReference = B3D2ED462F64350E00548E98 /* Teams but (actually) good.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B3D2ED572F64350E00548E98 /* Teams but (actually) good (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3D2ED8F2F64350E00548E98 /* Build configuration list for PBXNativeTarget "Teams but (actually) good (macOS)" */;
+			buildPhases = (
+				B3D2ED542F64350E00548E98 /* Sources */,
+				B3D2ED552F64350E00548E98 /* Frameworks */,
+				B3D2ED562F64350E00548E98 /* Resources */,
+				B3D2ED8E2F64350E00548E98 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B3D2ED712F64350E00548E98 /* PBXTargetDependency */,
+			);
+			name = "Teams but (actually) good (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "Teams but (actually) good (macOS)";
+			productReference = B3D2ED582F64350E00548E98 /* Teams but (actually) good.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B3D2ED632F64350E00548E98 /* Teams but (actually) good Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3D2ED842F64350E00548E98 /* Build configuration list for PBXNativeTarget "Teams but (actually) good Extension (iOS)" */;
+			buildPhases = (
+				B3D2ED602F64350E00548E98 /* Sources */,
+				B3D2ED612F64350E00548E98 /* Frameworks */,
+				B3D2ED622F64350E00548E98 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Teams but (actually) good Extension (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "Teams but (actually) good Extension (iOS)";
+			productReference = B3D2ED642F64350E00548E98 /* Teams but (actually) good Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B3D2ED6D2F64350E00548E98 /* Teams but (actually) good Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3D2ED8B2F64350E00548E98 /* Build configuration list for PBXNativeTarget "Teams but (actually) good Extension (macOS)" */;
+			buildPhases = (
+				B3D2ED6A2F64350E00548E98 /* Sources */,
+				B3D2ED6B2F64350E00548E98 /* Frameworks */,
+				B3D2ED6C2F64350E00548E98 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Teams but (actually) good Extension (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "Teams but (actually) good Extension (macOS)";
+			productReference = B3D2ED6E2F64350E00548E98 /* Teams but (actually) good Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B3D2ED332F64350E00548E98 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					B3D2ED452F64350E00548E98 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					B3D2ED572F64350E00548E98 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					B3D2ED632F64350E00548E98 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					B3D2ED6D2F64350E00548E98 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+				};
+			};
+			buildConfigurationList = B3D2ED362F64350E00548E98 /* Build configuration list for PBXProject "Teams but (actually) good" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B3D2ED322F64350E00548E98;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B3D2ED472F64350E00548E98 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B3D2ED452F64350E00548E98 /* Teams but (actually) good (iOS) */,
+				B3D2ED572F64350E00548E98 /* Teams but (actually) good (macOS) */,
+				B3D2ED632F64350E00548E98 /* Teams but (actually) good Extension (iOS) */,
+				B3D2ED6D2F64350E00548E98 /* Teams but (actually) good Extension (macOS) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B3D2ED442F64350E00548E98 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3D2ED762F64350E00548E98 /* Icon.png in Resources */,
+				B3D2ED4F2F64350E00548E98 /* LaunchScreen.storyboard in Resources */,
+				B3D2ED742F64350E00548E98 /* Main.html in Resources */,
+				B3D2ED7A2F64350E00548E98 /* Script.js in Resources */,
+				B3D2ED7E2F64350E00548E98 /* Assets.xcassets in Resources */,
+				B3D2ED522F64350E00548E98 /* Main.storyboard in Resources */,
+				B3D2ED782F64350E00548E98 /* Style.css in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3D2ED562F64350E00548E98 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3D2ED772F64350E00548E98 /* Icon.png in Resources */,
+				B3D2ED792F64350E00548E98 /* Style.css in Resources */,
+				B3D2ED5E2F64350E00548E98 /* Main.storyboard in Resources */,
+				B3D2ED7B2F64350E00548E98 /* Script.js in Resources */,
+				B3D2ED7F2F64350E00548E98 /* Assets.xcassets in Resources */,
+				B3D2ED752F64350E00548E98 /* Main.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3D2ED622F64350E00548E98 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3D2EDAB2F64350F00548E98 /* manifest.chrome.json in Resources */,
+				B3D2EDAC2F64350F00548E98 /* icons in Resources */,
+				B3D2EDA52F64350F00548E98 /* manifest.safari.json in Resources */,
+				B3D2EDA82F64350F00548E98 /* popup.html in Resources */,
+				B3D2EDAD2F64350F00548E98 /* manifest.json in Resources */,
+				B3D2EDA72F64350F00548E98 /* background.js in Resources */,
+				B3D2EDAA2F64350F00548E98 /* manifest.firefox.json in Resources */,
+				B3D2EDA62F64350F00548E98 /* popup.js in Resources */,
+				B3D2EDA92F64350F00548E98 /* injection.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3D2ED6C2F64350E00548E98 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3D2EDA22F64350F00548E98 /* manifest.chrome.json in Resources */,
+				B3D2EDA32F64350F00548E98 /* icons in Resources */,
+				B3D2ED9C2F64350F00548E98 /* manifest.safari.json in Resources */,
+				B3D2ED9F2F64350F00548E98 /* popup.html in Resources */,
+				B3D2EDA42F64350F00548E98 /* manifest.json in Resources */,
+				B3D2ED9E2F64350F00548E98 /* background.js in Resources */,
+				B3D2EDA12F64350F00548E98 /* manifest.firefox.json in Resources */,
+				B3D2ED9D2F64350F00548E98 /* popup.js in Resources */,
+				B3D2EDA02F64350F00548E98 /* injection.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B3D2ED422F64350E00548E98 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3D2ED7C2F64350E00548E98 /* ViewController.swift in Sources */,
+				B3D2ED4A2F64350E00548E98 /* AppDelegate.swift in Sources */,
+				B3D2ED4C2F64350E00548E98 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3D2ED542F64350E00548E98 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3D2ED7D2F64350E00548E98 /* ViewController.swift in Sources */,
+				B3D2ED5B2F64350E00548E98 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3D2ED602F64350E00548E98 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3D2ED802F64350E00548E98 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3D2ED6A2F64350E00548E98 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3D2ED812F64350E00548E98 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B3D2ED672F64350E00548E98 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3D2ED632F64350E00548E98 /* Teams but (actually) good Extension (iOS) */;
+			targetProxy = B3D2ED662F64350E00548E98 /* PBXContainerItemProxy */;
+		};
+		B3D2ED712F64350E00548E98 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3D2ED6D2F64350E00548E98 /* Teams but (actually) good Extension (macOS) */;
+			targetProxy = B3D2ED702F64350E00548E98 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B3D2ED392F64350E00548E98 /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3D2ED3A2F64350E00548E98 /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		B3D2ED4D2F64350E00548E98 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3D2ED4E2F64350E00548E98 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		B3D2ED502F64350E00548E98 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3D2ED512F64350E00548E98 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		B3D2ED5C2F64350E00548E98 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3D2ED5D2F64350E00548E98 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B3D2ED822F64350E00548E98 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B3D2ED832F64350E00548E98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		B3D2ED852F64350E00548E98 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WB4C79N2JW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Teams but (actually) good Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.leonimust.teams-but-actually-good.Extension";
+				PRODUCT_NAME = "Teams but (actually) good Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3D2ED862F64350E00548E98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WB4C79N2JW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Teams but (actually) good Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.leonimust.teams-but-actually-good.Extension";
+				PRODUCT_NAME = "Teams but (actually) good Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B3D2ED892F64350E00548E98 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WB4C79N2JW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Teams but (actually) good";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.leonimust.teams-but-actually-good";
+				PRODUCT_NAME = "Teams but (actually) good";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3D2ED8A2F64350E00548E98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WB4C79N2JW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Teams but (actually) good";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.leonimust.teams-but-actually-good";
+				PRODUCT_NAME = "Teams but (actually) good";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B3D2ED8C2F64350E00548E98 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WB4C79N2JW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Teams but (actually) good Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.leonimust.teams-but-actually-good.Extension";
+				PRODUCT_NAME = "Teams but (actually) good Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B3D2ED8D2F64350E00548E98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WB4C79N2JW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Teams but (actually) good Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.leonimust.teams-but-actually-good.Extension";
+				PRODUCT_NAME = "Teams but (actually) good Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B3D2ED902F64350E00548E98 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WB4C79N2JW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Teams but (actually) good";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.leonimust.teams-but-actually-good";
+				PRODUCT_NAME = "Teams but (actually) good";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B3D2ED912F64350E00548E98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WB4C79N2JW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Teams but (actually) good";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.leonimust.teams-but-actually-good";
+				PRODUCT_NAME = "Teams but (actually) good";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B3D2ED362F64350E00548E98 /* Build configuration list for PBXProject "Teams but (actually) good" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3D2ED822F64350E00548E98 /* Debug */,
+				B3D2ED832F64350E00548E98 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3D2ED842F64350E00548E98 /* Build configuration list for PBXNativeTarget "Teams but (actually) good Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3D2ED852F64350E00548E98 /* Debug */,
+				B3D2ED862F64350E00548E98 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3D2ED882F64350E00548E98 /* Build configuration list for PBXNativeTarget "Teams but (actually) good (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3D2ED892F64350E00548E98 /* Debug */,
+				B3D2ED8A2F64350E00548E98 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3D2ED8B2F64350E00548E98 /* Build configuration list for PBXNativeTarget "Teams but (actually) good Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3D2ED8C2F64350E00548E98 /* Debug */,
+				B3D2ED8D2F64350E00548E98 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3D2ED8F2F64350E00548E98 /* Build configuration list for PBXNativeTarget "Teams but (actually) good (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3D2ED902F64350E00548E98 /* Debug */,
+				B3D2ED912F64350E00548E98 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B3D2ED332F64350E00548E98 /* Project object */;
+}

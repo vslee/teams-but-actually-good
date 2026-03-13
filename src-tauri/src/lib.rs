@@ -170,7 +170,7 @@ async fn refresh_injection_from_github(app: AppHandle) -> Result<(), String> {
     let _ = app
         .notification()
         .builder()
-        .title("Teams But Actually Good")
+        .title("Teams but (actually) good")
         .body("Teams patch updated. It will apply on next launch.")
         .show();
 
@@ -188,7 +188,7 @@ async fn check_app_update(app: AppHandle) -> Result<(), String> {
         let _ = app
             .notification()
             .builder()
-            .title("Teams But Actually Good")
+            .title("Teams but (actually) good")
             .body(format!("App update available: {}", update.version))
             .show();
     }

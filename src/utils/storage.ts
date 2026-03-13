@@ -127,7 +127,7 @@ export async function getAllPluginNames(): Promise<string[]> {
 }
 
 /**
- * Clear all Teams But Good settings (main + all plugins)
+ * Clear all Teams but (actually) good settings (main + all plugins)
  */
 export async function clearAllSettings(): Promise<void> {
   const keys: string[] = [];

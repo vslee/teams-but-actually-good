@@ -1,5 +1,5 @@
 /**
- * Background script for Teams But Good.
+ * Background script for Teams but (actually) good.
  *
  * - Manages dynamic content script registration (injection.js) based on the
  *   extensionEnabled storage flag.  The script is never listed in manifest
@@ -27,6 +27,8 @@ const IS_FIREFOX = typeof browser !== "undefined";
 const DEV_SERVER_URL = "ws://localhost:9223";
 const KEEPALIVE_ALARM = "tbg-dev-keepalive";
 const CONTENT_SCRIPT_ID = "tbg-injection";
+const ONBOARDING_USAGE_URL = "https://docs.teamsbutactuallygood.dev/usage";
+const TEAMS_WEB_APP_URL = "https://teams.microsoft.com/";
 const TEAMS_MATCHES = [
   "*://teams.microsoft.com/*",
   "*://*.teams.microsoft.com/*",
@@ -122,9 +124,24 @@ function disableDevMode() {
   disconnectWs();
 }
 
+async function runInstallOnboarding(details) {
+  if (details.reason !== "install") {
+    return;
+  }
+
+  // Open docs first so users land on instructions, then preload Teams in a background tab.
+  await chrome.tabs.create({ url: ONBOARDING_USAGE_URL, active: true });
+  await chrome.tabs.create({ url: TEAMS_WEB_APP_URL, active: false });
+}
+
 // On install or update: register the content script if the extension is enabled.
-chrome.runtime.onInstalled.addListener(async () => {
+chrome.runtime.onInstalled.addListener(async (details) => {
   await syncContentScript();
+
+  await runInstallOnboarding(details).catch((err) => {
+    console.error("[TBG] Failed onboarding tab flow:", err);
+  });
+
   if (!IS_FIREFOX) {
     const { devModeEnabled = false } = await chrome.storage.local.get({ devModeEnabled: false });
     if (devModeEnabled) enableDevMode();

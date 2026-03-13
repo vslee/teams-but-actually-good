@@ -86,7 +86,7 @@ const SettingsPlugin: Plugin = {
 
   changeName(value: string) {
     if (value === "plugin_settings") {
-      return "Teams But Good Settings";
+      return "Teams but (actually) good Settings";
     }
     return value;
   },
