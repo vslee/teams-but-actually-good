@@ -1,4 +1,200 @@
-use tauri::{WebviewUrl, WebviewWindowBuilder};
+use reqwest::header::{ACCEPT, HeaderMap, HeaderValue, USER_AGENT};
+use semver::Version;
+use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
+use std::fs;
+use std::path::PathBuf;
+use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
+use tauri_plugin_notification::NotificationExt;
+use tauri_plugin_updater::UpdaterExt;
+
+const DEFAULT_REPO: &str = "LeonimusTTV/teams-but-actually-good";
+const GITHUB_API_BASE: &str = "https://api.github.com";
+
+#[derive(Debug, Clone, Deserialize)]
+struct GithubRelease {
+    assets: Vec<GithubAsset>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct GithubAsset {
+    name: String,
+    browser_download_url: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct InjectionMetadata {
+    version: String,
+    sha256: String,
+    published_at: Option<String>,
+    notes: Option<String>,
+}
+
+fn cached_paths(app: &AppHandle) -> Result<(PathBuf, PathBuf), String> {
+    let data_dir = app
+        .path()
+        .app_data_dir()
+        .map_err(|e| format!("failed to resolve app data dir: {e}"))?;
+
+    Ok((
+        data_dir.join("injection.js"),
+        data_dir.join("injection.meta.json"),
+    ))
+}
+
+fn sha256_hex(bytes: &[u8]) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(bytes);
+    format!("{:x}", hasher.finalize())
+}
+
+fn parse_version(v: &str) -> Option<Version> {
+    let normalized = v.trim_start_matches('v');
+    Version::parse(normalized).ok()
+}
+
+fn is_remote_newer(local: Option<&InjectionMetadata>, remote: &InjectionMetadata) -> bool {
+    let remote_ver = parse_version(&remote.version);
+    let local_ver = local.and_then(|m| parse_version(&m.version));
+
+    match (local_ver, remote_ver) {
+        (Some(l), Some(r)) => r > l,
+        (None, Some(_)) => true,
+        _ => local
+            .map(|m| !m.sha256.eq_ignore_ascii_case(&remote.sha256))
+            .unwrap_or(true),
+    }
+}
+
+fn load_cached_metadata(app: &AppHandle) -> Option<InjectionMetadata> {
+    let (_, metadata_path) = cached_paths(app).ok()?;
+    let raw = fs::read_to_string(metadata_path).ok()?;
+    serde_json::from_str(&raw).ok()
+}
+
+fn load_verified_cached_injection(app: &AppHandle) -> Option<String> {
+    let (injection_path, metadata_path) = cached_paths(app).ok()?;
+
+    let metadata_raw = fs::read_to_string(metadata_path).ok()?;
+    let metadata: InjectionMetadata = serde_json::from_str(&metadata_raw).ok()?;
+
+    let script = fs::read_to_string(injection_path).ok()?;
+    let script_hash = sha256_hex(script.as_bytes());
+    if script_hash.eq_ignore_ascii_case(&metadata.sha256) {
+        Some(script)
+    } else {
+        None
+    }
+}
+
+async fn fetch_latest_release(repo: &str) -> Result<GithubRelease, String> {
+    let mut headers = HeaderMap::new();
+    headers.insert(USER_AGENT, HeaderValue::from_static("teams-but-actually-good-updater"));
+    headers.insert(ACCEPT, HeaderValue::from_static("application/vnd.github+json"));
+
+    let client = reqwest::Client::builder()
+        .default_headers(headers)
+        .build()
+        .map_err(|e| format!("failed to build HTTP client: {e}"))?;
+
+    let url = format!("{GITHUB_API_BASE}/repos/{repo}/releases/latest");
+    client
+        .get(url)
+        .send()
+        .await
+        .map_err(|e| format!("failed to fetch latest release: {e}"))?
+        .error_for_status()
+        .map_err(|e| format!("github release request failed: {e}"))?
+        .json::<GithubRelease>()
+        .await
+        .map_err(|e| format!("failed to decode release payload: {e}"))
+}
+
+async fn fetch_text(url: &str) -> Result<String, String> {
+    let response = reqwest::Client::new()
+        .get(url)
+        .header(USER_AGENT, "teams-but-actually-good-updater")
+        .send()
+        .await
+        .map_err(|e| format!("failed to download {url}: {e}"))?
+        .error_for_status()
+        .map_err(|e| format!("download failed for {url}: {e}"))?;
+
+    response
+        .text()
+        .await
+        .map_err(|e| format!("failed to read response body: {e}"))
+}
+
+async fn refresh_injection_from_github(app: AppHandle) -> Result<(), String> {
+    let repo = std::env::var("TBG_GITHUB_REPO").unwrap_or_else(|_| DEFAULT_REPO.to_string());
+    let latest = fetch_latest_release(&repo).await?;
+
+    let js_asset = latest
+        .assets
+        .iter()
+        .find(|a| a.name == "injection.js")
+        .ok_or_else(|| "latest release does not include injection.js".to_string())?;
+    let meta_asset = latest
+        .assets
+        .iter()
+        .find(|a| a.name == "injection.meta.json")
+        .ok_or_else(|| "latest release does not include injection.meta.json".to_string())?;
+
+    let remote_meta_raw = fetch_text(&meta_asset.browser_download_url).await?;
+    let remote_meta: InjectionMetadata = serde_json::from_str(&remote_meta_raw)
+        .map_err(|e| format!("invalid injection metadata: {e}"))?;
+
+    let local_meta = load_cached_metadata(&app);
+    if !is_remote_newer(local_meta.as_ref(), &remote_meta) {
+        return Ok(());
+    }
+
+    let remote_script = fetch_text(&js_asset.browser_download_url).await?;
+    let remote_hash = sha256_hex(remote_script.as_bytes());
+    if !remote_hash.eq_ignore_ascii_case(&remote_meta.sha256) {
+        return Err("downloaded injection.js hash does not match metadata".to_string());
+    }
+
+    let (injection_path, metadata_path) = cached_paths(&app)?;
+    if let Some(parent) = injection_path.parent() {
+        fs::create_dir_all(parent)
+            .map_err(|e| format!("failed to create app data dir {}: {e}", parent.display()))?;
+    }
+
+    fs::write(&injection_path, remote_script)
+        .map_err(|e| format!("failed to store injection.js cache: {e}"))?;
+    fs::write(&metadata_path, remote_meta_raw)
+        .map_err(|e| format!("failed to store injection metadata cache: {e}"))?;
+
+    let _ = app
+        .notification()
+        .builder()
+        .title("Teams But Actually Good")
+        .body("Teams patch updated. It will apply on next launch.")
+        .show();
+
+    Ok(())
+}
+
+async fn check_app_update(app: AppHandle) -> Result<(), String> {
+    if let Some(update) = app
+        .updater()
+        .map_err(|e| format!("updater init failed: {e}"))?
+        .check()
+        .await
+        .map_err(|e| format!("updater check failed: {e}"))?
+    {
+        let _ = app
+            .notification()
+            .builder()
+            .title("Teams But Actually Good")
+            .body(format!("App update available: {}", update.version))
+            .show();
+    }
+
+    Ok(())
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -11,9 +207,23 @@ pub fn run() {
     }
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .setup(|app| {
-            let js_injection = include_str!("../../dist/injection.js");
+            let js_injection = load_verified_cached_injection(&app.handle().clone())
+                .unwrap_or_else(|| include_str!("../../dist/injection.js").to_string());
             let _user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.3800.70";
+
+            let handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                if let Err(err) = refresh_injection_from_github(handle.clone()).await {
+                    eprintln!("injection hot-update failed: {err}");
+                }
+
+                if let Err(err) = check_app_update(handle).await {
+                    eprintln!("binary update check failed: {err}");
+                }
+            });
 
             WebviewWindowBuilder::new(
                 app,
@@ -24,7 +234,7 @@ pub fn run() {
             .inner_size(1800.0, 800.0)
             .min_inner_size(800.0, 600.0)
             .center()
-            .initialization_script(js_injection)
+            .initialization_script(&js_injection)
             .user_agent(_user_agent)
             .build()?;
 

@@ -15,6 +15,7 @@
   },
   "bundle": {
     "active": true,
+    "createUpdaterArtifacts": true,
     "targets": "all",
     "macOS": {
       "hardenedRuntime": true
@@ -26,5 +27,13 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "$TAURI_UPDATER_PUBLIC_KEY",
+      "endpoints": [
+        "https://github.com/LeonimusTTV/teams-but-actually-good/releases/latest/download/latest.json"
+      ]
+    }
   }
 }
