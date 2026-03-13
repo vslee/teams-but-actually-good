@@ -30,7 +30,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "untrusted comment: minisign public key: 2C4DB93C380F3536\nRWQ2NQ84PLlNLBVWyWVklOm07yKO7QsS+shP3Yf8hfTbWqj2bj4uzdpN",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJDNERCOTNDMzgwRjM1MzYKUldRMk5RODRQTGxOTEJWV3lXVmtsT20wN3lLTzdRc1Mrc2hQM1lmOGhmVGJXcWoyYmo0dXpkcE4K",
       "endpoints": [
         "https://github.com/LeonimusTTV/teams-but-actually-good/releases/latest/download/latest.json"
       ]
