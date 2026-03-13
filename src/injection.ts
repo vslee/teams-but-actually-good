@@ -11,7 +11,7 @@ import PluginLoader from "./utils/plugin-loader";
 import ThemeLoader from "./utils/theme-loader";
 import { themeManager } from "./utils/themes";
 
-document.documentElement.setAttribute("data-tbg-injection", "booting");
+document.documentElement?.setAttribute("data-tbg-injection", "booting");
 
 easyLogger("info", "Booting up...");
 
@@ -141,7 +141,7 @@ function getCspNonce(): string | undefined {
       }
     }
   });
-  nonceCapture.observe(document.documentElement, {
+  nonceCapture.observe((document.documentElement ?? document) as Element, {
     childList: true,
     subtree: true,
   });
@@ -501,6 +501,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  document.documentElement.setAttribute("data-tbg-injection", "ready");
+  document.documentElement?.setAttribute("data-tbg-injection", "ready");
   easyLogger("info", "TypeScript Injection Successful!");
 });
