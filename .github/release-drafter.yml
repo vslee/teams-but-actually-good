@@ -18,14 +18,35 @@ history-limit: 10
 replacers: []
 categories:
   - title: "🚀 Features"
-    labels: ["feat"]
+    labels: ["feat", "feature", "enhancement"]
     collapse-after: 5
   - title: "🐛 Bug Fixes"
-    labels: ["fix"]
+    labels: ["fix", "bug", "hotfix"]
     collapse-after: 5
   - title: "🧹 Maintenance"
-    labels: ["chore"]
+    labels:
+      ["chore", "docs", "refactor", "ci", "build", "test", "style", "deps"]
     collapse-after: 5
+autolabeler:
+  - label: "feat"
+    title:
+      - '/^feat(\(.+\))?:/i'
+      - '/^feature(\(.+\))?:/i'
+  - label: "fix"
+    title:
+      - '/^fix(\(.+\))?:/i'
+      - '/^bug(\(.+\))?:/i'
+      - '/^hotfix(\(.+\))?:/i'
+  - label: "chore"
+    title:
+      - '/^chore(\(.+\))?:/i'
+      - '/^docs(\(.+\))?:/i'
+      - '/^refactor(\(.+\))?:/i'
+      - '/^build(\(.+\))?:/i'
+      - '/^ci(\(.+\))?:/i'
+      - '/^test(\(.+\))?:/i'
+      - '/^style(\(.+\))?:/i'
+      - '/^deps(\(.+\))?:/i'
 template: |
   ## What's Changed
   $CHANGES
