@@ -30,7 +30,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "$TAURI_UPDATER_PUBLIC_KEY",
+      "pubkey": "RWQ2NQ84PLlNLBVWyWVklOm07yKO7QsS+shP3Yf8hfTbWqj2bj4uzdpN",
       "endpoints": [
         "https://github.com/LeonimusTTV/teams-but-actually-good/releases/latest/download/latest.json"
       ]
