@@ -7,7 +7,7 @@
 ![Tauri](https://img.shields.io/badge/Tauri-24C8D8?style=for-the-badge&logo=tauri&logoColor=white&label=&color=1d2021&labelColor=282828)
 ![Bun](https://img.shields.io/badge/Bun-fbf0df?style=for-the-badge&logo=bun&logoColor=white&label=&color=1d2021&labelColor=282828)
 
-A browser extension (and optional Tauri desktop wrapper) that patches Microsoft Teams at runtime to improve the user experience. It's basically like Vencord but for Teams
+A browser extension (and optional Tauri desktop wrapper) that patches Microsoft Teams at runtime to improve the user experience. It's basically Vencord but for Teams
 
 ## Features
 
@@ -41,7 +41,7 @@ Thanks a lot do the [Vencord mod](https://github.com/Vendicated/Vencord) for Dis
 
 ## Logo
 
-Yes the Logo is made with AI, I'm not good enough nor did wanted at the time of doing it to pay someone for that logo, but I'm always open for someone to redo the current logo themself (paid ofc ^^)
+Yes the Logo is made with AI, I'm not good enough nor did wanted at the time of doing it to pay someone for that logo (monies is low), but I'm always open for someone to redo the current logo themself (I can pay a bit if needed ^^)
 
 ## Information
 
