@@ -1,6 +1,6 @@
-import { Styles, themeRegistry } from "../interface";
+import { themeRegistry } from "../interface";
 import { getMainSetting } from "./storage";
-import { applyStyles } from "./styles";
+import { injectStyles } from "./styles";
 
 let theme: string | null = null;
 (async () => {
@@ -10,7 +10,9 @@ let theme: string | null = null;
 export async function themeManager() {
   if (!theme) return;
 
-  if (!themeRegistry[theme].styles) return;
+  injectStyles(themeRegistry[theme].css);
 
-  applyStyles(themeRegistry[theme].styles as Styles);
+  //if (!themeRegistry[theme].styles) return;
+
+  //applyStyles(themeRegistry[theme].styles as Styles);
 }

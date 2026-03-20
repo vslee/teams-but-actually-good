@@ -460,8 +460,6 @@ function runPatchedFactory(
 }
 
 new MutationObserver(() => {
-  themeManager();
-
   Object.values(pluginRegistry).forEach((plugin) => {
     if (typeof plugin.onChangeObserved === "function" && plugin.enable) {
       try {
@@ -500,6 +498,8 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+
+  themeManager();
 
   document.documentElement?.setAttribute("data-tbg-injection", "ready");
   easyLogger("info", "TypeScript Injection Successful!");

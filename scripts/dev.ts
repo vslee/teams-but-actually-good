@@ -6,7 +6,7 @@
  *  2. Starts esbuild in watch mode; on every successful build it:
  *     a. Copies dist/injection.js → extension/injection.js
  *     b. Reloads the active Teams tab via the Chrome DevTools Protocol (CDP)
- *  3. Watches src/teams-plugin/ for added/removed plugin folders and
+ *  3. Watches src/teams-plugins/ and src/user-plugins/ for added/removed plugin folders and
  *     re-generates the registry + triggers a rebuild automatically
  *
  * Prerequisite – start Chrome with remote-debugging enabled.
@@ -30,7 +30,8 @@ const ROOT = path.resolve(__dirname, "..");
 const SRC_DIR = path.join(ROOT, "src");
 const DIST_DIR = path.join(ROOT, "dist");
 const EXT_DIR = path.join(ROOT, "extension");
-const PLUGIN_DIR = path.join(SRC_DIR, "teams-plugin");
+const PLUGIN_DIR = path.join(SRC_DIR, "teams-plugins");
+const USER_PLUGIN_DIR = path.join(SRC_DIR, "user-plugins");
 const THEME_DIR = path.join(SRC_DIR, "themes");
 
 const CDP_PORT = 9222;
@@ -386,6 +387,9 @@ if (!generateAll()) {
 
 await startWatch();
 watchDir(PLUGIN_DIR);
+if (fs.existsSync(USER_PLUGIN_DIR)) {
+  watchDir(USER_PLUGIN_DIR);
+}
 watchDir(THEME_DIR);
 
 // Warn early if Chrome isn't running with remote-debugging enabled.

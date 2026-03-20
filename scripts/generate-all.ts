@@ -3,7 +3,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const pluginFolder = "teams-plugin";
+const pluginFolder = "teams-plugins";
 const pluginDir = path.resolve(__dirname, `../src/${pluginFolder}`);
 const pluginOutputFile = path.resolve(
   __dirname,
@@ -24,33 +24,52 @@ export function generateAll(
 ) {
   try {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
-    const folders = entries.filter((entry) => entry.isDirectory());
 
     const imports: string[] = [];
     const names: string[] = [];
 
-    for (const folder of folders) {
-      const folderPath = path.join(dir, folder.name);
+    if (type === "plugin") {
+      const folders = entries.filter((entry) => entry.isDirectory());
 
-      // Look for index file
-      const indexFiles = ["index.ts", "index.tsx"].find((file) =>
-        fs.existsSync(path.join(folderPath, file)),
-      );
+      for (const folder of folders) {
+        const folderPath = path.join(dir, folder.name);
 
-      if (!indexFiles) {
-        console.warn(`No index file found in ${folder.name}, skipping...`);
-        continue;
+        // Look for index file
+        const indexFile = ["index.ts", "index.tsx"].find((file) =>
+          fs.existsSync(path.join(folderPath, file)),
+        );
+
+        if (!indexFile) {
+          console.warn(`No index file found in ${folder.name}, skipping...`);
+          continue;
+        }
+
+        // Generate safe variable name from folder name
+        const varName = folder.name
+          .replace(/[^a-zA-Z0-9]/g, "_")
+          .replace(/^(\d)/, "_$1");
+
+        imports.push(
+          `import ${varName}${type} from "../${folderName}/${folder.name}";`,
+        );
+        names.push(`${varName}${type}`);
       }
-
-      // Generate safe variable name from folder name
-      const varName = folder.name
-        .replace(/[^a-zA-Z0-9]/g, "_")
-        .replace(/^(\d)/, "_$1");
-
-      imports.push(
-        `import ${varName}${type} from "../${folderName}/${folder.name}";`,
+    } else {
+      const themeFiles = entries.filter(
+        (entry) => entry.isFile() && /\.(css|scss)$/i.test(entry.name),
       );
-      names.push(`${varName}${type}`);
+
+      for (const file of themeFiles) {
+        const fileNameWithoutExt = file.name.replace(/\.[^.]+$/, "");
+        const varName = fileNameWithoutExt
+          .replace(/[^a-zA-Z0-9]/g, "_")
+          .replace(/^(\d)/, "_$1");
+
+        imports.push(
+          `import ${varName}${type} from "../${folderName}/${file.name}";`,
+        );
+        names.push(`${varName}${type}`);
+      }
     }
 
     // Generate the file content

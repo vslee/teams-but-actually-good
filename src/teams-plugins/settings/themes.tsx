@@ -91,6 +91,55 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
               </div>
             </label>
           </div>
+          <div className="tbg-plugins-grid" key="custom-themes">
+            <label
+              htmlFor="theme-radio-default"
+              className="tbg-box-basic"
+              style={{
+                minHeight: 0,
+                cursor: "pointer",
+                userSelect: "none",
+                display: "block",
+              }}
+            >
+              <div className="tbg-plugin-header">
+                <span className="tbg-plugin-name">Custom Themes</span>
+                <div className="tbg-plugin-controls">
+                  <input
+                    id="theme-radio-default"
+                    type="radio"
+                    name="theme"
+                    value=""
+                    checked={selectedTheme === null}
+                    onChange={() => handleThemeChange(null)}
+                    style={{ display: "none" }}
+                  />
+                  <svg
+                    font-size="20px"
+                    className="tbg-purple-color"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    {selectedTheme === null ? (
+                      <path
+                        d="M10 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-13a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm-7 8a7 7 0 1 1 14 0 7 7 0 0 1-14 0Z"
+                        fill="currentColor"
+                      ></path>
+                    ) : (
+                      <path
+                        d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm-8 7a8 8 0 1 1 16 0 8 8 0 0 1-16 0Z"
+                        fill="currentColor"
+                      ></path>
+                    )}
+                  </svg>
+                </div>
+              </div>
+            </label>
+          </div>
           {Object.values(themeRegistry).map((theme) => (
             <div className="tbg-plugins-grid" key={theme.name}>
               <label

@@ -49,7 +49,12 @@ export interface Styles {
 
 export interface Theme {
   name: string;
-  styles?: Styles;
+  description: string;
+  author: string;
+  version: string;
+  source?: string;
+  website?: string;
+  css: string;
   enable?: boolean;
 }
 

@@ -1,0 +1,17 @@
+/**
+ * @name Test Name
+ * @author LeonimusT
+ * @version 0.0.1
+ * @description Test description.
+ * @source https://github.com
+ * @website https://leonimust.com
+ */
+
+.fui-FluentProvider,
+[class*="fui-FluentProvider"] {
+  --backgroundCanvas: #1cbf52 !important;
+}
+
+#ms-searchux-input {
+  background-color: #ffffff !important;
+}

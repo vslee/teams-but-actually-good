@@ -17,7 +17,7 @@ sed -i '' "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" extension/manifest.
 sed -i '' "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" extension/manifest.firefox.json
 sed -i '' "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" extension/manifest.safari.json
 
-git add src-tauri/Cargo.toml src-tauri/tauri.conf.json package.json extension/manifest.json extension/manifest.chrome.json extension/manifest.firefox.json extension/manifest.safari.json
+git add src-tauri/Cargo.toml src-tauri/Cargo.lock src-tauri/tauri.conf.json package.json extension/manifest.json extension/manifest.chrome.json extension/manifest.firefox.json extension/manifest.safari.json
 git commit -m "chore: release v$VERSION"
 git tag "v$VERSION"
 git push origin main "v$VERSION"

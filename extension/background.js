@@ -19,6 +19,11 @@
  * - MV3 service workers are suspended by Chrome after a short idle period,
  *   silently dropping the WebSocket.  A chrome.alarms keepalive (fired every
  *   ~25 s) wakes the SW and re-establishes the connection when in dev mode.
+ *
+ * - Periodically checks GitHub for a newer release version and shows a badge
+ *   on the extension icon when an update is available.  This is the best
+ *   achievable update notification for sideloaded extensions (true auto-update
+ *   requires the Chrome Web Store / Firefox AMO).
  */
 
 // Firefox exposes `browser` as a global; Chrome only has `chrome`.
@@ -26,13 +31,56 @@ const IS_FIREFOX = typeof browser !== "undefined";
 
 const DEV_SERVER_URL = "ws://localhost:9223";
 const KEEPALIVE_ALARM = "tbg-dev-keepalive";
+const UPDATE_CHECK_ALARM = "tbg-update-check";
+const UPDATE_CHECK_INTERVAL_MINUTES = 240; // every 4 hours
 const CONTENT_SCRIPT_ID = "tbg-injection";
 const ONBOARDING_USAGE_URL = "https://docs.teamsbutactuallygood.dev/usage";
 const TEAMS_WEB_APP_URL = "https://teams.microsoft.com/";
+const RELEASES_API_URL = "https://api.github.com/repos/LeonimusTTV/teams-but-actually-good/releases/latest";
+const META_URL = "https://github.com/LeonimusTTV/teams-but-actually-good/releases/latest/download/injection.meta.json";
 const TEAMS_MATCHES = [
   "*://teams.microsoft.com/*",
   "*://*.teams.microsoft.com/*",
 ];
+
+function normalizeVersion(v) {
+  if (typeof v !== "string") return "";
+  return v.trim().replace(/^v/i, "");
+}
+
+async function checkForUpdates() {
+  try {
+    const currentVersion = normalizeVersion(chrome.runtime.getManifest().version);
+    let latestVersion = "";
+
+    try {
+      const response = await fetch(RELEASES_API_URL, {
+        cache: "no-store",
+        headers: { Accept: "application/vnd.github+json" },
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const release = await response.json();
+      latestVersion = normalizeVersion(release?.tag_name || "");
+    } catch {
+      // Fallback to injection.meta.json if the API is unreachable.
+      const response = await fetch(META_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const meta = await response.json();
+      latestVersion = normalizeVersion(meta?.version || "");
+    }
+
+    if (latestVersion && latestVersion !== currentVersion) {
+      chrome.action.setBadgeText({ text: "↑" });
+      chrome.action.setBadgeBackgroundColor({ color: "#F59E0B" });
+      chrome.action.setTitle({ title: `Teams but (actually) good — Update available (v${latestVersion})` });
+    } else {
+      chrome.action.setBadgeText({ text: "" });
+      chrome.action.setTitle({ title: "Teams but (actually) good" });
+    }
+  } catch {
+    // Network error: leave badge unchanged.
+  }
+}
 
 // Module-level ref so we can check readyState across alarm wakeups.
 let ws = null;
@@ -142,6 +190,13 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     console.error("[TBG] Failed onboarding tab flow:", err);
   });
 
+  // Schedule periodic update checks (works on both Chrome and Firefox).
+  chrome.alarms.create(UPDATE_CHECK_ALARM, {
+    delayInMinutes: 1,
+    periodInMinutes: UPDATE_CHECK_INTERVAL_MINUTES,
+  });
+  checkForUpdates();
+
   if (!IS_FIREFOX) {
     const { devModeEnabled = false } = await chrome.storage.local.get({ devModeEnabled: false });
     if (devModeEnabled) enableDevMode();
@@ -149,18 +204,34 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 });
 
 // On SW startup (after suspension): re-connect WS if dev mode is still active.
+// Also ensure the update-check alarm is still scheduled (it survives restarts
+// so we only re-create it if it was somehow cleared).
+chrome.alarms.get(UPDATE_CHECK_ALARM, (alarm) => {
+  if (!alarm) {
+    chrome.alarms.create(UPDATE_CHECK_ALARM, {
+      delayInMinutes: 1,
+      periodInMinutes: UPDATE_CHECK_INTERVAL_MINUTES,
+    });
+  }
+});
+
+// Handle all recurring alarms in one listener (Chrome & Firefox).
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === UPDATE_CHECK_ALARM) {
+    checkForUpdates();
+    return;
+  }
+
+  if (!IS_FIREFOX && alarm.name === KEEPALIVE_ALARM) {
+    chrome.storage.local.get({ devModeEnabled: false }, ({ devModeEnabled }) => {
+      if (devModeEnabled) connect();
+    });
+  }
+});
+
 if (!IS_FIREFOX) {
   chrome.storage.local.get({ devModeEnabled: false }, ({ devModeEnabled }) => {
     if (devModeEnabled) enableDevMode();
-  });
-
-  // Keepalive alarm: re-connect WebSocket if dev mode is active.
-  chrome.alarms.onAlarm.addListener((alarm) => {
-    if (alarm.name === KEEPALIVE_ALARM) {
-      chrome.storage.local.get({ devModeEnabled: false }, ({ devModeEnabled }) => {
-        if (devModeEnabled) connect();
-      });
-    }
   });
 }
 

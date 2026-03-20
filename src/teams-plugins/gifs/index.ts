@@ -165,7 +165,6 @@ function addEventListenerToInput() {
 const Gifs: Plugin = {
   name: "BetterGifs",
   description: "Use Kiply for gifs.",
-
   setUpdate: null as any,
 
   isKiplyLoading(): boolean {
@@ -218,43 +217,137 @@ const Gifs: Plugin = {
     return mappedGifs;
   },
 
-  changeDefaultGifCategories(children: any[]) {
+  changeDefaultCategories(categories: any[]) {
+    categories[1].props.src =
+      "https://static.klipy.com/ii/35ccce3d852f7995dd2da910f2abd795/77/6b/K1tmEAl8.webp";
+    categories[2].props.src =
+      "https://static.klipy.com/ii/71b2873e478b9d8d0482ea3ec777ba7f/0d/58/KA6RC8a5.gif";
+    categories[3].props.src =
+      "https://static.klipy.com/ii/c3a19a0b747a76e98651f2b9a3cca5ff/35/fe/JUiTVkaE.webp";
+    categories[4].props.src =
+      "https://static.klipy.com/ii/4e7bea9f7a3371424e6c16ebc93252fe/7a/38/V1BFae4sQXh7Y.webp";
+    categories[5].props.src =
+      "https://static.klipy.com/ii/c3a19a0b747a76e98651f2b9a3cca5ff/95/8d/yCz64xWe.webp";
+    categories[6].props.src =
+      "https://static.klipy.com/ii/ce286d05b8e1a47cd4f32b0e1b6dec0e/7e/bc/mJ3xruBq.webp";
+    categories[7].props.src =
+      "https://static.klipy.com/ii/84b4c0b02782dda9051003f9e36484ec/1b/2a/h8c2IrV0.webp";
+
+    return categories;
+  },
+
+  defaultGifsSearch(children: any[]) {
+    fetchKiply(currentSearchTerm || "cats");
+
+    let gifs = [];
+    for (const gif of children) {
+      gifs.push(gif.props.gif);
+    }
+
+    const kiplyGif = this.gifPicker(gifs, currentSearchTerm || "cats");
+    for (let i = 0; i < children.length; i++) {
+      children[i].props.gif = kiplyGif[i];
+    }
+
+    return children;
+  },
+
+  /*changeEmojiSrc(src: any[]) {
+    return "https://cdn.discordapp.com/emojis/1204336920507850803.webp?size=240&animated=true";
+  },
+
+  changeEmojiName() {
+    return "cat-tbag";
+  },
+
+  changeFileSrc(src: any) {
+    if (src.length === 0 || !src[0].objectUrl) return src;
+
+    console.log(src);
+
+    return (src[0].objectUrl =
+      "https://cdn.discordapp.com/emojis/1204336920507850803.webp?size=240&animated=true");
+  },*/
+
+  injectCustomEmojis(content: any) {
+    if (typeof content !== "string") return content;
+
+    console.log(
+      "[BetterGifs] injectCustomEmojis called with content:",
+      content,
+    );
+    if (content.includes(":cat-tbag:")) {
+      console.log("[BetterGifs] Replacing :cat-tbag: with custom emoji");
+      const changedMessage = content.replace(
+        ":cat-tbag:",
+        '<span title="Pochette surprise" type="(1f389_partypopper)" class="animated-emoticon-20-1f389_partypopper" itemscope><img itemscope itemtype="http://schema.skype.com/Emoji" itemid="1f389_partypopper" src="https://statics.teams.cdn.office.net/evergreen-assets/personal-expressions/v2/assets/emoticons/1f389_partypopper/default/20_f.png" title="Pochette surprise" alt="🎉" style="width:20px;height:20px" /></span>',
+      );
+      content = changedMessage;
+    }
+    return content;
+  },
+
+  addEmojis(children: any[]) {
+    /*children.push({
+      key: "surprised",
+      ref: null,
+      props: {
+        loading: false,
+        emoji: {
+          id: "surprised",
+          animation: {
+            fps: 24,
+            framesCount: 73,
+            firstFrame: 17,
+            __typename: "EmojiAnimation",
+          },
+          description: "Surpris",
+          diverse: false,
+          etag: "v17",
+          keywords: [
+            "bouche bée",
+            "bouche ouverte",
+            "choqué",
+            "confus",
+            "incroyable",
+            "omd",
+            "oubli",
+            "surpris",
+            "visage avec bouche ouverte",
+            "visage avec la bouche ouverte",
+            "visage étonné",
+            "waouh",
+            "émoticône",
+            "épaté",
+          ],
+          searchMatch: null,
+          shortcuts: [":O", ":-O", ":=O", ":o", ":-o", ":=o", "surprised"],
+          unicode: "😮",
+          __typename: "TeamsEmoji",
+        },
+        index: 0,
+      },
+    });*/
+    return children;
+  },
+
+  manageGifsCategoryEmojis(children: any[]) {
     if (children[0]?.key == "0" && children[0]?.props?.gif != null) {
-      fetchKiply(currentSearchTerm || "cats");
+      return this.defaultGifsSearch(children);
+    }
 
-      let gifs = [];
-      for (const gif of children) {
-        gifs.push(gif.props.gif);
-      }
+    if (children[0]?.props?.emoji != null) {
+      console.log(
+        "[BetterGifs] manageGifsCategoryEmojis called with:",
+        children,
+      );
 
-      const kiplyGif = this.gifPicker(gifs, currentSearchTerm || "cats");
-      for (let i = 0; i < children.length; i++) {
-        children[i].props.gif = kiplyGif[i];
-      }
-
-      return children;
+      return this.addEmojis(children);
     }
 
     if (children[0]?.key != "") return children;
 
-    console.log(children);
-
-    children[1].props.src =
-      "https://static.klipy.com/ii/35ccce3d852f7995dd2da910f2abd795/77/6b/K1tmEAl8.webp";
-    children[2].props.src =
-      "https://static.klipy.com/ii/71b2873e478b9d8d0482ea3ec777ba7f/0d/58/KA6RC8a5.gif";
-    children[3].props.src =
-      "https://static.klipy.com/ii/c3a19a0b747a76e98651f2b9a3cca5ff/35/fe/JUiTVkaE.webp";
-    children[4].props.src =
-      "https://static.klipy.com/ii/4e7bea9f7a3371424e6c16ebc93252fe/7a/38/V1BFae4sQXh7Y.webp";
-    children[5].props.src =
-      "https://static.klipy.com/ii/c3a19a0b747a76e98651f2b9a3cca5ff/95/8d/yCz64xWe.webp";
-    children[6].props.src =
-      "https://static.klipy.com/ii/ce286d05b8e1a47cd4f32b0e1b6dec0e/7e/bc/mJ3xruBq.webp";
-    children[7].props.src =
-      "https://static.klipy.com/ii/84b4c0b02782dda9051003f9e36484ec/1b/2a/h8c2IrV0.webp";
-
-    return children;
+    return this.changeDefaultCategories(children);
   },
 
   setCategoryOpened(category: string) {
@@ -294,7 +387,30 @@ const Gifs: Plugin = {
       find: /"fui-Grid",\w+=\w+\.forwardRef/,
       replacement: {
         match: /(const\{rows:\w+,columns:\w+,className:\w+,\.\.\.\w+\}=(\w+))/,
-        replace: "$2.children=$self.changeDefaultGifCategories($2.children);$1",
+        replace: "$2.children=$self.manageGifsCategoryEmojis($2.children);$1",
+      },
+    },
+    /*{
+      find: /reactionSpriteImageBlob&&\w+\?\.reactionImageBlob/,
+      replacement: {
+        match:
+          /(itemID:)(\w+)(,itemType:\w+\.\w+\.emoji,onError:\w+,onLoad:\w+,src:)(\w+)(,)/,
+        replace: "$1$self.changeEmojiName()$3$self.changeEmojiSrc($4)$5",
+      },
+    },
+    {
+      find: /onReactionClick:\w+,reactionLimitText:\w+,enableMultipleReactionsPerUser:\w+/,
+      replacement: {
+        match: /(\w.useCallback\((\w+)=>{)/,
+        replace: "$1$self.logStuff($2);",
+      },
+    },*/
+    {
+      find: /\"aria-owns\":\w,\"data-last-visible\":\w,actions:/,
+      replacement: {
+        match:
+          /(const \w+=\w+\(\{convId:\w+,i18n:\w+,isMessageFailed:\w+,message:(\w+)\}\);)/,
+        replace: "$2.content=$self.injectCustomEmojis($2.content);$1",
       },
     },
   ],

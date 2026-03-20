@@ -168,3 +168,6 @@ autoReloadToggle.addEventListener("change", () => {
 
 updateVersionInfo();
 updateRuntimeStatus();
+
+// Clear the update badge now that the user has opened the popup.
+chrome.action.setBadgeText({ text: "" });

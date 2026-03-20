@@ -26,3 +26,6 @@ dist-ssr
 .vscode
 /extension/injection.js
 *.old.css
+
+/src/utils/*-registry.ts
+/src/user-plugins
