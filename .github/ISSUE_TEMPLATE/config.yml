@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question
+    # TODO: update discord invite when the server is made
+    url: https://discord.gg/TODO
+    about: Ask a question about Teams but (actually) good

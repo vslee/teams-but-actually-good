@@ -1,0 +1,78 @@
+name: Bug report
+description: Report a problem in Teams but (actually) good
+labels: [bug]
+body:
+
+  - type: textarea
+    attributes:
+      label: "Problem"
+      description: "Describe the current behavior. This may include crash logs, images, or videos."
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: "Steps to reproduce"
+      description: "List the steps to reproduce the problem."
+      placeholder: |
+        Open Microsoft Teams
+        Open the chat list
+        ...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: "Expected behavior"
+      description: "Describe the behavior you expect."
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: "Extension version"
+      description: |
+        1. Open your browser's extension manager
+        2. Find "Teams but (actually) good"
+        3. The version number is displayed there
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: "Browser name and version"
+      placeholder: "Chrome 136"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: "Operating system"
+      placeholder: "macOS 15.2"
+    validations:
+      required: true
+
+  - type: checkboxes
+    attributes:
+      label: "Browser Beta"
+      description: "Are you currently on the beta version of your browser?"
+      options:
+        - label: "Yes"
+          required: false
+
+  - type: checkboxes
+    attributes:
+      label: "Agreements"
+      description: "Check the following before submitting the bug report."
+      options:
+        - label: "My title is concise but descriptive and specific."
+          required: true
+        - label: "I am on the latest Teams but (actually) good release."
+          required: true
+        - label: "I have searched for [existing bug reports](https://github.com/LeonimusTTV/teams-but-actually-good/issues?q=is%3Aissue+label%3Abug)."
+          required: true
+        - label: "This is not a usage or 'How to' question."
+          required: true
+        - label: "I have made sure that my issue is not a duplicate of the pinned issues."
+          required: true
