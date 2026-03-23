@@ -1,8 +1,8 @@
 name: Bug report
 description: Report a problem in Teams but (actually) good
+assignees: ["LeonimusTTV"]
 labels: [bug]
 body:
-
   - type: textarea
     attributes:
       label: "Problem"
