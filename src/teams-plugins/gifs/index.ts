@@ -280,8 +280,9 @@ const Gifs: Plugin = {
       console.log("[BetterGifs] Replacing :cat-tbag: with custom emoji");
       const changedMessage = content.replace(
         ":cat-tbag:",
-        '<span title="Pochette surprise" type="(1f389_partypopper)" class="animated-emoticon-20-1f389_partypopper" itemscope><img itemscope itemtype="http://schema.skype.com/Emoji" itemid="1f389_partypopper" src="https://statics.teams.cdn.office.net/evergreen-assets/personal-expressions/v2/assets/emoticons/1f389_partypopper/default/20_f.png" title="Pochette surprise" alt="🎉" style="width:20px;height:20px" /></span>',
+        '<span contenteditable="false" title="Party popper" type="(1f389_partypopper)" class="animated-emoticon-20-1f389_partypopper" itemscope><img itemscope itemtype="http://schema.skype.com/Emoji" itemid="1f389_partypopper" src="https://statics.teams.cdn.office.net/evergreen-assets/personal-expressions/v2/assets/emoticons/1f389_partypopper/default/20_f.png" title="Party popper" alt="🎉" style="width:20px;height:20px;"></span>',
       );
+      console.log("[BetterGifs] Changed message:", changedMessage);
       content = changedMessage;
     }
     return content;
@@ -405,13 +406,47 @@ const Gifs: Plugin = {
         replace: "$1$self.logStuff($2);",
       },
     },*/
-    {
+    /*{
       find: /\"aria-owns\":\w,\"data-last-visible\":\w,actions:/,
       replacement: {
         match:
           /(const \w+=\w+\(\{convId:\w+,i18n:\w+,isMessageFailed:\w+,message:(\w+)\}\);)/,
         replace: "$2.content=$self.injectCustomEmojis($2.content);$1",
       },
+    },*/
+    {
+      find: /"scheduledSendTime","content","files","suggestedActions","clientMessageId","from","id"/,
+      replacement: [
+        {
+          match:
+            /(\w+\(\),\w+\(\),\w+\(!0\),\w+\(\),await \w+\(\{convId:\w+\?\?\"\",from:\w+\?\?\"\",content:(\w+),suggestedActions:\w+)/,
+          replace: "$2=$self.logStuff($2),$1",
+        },
+        {
+          match:
+            /(\w+=\w+\.useCallback\(async\(\)=>\{)(\w+\&\&\w+\?\w+\(\):\w+\(\))/,
+          replace: '$1$self.logStuff("called");$2',
+        },
+        {
+          match: /const(\{dataTidPrefix:\w+\}=\w+)/,
+          replace: "let $1",
+        },
+        /*{
+          match: /(\w+\(\);const \w+=\w+\(\w+,\w+\))/,
+          replace: "Lt=$self.injectCustomEmojis(Lt);$1",
+        },
+        
+        {
+          match:
+            /(messageId:\w+,clientMessageId:\w+,scenarioFactory:\w+\}=\w+;)/,
+          replace: "$1$self.logStuff(ct);",
+        },
+        {
+          match:
+            /(\w+=\w+\(\w+\?\?\"\",\w+\?\?\"\",\w+,\w+,\w+\),\w+=\w+\()(\w+),(\w+)\)/,
+          replace: "$1$self.logStuff($2),$self.logStuff($3))",
+        },*/
+      ],
     },
   ],
 
