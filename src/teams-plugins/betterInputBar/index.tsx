@@ -9,7 +9,8 @@ function ChannelSelectorComponent({
 }: IPluginOptionComponentProps) {
   void ReactLib;
   const plugin = (window as any).__TEAMS_PLUGINS__?.[betterInputBar.name];
-  const channels: Array<{ key: string }> = plugin?.availableInputButtons ?? [];
+  const channels: Array<{ key: string; name: string }> =
+    plugin?.availableInputButtons ?? [];
   const selected: string[] = Array.isArray(value) ? value : [];
 
   if (channels.length === 0) {
@@ -24,7 +25,7 @@ function ChannelSelectorComponent({
   /** @jsx ReactLib.createElement */
   return (
     <div className="tbg-channel-selector">
-      {channels.map(({ key }: { key: string }) => (
+      {channels.map(({ key, name }: { key: string; name: string }) => (
         <label
           key={key}
           className="tbg-channel-option"
@@ -46,7 +47,7 @@ function ChannelSelectorComponent({
               setValue(next);
             }}
           />{" "}
-          {key}
+          {name}
         </label>
       ))}
     </div>
@@ -56,7 +57,7 @@ function ChannelSelectorComponent({
 const betterInputBar: Plugin = {
   name: "BetterInputBar",
   description: "Remove useless buttons from the input bar.",
-  availableInputButtons: [] as Array<{ key: string }>,
+  availableInputButtons: [] as Array<{ key: string; name: string }>,
   settingsDef: {
     selectedButtons: {
       type: OptionType.COMPONENT,
@@ -66,29 +67,32 @@ const betterInputBar: Plugin = {
     },
   },
 
-  filterInputBarItems(inputBarAdditionalCommands: any) {
-    if (!inputBarAdditionalCommands) return inputBarAdditionalCommands;
-    //console.log(inputBarAdditionalCommands);
+  filterInputBarItems(inputBarDataId: string, inputBarTitle: string) {
+    if (!inputBarDataId || !inputBarTitle) return true;
 
-    this.availableInputButtons = inputBarAdditionalCommands.map(
-      (_item: any, index: number) => ({
-        key: String(index + 1),
-      }),
-    );
-
-    //console.log(this.availableInputButtons);
+    // check if key already exists, if not add it to
+    if (
+      !this.availableInputButtons.some(
+        (btn: { key: string; name: string }) => btn.key === inputBarDataId,
+      ) &&
+      inputBarDataId.startsWith("send")
+    ) {
+      console.log(
+        `[BetterInputBar] Adding input bar item to available buttons: ${inputBarTitle} (${inputBarDataId})`,
+      );
+      this.availableInputButtons.push({
+        key: inputBarDataId,
+        name: inputBarTitle,
+      });
+    }
 
     const selected: string[] = Array.isArray(this.settings?.selectedButtons)
       ? (this.settings.selectedButtons as string[])
       : [];
 
-    // Show all channels when nothing is explicitly selected
-    if (selected.length === 0) return inputBarAdditionalCommands;
+    if (selected.length === 0) return true;
 
-    return inputBarAdditionalCommands.filter((_item: any, index: number) => {
-      const key = String(index + 1);
-      return selected.includes(key);
-    });
+    return selected.includes(inputBarDataId);
   },
 
   logStuff(stuff: any) {
@@ -98,22 +102,25 @@ const betterInputBar: Plugin = {
 
   patches: [
     {
-      find: "hide-from-overflow",
+      find: '"enableComposeToolbarButtonsTooltip"]',
       replacement: [
         {
           match:
-            /(additionalCommands:(\w+),overflowTitle:\w+,showDividers:\w+,showLargerDivider:\w+,showMediumDivider:\w+,start:\w+,variablesMain:\w+,className:\w+,isSmartResponse:\w+,isEditingSideThreaded:\w+\}\)=>\{)/,
-          replace: "$1$2=$self.filterInputBarItems($2);",
+            /(dataTid:(\w+),icon:\w+,onClick:\w+,active:\w+,disabled:\w+,hidden:\w+,content:\$,as:\w+,renderV9Toolbar:\w+,shouldAnimateButton:\w+,isPopupOpen:\w+,title:(\w+),currentSelectedOption:\w+,setCurrentSelectedOption:\w+,\.\.\.\w+\}\)\=\>\{)/,
+          replace:
+            "$1let keepItem=$self.filterInputBarItems($2,$3);if(!keepItem){return null;}",
+          //"$1$self.logStuff($2,$3);",
         },
       ],
     },
     {
-      find: '("isAutoOverflow")',
+      find: "fluid_convert_text_to_loop_create",
       replacement: [
         {
           match:
-            /(\"data-is-visible\":\!\w+,\"aria-hidden\":\w+,getOverflowItems:\w+,items:)(\w+),/,
-          replace: "$1$self.logStuff($2),",
+            /(buttonProps:\w+,name:(\w+),title:(\w+),onActionClick:\w+,onMouseOver:\w+\}=\w+;)/,
+          replace:
+            "$1let keepItem=$self.filterInputBarItems($2,$3);if(!keepItem){return null;}",
         },
       ],
     },
