@@ -52,6 +52,16 @@ if (teamsWindow.trustedTypes && teamsWindow.trustedTypes.createPolicy) {
       createHTML: (s: string) => s,
     });
 
+    // Expose for internal extension use (e.g. CodeMirror needs a TrustedScript policy)
+    (teamsWindow as any).__tbg_trusted_policy = stolenPolicy;
+    // Expose nonce lazily so plugins can inject inline scripts past CSP.
+    // Defined as a getter so it resolves at read-time, not at policy-steal time.
+    Object.defineProperty(teamsWindow, "__tbg_csp_nonce", {
+      get: () => getCspNonce(),
+      configurable: true,
+      enumerable: false,
+    });
+
     // trap the browser's createPolicy function
     teamsWindow.trustedTypes.createPolicy = function (
       name: string,

@@ -1,4 +1,8 @@
 import React from "react";
+import { basicSetup, EditorView } from "codemirror";
+import { EditorState } from "@codemirror/state";
+import { css } from "@codemirror/lang-css";
+import { oneDark } from "@codemirror/theme-one-dark";
 import windowUrl from "../../svgs/window.svg";
 import { getMainSetting, setMainSetting } from "../../utils/storage";
 import { themeRegistry } from "../../interface";
@@ -9,7 +13,8 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
   const [selectedTheme, setSelectedTheme] = ReactLib.useState<string | null>(
     null,
   );
-  const [customCss, setCustomCss] = ReactLib.useState("");
+  const editorHostRef = ReactLib.useRef<HTMLDivElement | null>(null);
+  const editorViewRef = ReactLib.useRef<EditorView | null>(null);
   const defaultThemeName = "Default (Teams)";
 
   ReactLib.useEffect(() => {
@@ -19,10 +24,83 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
         themeRegistry[saved].enable = true;
       }
     });
-    getMainSetting("customCss").then((saved) => {
-      if (typeof saved === "string") setCustomCss(saved);
-    });
   }, []);
+
+  ReactLib.useEffect(() => {
+    if (selectedTheme !== "custom") return;
+
+    let active = true;
+    const raf = requestAnimationFrame(() => {
+      if (!active || !editorHostRef.current) return;
+
+      let initialDoc = `/**
+ * @name Test Name
+ * @author LeonimusT
+ * @version 0.0.1
+ * @description Test description.
+ * @source https://github.com
+ * @website https://leonimust.com
+ */
+
+.fui-FluentProvider,
+[class*="fui-FluentProvider"] {
+  --backgroundCanvas: #1cbf52 !important;
+}
+
+#ms-searchux-input {
+  background-color: #ffffff !important;
+}`;
+      try {
+        const raw = localStorage.getItem("teams-but-good:main");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (
+            typeof parsed.customCss === "string" &&
+            parsed.customCss.length > 0
+          ) {
+            initialDoc = parsed.customCss;
+          }
+        }
+      } catch {
+        /* ignore parse errors */
+      }
+
+      try {
+        const state = EditorState.create({
+          doc: initialDoc,
+          extensions: [
+            basicSetup,
+            css(),
+            oneDark,
+            EditorView.cspNonce.of((window as any).__tbg_csp_nonce ?? ""),
+            EditorView.updateListener.of((update) => {
+              if (update.docChanged) {
+                setMainSetting("customCss", update.state.doc.toString());
+              }
+            }),
+            EditorView.theme({
+              "&": { height: "400px" },
+              ".cm-scroller": { overflow: "auto" },
+            }),
+          ],
+        });
+
+        editorViewRef.current = new EditorView({
+          state,
+          parent: editorHostRef.current,
+        });
+      } catch (err) {
+        console.error("[tbg] CodeMirror init failed:", err);
+      }
+    });
+
+    return () => {
+      active = false;
+      cancelAnimationFrame(raf);
+      editorViewRef.current?.destroy();
+      editorViewRef.current = null;
+    };
+  }, [selectedTheme]);
 
   function handleThemeChange(themeName: string | null) {
     setSelectedTheme(themeName);
@@ -196,6 +274,17 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
             </div>
           ))}
         </div>
+        {selectedTheme === "custom" && (
+          <div
+            ref={editorHostRef}
+            style={{
+              marginTop: "12px",
+              border: "1px solid #3c3c3c",
+              borderRadius: "4px",
+              overflow: "hidden",
+            }}
+          />
+        )}
         {needRestart && (
           <div
             className="tbg-modal-footer"
@@ -214,37 +303,6 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
               Restart Teams to apply changes
             </button>
           </div>
-        )}
-        {selectedTheme === "custom" && (
-          // wanted to use monaco but it doens't seems that it's possible
-          // to use it due to us needed the React variable used by teams to be
-          // able to show it and Monaco don't support that
-          <textarea
-            value={customCss}
-            onChange={(e: any) => {
-              setCustomCss(e.target.value);
-              setMainSetting("customCss", e.target.value);
-            }}
-            placeholder="/* Write your custom CSS here */"
-            spellCheck={false}
-            style={{
-              width: "100%",
-              height: "400px",
-              marginTop: "12px",
-              padding: "12px",
-              boxSizing: "border-box",
-              background: "#1e1e1e",
-              color: "#d4d4d4",
-              border: "1px solid #3c3c3c",
-              borderRadius: "4px",
-              fontFamily:
-                "'Cascadia Code', 'Consolas', 'Courier New', monospace",
-              fontSize: "13px",
-              lineHeight: "1.5",
-              resize: "vertical",
-              outline: "none",
-            }}
-          />
         )}
       </div>
     </div>
