@@ -42,9 +42,9 @@ function parseTheme(cssContent: string, index: number): Theme {
     name: metadata.name ?? `Theme ${index + 1}`,
     description: metadata.description ?? "No description provided.",
     author: metadata.author ?? "Unknown",
-    version: metadata.version ?? "0.0.0",
-    source: metadata.source,
-    website: metadata.website,
+    version: metadata.version ?? "1.0.0",
+    source: metadata.source ?? "",
+    website: metadata.website ?? "",
     css: cssContent,
   };
 }
