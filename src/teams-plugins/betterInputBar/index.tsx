@@ -8,7 +8,7 @@ function ChannelSelectorComponent({
   ReactLib,
 }: IPluginOptionComponentProps) {
   void ReactLib;
-  const plugin = (window as any).__TEAMS_PLUGINS__?.[inputBarCleaner.name];
+  const plugin = (window as any).__TEAMS_PLUGINS__?.[betterInputBar.name];
   const channels: Array<{ key: string }> = plugin?.availableInputButtons ?? [];
   const selected: string[] = Array.isArray(value) ? value : [];
 
@@ -53,8 +53,8 @@ function ChannelSelectorComponent({
   );
 }
 
-const inputBarCleaner: Plugin = {
-  name: "InputBarCleaner",
+const betterInputBar: Plugin = {
+  name: "BetterInputBar",
   description: "Remove useless buttons from the input bar.",
   availableInputButtons: [] as Array<{ key: string }>,
   settingsDef: {
@@ -105,4 +105,4 @@ const inputBarCleaner: Plugin = {
   ],
 };
 
-export default inputBarCleaner;
+export default betterInputBar;
