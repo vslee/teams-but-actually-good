@@ -10,9 +10,15 @@ let theme: string | null = null;
 export async function themeManager() {
   if (!theme) return;
 
-  if (theme === "custom") return;
+  let css = "";
 
-  injectStyles(themeRegistry[theme].css);
+  if (theme === "custom") {
+    css = (await getMainSetting("customCss")) || "";
+  } else {
+    css = themeRegistry[theme]?.css || "";
+  }
+
+  injectStyles(css);
 
   //if (!themeRegistry[theme].styles) return;
 

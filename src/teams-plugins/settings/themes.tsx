@@ -22,6 +22,8 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
       if (saved && themeRegistry[saved]) {
         setSelectedTheme(saved);
         themeRegistry[saved].enable = true;
+      } else if (saved === "custom") {
+        setSelectedTheme("custom");
       }
     });
   }, []);
