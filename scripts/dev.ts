@@ -199,6 +199,10 @@ let autoReloadEnabled = true;
 
 Bun.serve({
   port: DEV_WS_PORT,
+  // Bind explicitly to 127.0.0.1 (IPv4 loopback) to match the extension's
+  // DEV_SERVER_URL. Without this, Bun defaults to 0.0.0.0 (all IPv4 ifaces)
+  // which also works, but being explicit avoids any ambiguity on Windows.
+  hostname: "127.0.0.1",
   fetch(req, server) {
     if (server.upgrade(req)) return;
     return new Response("teams-but-good dev reload server", { status: 200 });

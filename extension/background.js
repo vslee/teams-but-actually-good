@@ -26,10 +26,9 @@
  *   requires the Chrome Web Store / Firefox AMO).
  */
 
-// Firefox exposes `browser` as a global; Chrome only has `chrome`.
-const IS_FIREFOX = typeof browser !== "undefined";
+const IS_FIREFOX = navigator.userAgent.includes("Firefox");
 
-const DEV_SERVER_URL = "ws://localhost:9223";
+const DEV_SERVER_URL = "ws://127.0.0.1:9223";
 const KEEPALIVE_ALARM = "tbg-dev-keepalive";
 const UPDATE_CHECK_ALARM = "tbg-update-check";
 const UPDATE_CHECK_INTERVAL_MINUTES = 240; // every 4 hours
@@ -94,17 +93,17 @@ function connect() {
 
   try {
     ws = new WebSocket(DEV_SERVER_URL);
-  } catch {
-    // Dev server not running – retry silently.
+  } catch (err) {
+    // Dev server not running
+    console.error("[TBAG] Failed to connect to dev server:", err);
     ws = null;
     setTimeout(connect, 2000);
     return;
   }
 
-  ws.onopen = () => {
-    chrome.storage.local.get({ autoReloadEnabled: true }, ({ autoReloadEnabled }) => {
-      ws.send(JSON.stringify({ type: "ready", autoReloadEnabled }));
-    });
+  ws.onopen = async () => {
+    const { autoReloadEnabled = true } = await chrome.storage.local.get({ autoReloadEnabled: true });
+    ws.send(JSON.stringify({ type: "ready", autoReloadEnabled }));
   };
 
   ws.onmessage = (e) => {
@@ -113,12 +112,11 @@ function connect() {
     }
   };
 
-  ws.onclose = () => {
+  ws.onclose = async () => {
     ws = null;
     // Only schedule a reconnect when dev mode is still active.
-    chrome.storage.local.get({ devModeEnabled: false }, ({ devModeEnabled }) => {
-      if (devModeEnabled) setTimeout(connect, 1000);
-    });
+    const { devModeEnabled = false } = await chrome.storage.local.get({ devModeEnabled: false });
+    if (devModeEnabled) setTimeout(connect, 1000);
   };
 
   ws.onerror = () => {
@@ -153,11 +151,11 @@ async function syncContentScript() {
         world: "MAIN",
         allFrames: false,
       },
-    ]).catch((err) => console.error("[TBG] Failed to register content script:", err));
+    ]).catch((err) => console.error("[TBAG] Failed to register content script:", err));
   } else if (!extensionEnabled && isRegistered) {
     await chrome.scripting
       .unregisterContentScripts({ ids: [CONTENT_SCRIPT_ID] })
-      .catch((err) => console.error("[TBG] Failed to unregister content script:", err));
+      .catch((err) => console.error("[TBAG] Failed to unregister content script:", err));
   }
 }
 
@@ -187,7 +185,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   await syncContentScript();
 
   await runInstallOnboarding(details).catch((err) => {
-    console.error("[TBG] Failed onboarding tab flow:", err);
+    console.error("[TBAG] Failed onboarding tab flow:", err);
   });
 
   // Schedule periodic update checks (works on both Chrome and Firefox).
@@ -203,37 +201,33 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   }
 });
 
-// On SW startup (after suspension): re-connect WS if dev mode is still active.
-// Also ensure the update-check alarm is still scheduled (it survives restarts
-// so we only re-create it if it was somehow cleared).
-chrome.alarms.get(UPDATE_CHECK_ALARM, (alarm) => {
+(async () => {
+  const alarm = await chrome.alarms.get(UPDATE_CHECK_ALARM);
   if (!alarm) {
     chrome.alarms.create(UPDATE_CHECK_ALARM, {
       delayInMinutes: 1,
       periodInMinutes: UPDATE_CHECK_INTERVAL_MINUTES,
     });
   }
-});
+
+  if (!IS_FIREFOX) {
+    const { devModeEnabled = false } = await chrome.storage.local.get({ devModeEnabled: false });
+    if (devModeEnabled) enableDevMode();
+  }
+})();
 
 // Handle all recurring alarms in one listener (Chrome & Firefox).
-chrome.alarms.onAlarm.addListener((alarm) => {
+chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === UPDATE_CHECK_ALARM) {
     checkForUpdates();
     return;
   }
 
   if (!IS_FIREFOX && alarm.name === KEEPALIVE_ALARM) {
-    chrome.storage.local.get({ devModeEnabled: false }, ({ devModeEnabled }) => {
-      if (devModeEnabled) connect();
-    });
+    const { devModeEnabled = false } = await chrome.storage.local.get({ devModeEnabled: false });
+    if (devModeEnabled) connect();
   }
 });
-
-if (!IS_FIREFOX) {
-  chrome.storage.local.get({ devModeEnabled: false }, ({ devModeEnabled }) => {
-    if (devModeEnabled) enableDevMode();
-  });
-}
 
 // React to storage changes from the popup.
 chrome.storage.onChanged.addListener((changes, area) => {

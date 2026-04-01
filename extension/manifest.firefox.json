@@ -20,7 +20,9 @@
     "https://api.github.com/*",
     "https://release-assets.githubusercontent.com/*",
     "*://teams.microsoft.com/*",
-    "*://*.teams.microsoft.com/*"
+    "*://*.teams.microsoft.com/*",
+    "ws://localhost/*",
+    "ws://127.0.0.1/*"
   ],
   "action": {
     "default_popup": "popup.html",
