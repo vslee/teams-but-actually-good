@@ -9,6 +9,7 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
   const [selectedTheme, setSelectedTheme] = ReactLib.useState<string | null>(
     null,
   );
+  const [customCss, setCustomCss] = ReactLib.useState("");
   const defaultThemeName = "Default (Teams)";
 
   ReactLib.useEffect(() => {
@@ -17,6 +18,9 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
         setSelectedTheme(saved);
         themeRegistry[saved].enable = true;
       }
+    });
+    getMainSetting("customCss").then((saved) => {
+      if (typeof saved === "string") setCustomCss(saved);
     });
   }, []);
 
@@ -93,7 +97,7 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
           </div>
           <div className="tbg-plugins-grid" key="custom-themes">
             <label
-              htmlFor="theme-radio-default"
+              htmlFor="theme-radio-custom"
               className="tbg-box-basic"
               style={{
                 minHeight: 0,
@@ -106,12 +110,12 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
                 <span className="tbg-plugin-name">Custom Themes</span>
                 <div className="tbg-plugin-controls">
                   <input
-                    id="theme-radio-default"
+                    id="theme-radio-custom"
                     type="radio"
                     name="theme"
-                    value=""
-                    checked={selectedTheme === null}
-                    onChange={() => handleThemeChange(null)}
+                    value="custom"
+                    checked={selectedTheme === "custom"}
+                    onChange={() => handleThemeChange("custom")}
                     style={{ display: "none" }}
                   />
                   <svg
@@ -124,7 +128,7 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    {selectedTheme === null ? (
+                    {selectedTheme === "custom" ? (
                       <path
                         d="M10 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-13a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm-7 8a7 7 0 1 1 14 0 7 7 0 0 1-14 0Z"
                         fill="currentColor"
@@ -210,6 +214,37 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
               Restart Teams to apply changes
             </button>
           </div>
+        )}
+        {selectedTheme === "custom" && (
+          // wanted to use monaco but it doens't seems that it's possible
+          // to use it due to us needed the React variable used by teams to be
+          // able to show it and Monaco don't support that
+          <textarea
+            value={customCss}
+            onChange={(e: any) => {
+              setCustomCss(e.target.value);
+              setMainSetting("customCss", e.target.value);
+            }}
+            placeholder="/* Write your custom CSS here */"
+            spellCheck={false}
+            style={{
+              width: "100%",
+              height: "400px",
+              marginTop: "12px",
+              padding: "12px",
+              boxSizing: "border-box",
+              background: "#1e1e1e",
+              color: "#d4d4d4",
+              border: "1px solid #3c3c3c",
+              borderRadius: "4px",
+              fontFamily:
+                "'Cascadia Code', 'Consolas', 'Courier New', monospace",
+              fontSize: "13px",
+              lineHeight: "1.5",
+              resize: "vertical",
+              outline: "none",
+            }}
+          />
         )}
       </div>
     </div>

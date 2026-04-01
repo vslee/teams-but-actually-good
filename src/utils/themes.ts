@@ -10,6 +10,8 @@ let theme: string | null = null;
 export async function themeManager() {
   if (!theme) return;
 
+  if (theme === "custom") return;
+
   injectStyles(themeRegistry[theme].css);
 
   //if (!themeRegistry[theme].styles) return;
