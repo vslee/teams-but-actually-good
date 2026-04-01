@@ -68,7 +68,7 @@ const betterInputBar: Plugin = {
 
   filterInputBarItems(inputBarAdditionalCommands: any) {
     if (!inputBarAdditionalCommands) return inputBarAdditionalCommands;
-    console.log(inputBarAdditionalCommands);
+    //console.log(inputBarAdditionalCommands);
 
     this.availableInputButtons = inputBarAdditionalCommands.map(
       (_item: any, index: number) => ({
@@ -76,7 +76,7 @@ const betterInputBar: Plugin = {
       }),
     );
 
-    console.log(this.availableInputButtons);
+    //console.log(this.availableInputButtons);
 
     const selected: string[] = Array.isArray(this.settings?.selectedButtons)
       ? (this.settings.selectedButtons as string[])
@@ -91,6 +91,11 @@ const betterInputBar: Plugin = {
     });
   },
 
+  logStuff(stuff: any) {
+    console.log("[BetterInputBar] logStuff:", stuff);
+    return stuff;
+  },
+
   patches: [
     {
       find: "hide-from-overflow",
@@ -99,6 +104,16 @@ const betterInputBar: Plugin = {
           match:
             /(additionalCommands:(\w+),overflowTitle:\w+,showDividers:\w+,showLargerDivider:\w+,showMediumDivider:\w+,start:\w+,variablesMain:\w+,className:\w+,isSmartResponse:\w+,isEditingSideThreaded:\w+\}\)=>\{)/,
           replace: "$1$2=$self.filterInputBarItems($2);",
+        },
+      ],
+    },
+    {
+      find: '("isAutoOverflow")',
+      replacement: [
+        {
+          match:
+            /(\"data-is-visible\":\!\w+,\"aria-hidden\":\w+,getOverflowItems:\w+,items:)(\w+),/,
+          replace: "$1$self.logStuff($2),",
         },
       ],
     },
