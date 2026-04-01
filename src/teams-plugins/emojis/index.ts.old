@@ -252,6 +252,86 @@ const Gifs: Plugin = {
     return children;
   },
 
+  /*changeEmojiSrc(src: any[]) {
+    return "https://cdn.discordapp.com/emojis/1204336920507850803.webp?size=240&animated=true";
+  },
+
+  changeEmojiName() {
+    return "cat-tbag";
+  },
+
+  changeFileSrc(src: any) {
+    if (src.length === 0 || !src[0].objectUrl) return src;
+
+    console.log(src);
+
+    return (src[0].objectUrl =
+      "https://cdn.discordapp.com/emojis/1204336920507850803.webp?size=240&animated=true");
+  },*/
+
+  injectCustomEmojis(content: any) {
+    if (typeof content !== "string") return content;
+
+    console.log(
+      "[BetterGifs] injectCustomEmojis called with content:",
+      content,
+    );
+    if (content.includes(":cat-tbag:")) {
+      console.log("[BetterGifs] Replacing :cat-tbag: with custom emoji");
+      const changedMessage = content.replace(
+        ":cat-tbag:",
+        '<span contenteditable="false" title="Party popper" type="(1f389_partypopper)" class="animated-emoticon-20-1f389_partypopper" itemscope><img itemscope itemtype="http://schema.skype.com/Emoji" itemid="1f389_partypopper" src="https://statics.teams.cdn.office.net/evergreen-assets/personal-expressions/v2/assets/emoticons/1f389_partypopper/default/20_f.png" title="Party popper" alt="🎉" style="width:20px;height:20px;"></span>',
+      );
+      console.log("[BetterGifs] Changed message:", changedMessage);
+      content = changedMessage;
+    }
+    return content;
+  },
+
+  addEmojis(children: any[]) {
+    /*children.push({
+      key: "surprised",
+      ref: null,
+      props: {
+        loading: false,
+        emoji: {
+          id: "surprised",
+          animation: {
+            fps: 24,
+            framesCount: 73,
+            firstFrame: 17,
+            __typename: "EmojiAnimation",
+          },
+          description: "Surpris",
+          diverse: false,
+          etag: "v17",
+          keywords: [
+            "bouche bée",
+            "bouche ouverte",
+            "choqué",
+            "confus",
+            "incroyable",
+            "omd",
+            "oubli",
+            "surpris",
+            "visage avec bouche ouverte",
+            "visage avec la bouche ouverte",
+            "visage étonné",
+            "waouh",
+            "émoticône",
+            "épaté",
+          ],
+          searchMatch: null,
+          shortcuts: [":O", ":-O", ":=O", ":o", ":-o", ":=o", "surprised"],
+          unicode: "😮",
+          __typename: "TeamsEmoji",
+        },
+        index: 0,
+      },
+    });*/
+    return children;
+  },
+
   manageGifsCategoryEmojis(children: any[]) {
     if (children[0]?.key == "0" && children[0]?.props?.gif != null) {
       return this.defaultGifsSearch(children);
@@ -310,6 +390,63 @@ const Gifs: Plugin = {
         match: /(const\{rows:\w+,columns:\w+,className:\w+,\.\.\.\w+\}=(\w+))/,
         replace: "$2.children=$self.manageGifsCategoryEmojis($2.children);$1",
       },
+    },
+    /*{
+      find: /reactionSpriteImageBlob&&\w+\?\.reactionImageBlob/,
+      replacement: {
+        match:
+          /(itemID:)(\w+)(,itemType:\w+\.\w+\.emoji,onError:\w+,onLoad:\w+,src:)(\w+)(,)/,
+        replace: "$1$self.changeEmojiName()$3$self.changeEmojiSrc($4)$5",
+      },
+    },
+    {
+      find: /onReactionClick:\w+,reactionLimitText:\w+,enableMultipleReactionsPerUser:\w+/,
+      replacement: {
+        match: /(\w.useCallback\((\w+)=>{)/,
+        replace: "$1$self.logStuff($2);",
+      },
+    },*/
+    /*{
+      find: /\"aria-owns\":\w,\"data-last-visible\":\w,actions:/,
+      replacement: {
+        match:
+          /(const \w+=\w+\(\{convId:\w+,i18n:\w+,isMessageFailed:\w+,message:(\w+)\}\);)/,
+        replace: "$2.content=$self.injectCustomEmojis($2.content);$1",
+      },
+    },*/
+    {
+      find: /"scheduledSendTime","content","files","suggestedActions","clientMessageId","from","id"/,
+      replacement: [
+        {
+          match:
+            /(\w+\(\),\w+\(\),\w+\(!0\),\w+\(\),await \w+\(\{convId:\w+\?\?\"\",from:\w+\?\?\"\",content:(\w+),suggestedActions:\w+)/,
+          replace: "$2=$self.logStuff($2),$1",
+        },
+        {
+          match:
+            /(\w+=\w+\.useCallback\(async\(\)=>\{)(\w+\&\&\w+\?\w+\(\):\w+\(\))/,
+          replace: '$1$self.logStuff("called");$2',
+        },
+        {
+          match: /const(\{dataTidPrefix:\w+\}=\w+)/,
+          replace: "let $1",
+        },
+        /*{
+          match: /(\w+\(\);const \w+=\w+\(\w+,\w+\))/,
+          replace: "Lt=$self.injectCustomEmojis(Lt);$1",
+        },
+        
+        {
+          match:
+            /(messageId:\w+,clientMessageId:\w+,scenarioFactory:\w+\}=\w+;)/,
+          replace: "$1$self.logStuff(ct);",
+        },
+        {
+          match:
+            /(\w+=\w+\(\w+\?\?\"\",\w+\?\?\"\",\w+,\w+,\w+\),\w+=\w+\()(\w+),(\w+)\)/,
+          replace: "$1$self.logStuff($2),$self.logStuff($3))",
+        },*/
+      ],
     },
   ],
 
