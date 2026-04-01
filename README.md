@@ -12,10 +12,11 @@ A browser extension (and optional Tauri desktop wrapper) that patches Microsoft 
 ## Features
 
 - Easy to install and use
-- Extension available in the Chrome web store and firefox add-ons
+- Extension available in for Chromium based browser, firefox based browser and Safari
 - Custom themes
+- Custom plugins
 - Maintenaned
-- Removed Teams telemetry and analytics
+- Removed Teams telemetry and analytics (broken for now :c)
 
 ## Documentation
 
