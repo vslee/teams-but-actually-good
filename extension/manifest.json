@@ -15,8 +15,6 @@
     "https://release-assets.githubusercontent.com/*",
     "*://teams.microsoft.com/*",
     "*://*.teams.microsoft.com/*",
-    "http://localhost/*",
-    "http://127.0.0.1/*",
     "ws://localhost/*",
     "ws://127.0.0.1/*"
   ],
