@@ -1,8 +1,8 @@
 # Teams But (actually) Good - The Vencord for Teams
 
 ![GitHub Tag](https://img.shields.io/github/v/tag/LeonimusTTV/teams-but-actually-good?style=for-the-badge&logo=github&logoColor=white&label=&color=1d2021&labelColor=282828)
-![Chrome web store](https://img.shields.io/chrome-web-store/v/TODO?style=for-the-badge&logo=googlechrome&logoColor=white&label=&color=1d2021&labelColor=282828)
-![Firefox add-ons](https://img.shields.io/amo/v/teams-but-good?style=for-the-badge&logo=firefox&logoColor=white&label=&color=1d2021&labelColor=282828)
+![Chrome web store](https://img.shields.io/chrome-web-store/v/ahbiodnejgedaflhonhabedfhmgigobc?style=for-the-badge&logo=googlechrome&logoColor=white&label=&color=1d2021&labelColor=282828)
+![Firefox add-ons](https://img.shields.io/amo/v/teams-but-actually-good?style=for-the-badge&logo=firefox&logoColor=white&label=&color=1d2021&labelColor=282828)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=for-the-badge&logo=typescript&logoColor=white&label=&color=1d2021&labelColor=282828)
 ![Tauri](https://img.shields.io/badge/Tauri-24C8D8?style=for-the-badge&logo=tauri&logoColor=white&label=&color=1d2021&labelColor=282828)
 ![Bun](https://img.shields.io/badge/Bun-fbf0df?style=for-the-badge&logo=bun&logoColor=white&label=&color=1d2021&labelColor=282828)
