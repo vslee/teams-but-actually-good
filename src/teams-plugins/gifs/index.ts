@@ -257,14 +257,14 @@ const Gifs: Plugin = {
       return this.defaultGifsSearch(children);
     }
 
-    if (children[0]?.props?.emoji != null) {
+    /*if (children[0]?.props?.emoji != null) {
       console.log(
         "[BetterGifs] manageGifsCategoryEmojis called with:",
         children,
       );
 
       return this.addEmojis(children);
-    }
+    }*/
 
     if (children[0]?.key != "") return children;
 
