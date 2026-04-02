@@ -32,7 +32,7 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
     if (selectedTheme !== "custom") return;
 
     let active = true;
-    const raf = requestAnimationFrame(() => {
+    const raf = requestAnimationFrame(async () => {
       if (!active || !editorHostRef.current) return;
 
       let initialDoc = `/**
@@ -53,15 +53,11 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
   background-color: #ffffff !important;
 }`;
       try {
-        const raw = localStorage.getItem("teams-but-good:main");
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (
-            typeof parsed.customCss === "string" &&
-            parsed.customCss.length > 0
-          ) {
-            initialDoc = parsed.customCss;
-          }
+        const customCss = await getMainSetting("customCss");
+        if (customCss) {
+          initialDoc = customCss;
+        } else {
+          setMainSetting("customCss", initialDoc);
         }
       } catch {
         /* ignore parse errors */
@@ -78,6 +74,7 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
             EditorView.updateListener.of((update) => {
               if (update.docChanged) {
                 setMainSetting("customCss", update.state.doc.toString());
+                setNeedRestart(true);
               }
             }),
             EditorView.theme({
@@ -91,9 +88,7 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
           state,
           parent: editorHostRef.current,
         });
-      } catch (err) {
-        console.error("[tbg] CodeMirror init failed:", err);
-      }
+      } catch (err) {}
     });
 
     return () => {
