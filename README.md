@@ -38,7 +38,7 @@ todo :3
 
 ## Credits
 
-Thanks a lot do the [Vencord mod](https://github.com/Vendicated/Vencord) for Discord which gave me that idea for Teams and helped to make my mod work on Teams :3
+Thanks a lot to [Vencord](https://github.com/Vendicated/Vencord) which gave me that idea for Teams and helped me a lot to make my mod work on Teams :3
 
 ## Logo
 
