@@ -5,6 +5,7 @@
   "description": "A Microsoft Teams extension that actually improves the user experience.",
   "author": "LeonimusT",
   "permissions": [
+    "alarms",
     "storage",
     "scripting"
   ],
