@@ -16,6 +16,7 @@ sed -i '' "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" extension/manifest.
 sed -i '' "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" extension/manifest.chrome.json
 sed -i '' "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" extension/manifest.firefox.json
 sed -i '' "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" extension/manifest.safari.json
+sed -i '' "/^name = \"teams-but-actually-good\"/{n;s/^version = .*/version = \"$VERSION\"/;}" src-tauri/Cargo.lock
 
 git add src-tauri/Cargo.toml src-tauri/Cargo.lock src-tauri/tauri.conf.json package.json extension/manifest.json extension/manifest.chrome.json extension/manifest.firefox.json extension/manifest.safari.json
 git commit -m "chore: release v$VERSION"
