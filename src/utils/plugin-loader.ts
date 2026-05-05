@@ -6,7 +6,7 @@ function isValidPlugin(obj: any): obj is Plugin {
   return obj && typeof obj.name === "string" && Array.isArray(obj.patches);
 }
 
-export default async function loadPlugins(): Promise<Boolean> {
+export default async function loadPlugins(): Promise<boolean> {
   try {
     for (const plugin of plugins) {
       try {
