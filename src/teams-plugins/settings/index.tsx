@@ -27,19 +27,33 @@ const SettingsPlugin: Plugin = {
   },
 
   addNewChildren(elementsProp: any) {
+    const rootChildren = elementsProp?.children;
     if (
-      !elementsProp?.children ||
-      !Array.isArray(elementsProp.children) ||
+      !Array.isArray(rootChildren) ||
       !elementsProp["aria-label"]
     ) {
       return elementsProp;
     }
 
-    if (elementsProp.children[2]?.props?.children[0]?.key !== "general") {
+    const navigationPane = rootChildren[1];
+    const categoryPane = rootChildren[2];
+    const navigationChildren = navigationPane?.props?.children;
+    const categoryChildren = categoryPane?.props?.children;
+
+    if (
+      !Array.isArray(navigationChildren) ||
+      !Array.isArray(categoryChildren) ||
+      categoryChildren.some((child: any) => child?.key === "plugin_settings")
+    ) {
       return elementsProp;
     }
 
-    const template = elementsProp.children[2]?.props?.children[0];
+    const template = categoryChildren.find(
+      (child: any) => child?.key === "general",
+    );
+    if (!template?.props) {
+      return elementsProp;
+    }
 
     const newChild = {
       ...template,
@@ -48,39 +62,39 @@ const SettingsPlugin: Plugin = {
       props: {
         ...template.props,
         category: "plugin_settings",
-        isActive: elementsProp.children[2].key === "plugin_settings",
+        isActive: categoryPane.key === "plugin_settings",
       },
     };
 
     const newChildrenTwo = [
       newChild,
-      ...elementsProp.children[2].props.children,
+      ...categoryChildren,
     ];
 
     const newChildrenOne = [
       newChild,
-      ...elementsProp.children[1].props.children,
+      ...navigationChildren,
     ];
+
+    const nextRootChildren = [...rootChildren];
+    nextRootChildren[1] = {
+      ...navigationPane,
+      props: {
+        ...navigationPane.props,
+        children: newChildrenOne,
+      },
+    };
+    nextRootChildren[2] = {
+      ...categoryPane,
+      props: {
+        ...categoryPane.props,
+        children: newChildrenTwo,
+      },
+    };
 
     return {
       ...elementsProp,
-      children: [
-        elementsProp.children[0],
-        {
-          ...elementsProp.children[1],
-          props: {
-            ...elementsProp.children[1].props,
-            children: newChildrenOne,
-          },
-        },
-        {
-          ...elementsProp.children[2],
-          props: {
-            ...elementsProp.children[2].props,
-            children: newChildrenTwo,
-          },
-        },
-      ],
+      children: nextRootChildren,
     };
   },
 
