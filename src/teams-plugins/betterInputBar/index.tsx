@@ -8,7 +8,7 @@ function ChannelSelectorComponent({
   ReactLib,
 }: IPluginOptionComponentProps) {
   void ReactLib;
-  const plugin = (window as any).__TEAMS_PLUGINS__?.[betterInputBar.name];
+  const plugin = window.__TEAMS_PLUGINS__?.[betterInputBar.name];
   const channels: Array<{ key: string; name: string }> =
     plugin?.availableInputButtons ?? [];
   const selected: string[] =
@@ -98,7 +98,7 @@ const betterInputBar: Plugin = {
     return selected.includes(inputBarDataId);
   },
 
-  logStuff(stuff: any) {
+  logStuff(stuff: string | object) {
     console.log("[BetterInputBar] logStuff:", stuff);
     return stuff;
   },

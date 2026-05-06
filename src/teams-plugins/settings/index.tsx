@@ -26,7 +26,21 @@ const SettingsPlugin: Plugin = {
     },
   },
 
-  addNewChildren(elementsProp: any) {
+  addNewChildren(elementsProp: {
+    children?: Array<{
+      key: string;
+      ref?: unknown;
+      props?: {
+        children?: Array<{
+          key: string;
+          ref?: unknown;
+          props?: Record<string, unknown>;
+        }>;
+        [key: string]: unknown;
+      };
+    }>;
+    "aria-label"?: string;
+  }) {
     const rootChildren = elementsProp?.children;
     if (!Array.isArray(rootChildren) || !elementsProp["aria-label"]) {
       return elementsProp;
@@ -40,13 +54,15 @@ const SettingsPlugin: Plugin = {
     if (
       !Array.isArray(navigationChildren) ||
       !Array.isArray(categoryChildren) ||
-      categoryChildren.some((child: any) => child?.key === "plugin_settings")
+      categoryChildren.some(
+        (child: { key: string }) => child?.key === "plugin_settings",
+      )
     ) {
       return elementsProp;
     }
 
     const template = categoryChildren.find(
-      (child: any) => child?.key === "general",
+      (child: { key: string }) => child?.key === "general",
     );
     if (!template?.props) {
       return elementsProp;
@@ -174,7 +190,7 @@ const SettingsPlugin: Plugin = {
                         data-checked={String(
                           pluginRegistry[plugin.name]?.enable === true,
                         )}
-                        onClick={(e: any) => {
+                        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                           if (plugin.enableByDefault) {
                             return;
                           }
@@ -183,7 +199,7 @@ const SettingsPlugin: Plugin = {
                           target.dataset.checked = String(next);
                           handleCheckboxChange(next, plugin.name);
                         }}
-                        onKeyDown={(e: any) => {
+                        onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
                           if (e.key === " " || e.key === "Enter") {
                             e.preventDefault();
                             e.currentTarget.click();

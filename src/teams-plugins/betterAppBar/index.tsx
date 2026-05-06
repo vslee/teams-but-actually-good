@@ -8,7 +8,7 @@ function ChannelSelectorComponent({
   ReactLib,
 }: IPluginOptionComponentProps) {
   void ReactLib;
-  const plugin = (window as any).__TEAMS_PLUGINS__?.[betterAppBar.name];
+  const plugin = window.__TEAMS_PLUGINS__?.[betterAppBar.name];
   const channels: Array<{ key: string; name: string }> =
     plugin?.availableChannels ?? [];
   const selected: string[] =
@@ -72,7 +72,7 @@ const betterAppBar: Plugin = {
     },
   },
 
-  filterChannels(items: any[]): any[] {
+  filterChannels(items: { key: string }[]) {
     const selected: string[] = Array.isArray(this.settings?.selectedChannels)
       ? (this.settings.selectedChannels as string[])
       : [];
@@ -80,13 +80,30 @@ const betterAppBar: Plugin = {
     // Show all channels when nothing is explicitly selected
     if (selected.length === 0) return items;
 
-    return items.filter((item: any) => {
+    return items.filter((item: { key: string }) => {
       const key = String(item?.key);
       return selected.includes(key);
     });
   },
 
-  saveAppInfo(children: any) {
+  saveAppInfo(children: {
+    props?: {
+      children?: Array<
+        Array<{
+          props?: {
+            children?: {
+              props?: {
+                m365App?: {
+                  id?: string;
+                  name?: string;
+                };
+              };
+            };
+          };
+        }>
+      >;
+    };
+  }) {
     if (
       !children.props?.children?.[0]?.[0]?.props?.children?.props?.m365App?.id
     ) {

@@ -113,6 +113,19 @@ export type PluginStorageValue =
   | bigint
   | null;
 
+export type KiplyGifResponse = {
+  title: string;
+  file: {
+    hd: {
+      gif: {
+        url: string;
+        height: number;
+        width: number;
+      };
+    };
+  };
+};
+
 declare global {
   interface Window {
     __TEAMS_PLUGINS__?: Record<string, Plugin>;
