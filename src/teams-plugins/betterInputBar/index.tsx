@@ -118,7 +118,7 @@ const betterInputBar: Plugin = {
       replacement: [
         {
           match:
-            /(buttonProps:\w+,name:(\w+),title:(\w+),onActionClick:\w+,onMouseOver:\w+\}=\w+;)/,
+            /(buttonProps:[\w$]+,name:(\w+),title:(\w+),onActionClick:\w+,onMouseOver:\w+\}=\w+;)/,
           replace:
             "$1let keepItem=$self.filterInputBarItems($2,$3);if(!keepItem){return null;}",
         },
