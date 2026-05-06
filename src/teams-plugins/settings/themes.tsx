@@ -70,7 +70,7 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
             basicSetup,
             css(),
             oneDark,
-            EditorView.cspNonce.of((window as any).__tbg_csp_nonce ?? ""),
+            EditorView.cspNonce.of(window.__tbg_csp_nonce ?? ""),
             EditorView.updateListener.of((update) => {
               if (update.docChanged) {
                 setMainSetting("customCss", update.state.doc.toString());
@@ -88,7 +88,9 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
           state,
           parent: editorHostRef.current,
         });
-      } catch (err) {}
+      } catch (err) {
+        console.error("Failed to initialize CodeMirror editor:", err);
+      }
     });
 
     return () => {

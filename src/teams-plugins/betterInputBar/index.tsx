@@ -8,7 +8,9 @@ function ChannelSelectorComponent({
   ReactLib,
 }: IPluginOptionComponentProps) {
   void ReactLib;
-  const plugin = (window as any).__TEAMS_PLUGINS__?.[betterInputBar.name];
+  const plugin = window.__TEAMS_PLUGINS__?.[betterInputBar.name] as
+    | BetterInputBarPlugin
+    | undefined;
   const channels: Array<{ key: string; name: string }> =
     plugin?.availableInputButtons ?? [];
   const selected: string[] =
@@ -57,7 +59,13 @@ function ChannelSelectorComponent({
   );
 }
 
-const betterInputBar: Plugin = {
+interface BetterInputBarPlugin extends Plugin {
+  availableInputButtons: Array<{ key: string; name: string }>;
+  filterInputBarItems(inputBarDataId: string, inputBarTitle: string): boolean;
+  logStuff(stuff: string | object): string | object;
+}
+
+const betterInputBar: BetterInputBarPlugin = {
   name: "BetterInputBar",
   description: "Remove useless buttons from the input bar.",
   availableInputButtons: [] as Array<{ key: string; name: string }>,
@@ -98,7 +106,7 @@ const betterInputBar: Plugin = {
     return selected.includes(inputBarDataId);
   },
 
-  logStuff(stuff: any) {
+  logStuff(stuff: string | object) {
     console.log("[BetterInputBar] logStuff:", stuff);
     return stuff;
   },
@@ -109,7 +117,7 @@ const betterInputBar: Plugin = {
       replacement: [
         {
           match:
-            /(dataTid:([\w$]+),icon:[\w$]+,onClick:[\w$]+,active:[\w$]+,disabled:[\w$]+,hidden:[\w$]+,content:[\w$]+,as:[\w$]+,renderV9Toolbar:[\w$]+,shouldAnimateButton:[\w$]+,isPopupOpen:[\w$]+,title:([\w$]+),currentSelectedOption:[\w$]+,setCurrentSelectedOption:[\w$]+,\.\.\.[\w$]+\}\)\=\>\{)/,
+            /(dataTid:([\w$]+),icon:[\w$]+,onClick:[\w$]+,active:[\w$]+,disabled:[\w$]+,hidden:[\w$]+,content:[\w$]+,as:[\w$]+,renderV9Toolbar:[\w$]+,shouldAnimateButton:[\w$]+,isPopupOpen:[\w$]+,title:([\w$]+),currentSelectedOption:[\w$]+,setCurrentSelectedOption:[\w$]+,\.\.\.[\w$]+\}\)=>\{)/,
           replace:
             "$1let keepItem=$self.filterInputBarItems($2,$3);if(!keepItem){return null;}",
           //"$1$self.logStuff($2,$3);",

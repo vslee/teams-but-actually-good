@@ -1,4 +1,5 @@
 import { Plugin } from "../../interface";
+import { KiplyGifResponse } from "../../types/types";
 
 const TEAMS_IMAGE_URL_FIELD_NAMES = [
   "image",
@@ -94,7 +95,7 @@ const GIF_ITEM_BASE = {
   __typename: "Giphy",
 };
 
-const kiplyCache = new Map<string, any>();
+const kiplyCache = new Map<string, { data: { data: KiplyGifResponse[] } }>();
 let currentSearchTerm = "";
 let categoryOpened = "";
 
@@ -126,7 +127,9 @@ async function fetchKiply(search: string): Promise<void> {
     kiplyCache.set(search, data);
 
     setTimeout(() => {
-      const plugin = (window as any).__TEAMS_PLUGINS__?.["BetterGifs"];
+      const plugin = window.__TEAMS_PLUGINS__?.["BetterGifs"] as
+        | GifsPlugin
+        | undefined;
       plugin?.setUpdate?.((n: number) => n + 1);
     }, 0);
   } catch (err) {
@@ -162,10 +165,27 @@ function addEventListenerToInput() {
   });
 }
 
-const Gifs: Plugin = {
+type GifItem = {
+  fieldValues: Array<{ fieldName: string; fieldValue: string | number }>;
+  [key: string]: unknown;
+};
+
+type GifChild = { key: string; props: Record<string, unknown> };
+
+interface GifsPlugin extends Plugin {
+  setUpdate: ((...args: unknown[]) => void) | null;
+  isKiplyLoading(): boolean;
+  gifPicker(items: GifItem[], customSearchTerm?: string): GifItem[];
+  changeDefaultCategories(categories: GifChild[]): GifChild[];
+  defaultGifsSearch(children: GifChild[]): GifChild[];
+  manageGifsCategoryEmojis(children: GifChild[]): GifChild[];
+  setCategoryOpened(category: string): string;
+}
+
+const Gifs: GifsPlugin = {
   name: "BetterGifs",
   description: "Use Kiply for gifs.",
-  setUpdate: null as any,
+  setUpdate: null,
 
   isKiplyLoading(): boolean {
     return (
@@ -174,7 +194,12 @@ const Gifs: Plugin = {
     );
   },
 
-  gifPicker(items: any[], customSearchTerm: string = ""): any[] {
+  gifPicker(
+    items: Array<{
+      fieldValues: Array<{ fieldName: string; fieldValue: string | number }>;
+    }>,
+    customSearchTerm: string = "",
+  ) {
     const gifs = kiplyCache.get(
       currentSearchTerm
         ? currentSearchTerm
@@ -185,7 +210,7 @@ const Gifs: Plugin = {
 
     if (!gifs) return items;
 
-    const gifList: any[] = gifs.data.data;
+    const gifList: KiplyGifResponse[] = gifs.data.data;
 
     if (items.length === 0) {
       items.push(...Array(gifs.data.data.length).fill(GIF_ITEM_BASE));
@@ -195,29 +220,31 @@ const Gifs: Plugin = {
       const gif = gifList[index % gifList.length];
       const gifData = gif.file.hd.gif;
       const clone = { ...item, composeValue: gifData.url };
-      clone.fieldValues = (item.fieldValues ?? []).map((field: any) => {
-        const f = { ...field };
-        if (TEAMS_IMAGE_URL_FIELD_NAMES.includes(f.fieldName)) {
-          f.fieldValue = gifData.url;
-        }
-        if (TEAMS_IMAGE_HEIGHT_FIELD_NAMES.includes(f.fieldName)) {
-          f.fieldValue = gifData.height;
-        }
-        if (TEAMS_IMAGE_WIDTH_FIELD_NAMES.includes(f.fieldName)) {
-          f.fieldValue = gifData.width;
-        }
-        if (f.fieldName === "title") {
-          f.fieldValue = gif.title || "Untitled Gif";
-        }
-        return f;
-      });
+      clone.fieldValues = (item.fieldValues ?? []).map(
+        (field: { fieldValue: string | number; fieldName: string }) => {
+          const f = { ...field };
+          if (TEAMS_IMAGE_URL_FIELD_NAMES.includes(f.fieldName)) {
+            f.fieldValue = gifData.url;
+          }
+          if (TEAMS_IMAGE_HEIGHT_FIELD_NAMES.includes(f.fieldName)) {
+            f.fieldValue = gifData.height;
+          }
+          if (TEAMS_IMAGE_WIDTH_FIELD_NAMES.includes(f.fieldName)) {
+            f.fieldValue = gifData.width;
+          }
+          if (f.fieldName === "title") {
+            f.fieldValue = gif.title || "Untitled Gif";
+          }
+          return f;
+        },
+      );
       return clone;
     });
 
     return mappedGifs;
   },
 
-  changeDefaultCategories(categories: any[]) {
+  changeDefaultCategories(categories: GifChild[]) {
     categories[1].props.src =
       "https://static.klipy.com/ii/35ccce3d852f7995dd2da910f2abd795/77/6b/K1tmEAl8.webp";
     categories[2].props.src =
@@ -236,12 +263,12 @@ const Gifs: Plugin = {
     return categories;
   },
 
-  defaultGifsSearch(children: any[]) {
+  defaultGifsSearch(children: GifChild[]) {
     fetchKiply(currentSearchTerm || "cats");
 
-    let gifs = [];
+    const gifs: GifItem[] = [];
     for (const gif of children) {
-      gifs.push(gif.props.gif);
+      gifs.push(gif.props.gif as GifItem);
     }
 
     const kiplyGif = this.gifPicker(gifs, currentSearchTerm || "cats");
@@ -252,7 +279,7 @@ const Gifs: Plugin = {
     return children;
   },
 
-  manageGifsCategoryEmojis(children: any[]) {
+  manageGifsCategoryEmojis(children: GifChild[]) {
     if (children[0]?.key == "0" && children[0]?.props?.gif != null) {
       return this.defaultGifsSearch(children);
     }
@@ -275,11 +302,6 @@ const Gifs: Plugin = {
     categoryOpened = category;
     fetchKiply(category);
     return category;
-  },
-
-  logStuff(stuff: any) {
-    console.log("[BetterGifs] logStuff:", stuff);
-    return stuff;
   },
 
   patches: [

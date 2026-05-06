@@ -1,3 +1,6 @@
+import React from "react";
+import type { Plugin } from "../interface";
+
 export const enum OptionType {
   STRING,
   NUMBER,
@@ -27,7 +30,7 @@ export type PluginSettingDef =
 export interface PluginSettingCommon {
   description: string;
   placeholder?: string;
-  onChange?(newValue: any): void;
+  onChange?(newValue: PluginStorageValue): void;
   restartNeeded?: boolean;
   hidden?: boolean;
 }
@@ -76,24 +79,24 @@ export interface PluginSettingSliderDef {
 
 export interface PluginSettingCustomDef {
   type: OptionType.CUSTOM;
-  default?: any;
+  default?: PluginStorageValue;
 }
 
 export interface IPluginOptionComponentProps {
   /** Run this when the value changes. */
-  setValue(newValue: any): void;
+  setValue(newValue: PluginStorageValue): void;
   /** The option definition object */
   option: PluginSettingComponentDef;
   /** The current stored value for this setting */
-  value?: any;
+  value?: PluginStorageValue;
   /** Teams' React instance — use this for hooks and element creation */
-  ReactLib: any;
+  ReactLib: typeof React;
 }
 
 export interface PluginSettingComponentDef {
   type: OptionType.COMPONENT;
-  component: (props: IPluginOptionComponentProps) => any;
-  default?: any;
+  component: (props: IPluginOptionComponentProps) => React.JSX.Element;
+  default?: PluginStorageValue;
 }
 
 export type Author = {
@@ -101,3 +104,34 @@ export type Author = {
   profileAvatarUrl?: string;
   socialMediaUrl?: string;
 };
+
+export type PluginStorageValue =
+  | string
+  | number
+  | boolean
+  | object
+  | bigint
+  | null;
+
+export type KiplyGifResponse = {
+  title: string;
+  file: {
+    hd: {
+      gif: {
+        url: string;
+        height: number;
+        width: number;
+      };
+    };
+  };
+};
+
+declare global {
+  interface Window {
+    __TEAMS_PLUGINS__?: Record<string, Plugin>;
+    /** Trusted Types policy stolen from Teams, exposed for internal extension use */
+    __tbg_trusted_policy?: TrustedTypePolicy;
+    /** CSP nonce captured at injection time, exposed as a lazy getter */
+    __tbg_csp_nonce?: string;
+  }
+}

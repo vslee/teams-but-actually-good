@@ -12,7 +12,27 @@ import Themes from "./themes";
 
 injectStyles(styles, "teams-but-good-settings");
 
-const SettingsPlugin: Plugin = {
+interface SettingsPluginType extends Plugin {
+  addNewChildren(elementsProp: {
+    children?: Array<{
+      key: string;
+      ref?: unknown;
+      props?: {
+        children?: Array<{
+          key: string;
+          ref?: unknown;
+          props?: Record<string, unknown>;
+        }>;
+        [key: string]: unknown;
+      };
+    }>;
+    "aria-label"?: string;
+  }): typeof elementsProp;
+  changeName(value: string): string;
+  addCustomContent(ReactLib: typeof React): React.JSX.Element;
+}
+
+const SettingsPlugin: SettingsPluginType = {
   name: "Settings",
   description: "Adds custom settings tabs to Teams settings panel",
   enableByDefault: true,
@@ -26,12 +46,23 @@ const SettingsPlugin: Plugin = {
     },
   },
 
-  addNewChildren(elementsProp: any) {
+  addNewChildren(elementsProp: {
+    children?: Array<{
+      key: string;
+      ref?: unknown;
+      props?: {
+        children?: Array<{
+          key: string;
+          ref?: unknown;
+          props?: Record<string, unknown>;
+        }>;
+        [key: string]: unknown;
+      };
+    }>;
+    "aria-label"?: string;
+  }) {
     const rootChildren = elementsProp?.children;
-    if (
-      !Array.isArray(rootChildren) ||
-      !elementsProp["aria-label"]
-    ) {
+    if (!Array.isArray(rootChildren) || !elementsProp["aria-label"]) {
       return elementsProp;
     }
 
@@ -43,13 +74,15 @@ const SettingsPlugin: Plugin = {
     if (
       !Array.isArray(navigationChildren) ||
       !Array.isArray(categoryChildren) ||
-      categoryChildren.some((child: any) => child?.key === "plugin_settings")
+      categoryChildren.some(
+        (child: { key: string }) => child?.key === "plugin_settings",
+      )
     ) {
       return elementsProp;
     }
 
     const template = categoryChildren.find(
-      (child: any) => child?.key === "general",
+      (child: { key: string }) => child?.key === "general",
     );
     if (!template?.props) {
       return elementsProp;
@@ -66,15 +99,9 @@ const SettingsPlugin: Plugin = {
       },
     };
 
-    const newChildrenTwo = [
-      newChild,
-      ...categoryChildren,
-    ];
+    const newChildrenTwo = [newChild, ...categoryChildren];
 
-    const newChildrenOne = [
-      newChild,
-      ...navigationChildren,
-    ];
+    const newChildrenOne = [newChild, ...navigationChildren];
 
     const nextRootChildren = [...rootChildren];
     nextRootChildren[1] = {
@@ -183,7 +210,7 @@ const SettingsPlugin: Plugin = {
                         data-checked={String(
                           pluginRegistry[plugin.name]?.enable === true,
                         )}
-                        onClick={(e: any) => {
+                        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                           if (plugin.enableByDefault) {
                             return;
                           }
@@ -192,7 +219,7 @@ const SettingsPlugin: Plugin = {
                           target.dataset.checked = String(next);
                           handleCheckboxChange(next, plugin.name);
                         }}
-                        onKeyDown={(e: any) => {
+                        onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
                           if (e.key === " " || e.key === "Enter") {
                             e.preventDefault();
                             e.currentTarget.click();

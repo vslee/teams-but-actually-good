@@ -31,10 +31,10 @@ PluginLoader().then((success) => {
   }
 });
 
-const teamsWindow = window as any;
+const teamsWindow = window;
 
 // trusted type manipulation (Required for eval() to work with CSP)
-let stolenPolicy: any = null;
+let stolenPolicy: TrustedTypePolicy | null = null;
 
 if (teamsWindow.trustedTypes && teamsWindow.trustedTypes.createPolicy) {
   const originalCreatePolicy = teamsWindow.trustedTypes.createPolicy.bind(
@@ -53,7 +53,7 @@ if (teamsWindow.trustedTypes && teamsWindow.trustedTypes.createPolicy) {
     });
 
     // Expose for internal extension use (e.g. CodeMirror needs a TrustedScript policy)
-    (teamsWindow as any).__tbg_trusted_policy = stolenPolicy;
+    teamsWindow.__tbg_trusted_policy = stolenPolicy ?? undefined;
     // Expose nonce lazily so plugins can inject inline scripts past CSP.
     // Defined as a getter so it resolves at read-time, not at policy-steal time.
     Object.defineProperty(teamsWindow, "__tbg_csp_nonce", {
@@ -65,16 +65,16 @@ if (teamsWindow.trustedTypes && teamsWindow.trustedTypes.createPolicy) {
     // trap the browser's createPolicy function
     teamsWindow.trustedTypes.createPolicy = function (
       name: string,
-      rules: any,
+      rules?: TrustedTypePolicyOptions,
     ) {
       if (name === targetPolicyName) {
         easyLogger("info", `Teams requested ${name}. Handing over our policy`);
-        return stolenPolicy;
+        return stolenPolicy!;
       }
       return originalCreatePolicy(name, rules);
     };
-  } catch (e) {
-    easyLogger("error", "Failed to hijack Trusted Types:", e);
+  } catch (error) {
+    easyLogger("error", "Failed to hijack Trusted Types:", error as string);
   }
 }
 
@@ -95,7 +95,7 @@ const define: typeof Reflect.defineProperty = (target, p, attributes) => {
   });
 };
 
-function logger(level: "info" | "warn" | "error", ...args: any[]) {
+function logger(level: "info" | "warn" | "error", ...args: string[]) {
   const prefix = "[TeamsPatcher]";
   console[level](prefix, ...args);
 }
@@ -198,6 +198,7 @@ define(Function.prototype, "m", {
       // Initialize wreq if this is the first instance
       if (wreq == null && this.c != null) {
         logger("info", "Initializing main WebpackRequire reference");
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         wreq = this;
       }
 
@@ -251,7 +252,7 @@ function proxyModuleFactory(
   const proxiedFactory = new Proxy(factory, {
     apply(target, thisArg, argArray) {
       // Check if already patched
-      if ((target as any)[SYM_ORIGINAL_FACTORY] != null) {
+      if ((target as PatchedModuleFactory)[SYM_ORIGINAL_FACTORY] != null) {
         return runPatchedFactory(
           target as PatchedModuleFactory,
           thisArg,
@@ -324,7 +325,7 @@ function patchFactory(
       continue;
     }
 
-    const patchPlugin = (patch as any).plugin;
+    const patchPlugin = patch.plugin;
     easyLogger(
       "info",
       `Module ${String(moduleId)} matches patch from ${patchPlugin}: ${patch.find}`,
@@ -417,11 +418,11 @@ try {
         );
 
         wasPatched = true;
-      } catch (err) {
+      } catch (error) {
         easyLogger(
           "error",
           `Failed to apply patch from ${patchPlugin || "unknown"} to module ${String(moduleId)}:`,
-          err,
+          error as string,
         );
         code = lastCode;
         patchedFactory = originalFactory;
@@ -459,11 +460,11 @@ function runPatchedFactory(
   try {
     const result = patchedFactory.apply(thisArg, argArray);
     return result;
-  } catch (err) {
+  } catch (error) {
     easyLogger(
       "error",
       `Error in patched factory for module ${String(module.id)}:`,
-      err,
+      error as string,
     );
     return originalFactory.apply(thisArg, argArray);
   }
@@ -499,11 +500,11 @@ window.addEventListener("DOMContentLoaded", () => {
           "info",
           `Executed main entry of plugin ${plugin.name || "unknown"}`,
         );
-      } catch (err) {
+      } catch (error) {
         easyLogger(
           "error",
           `Error executing main entry of plugin ${plugin.name || "unknown"}:`,
-          err,
+          error as string,
         );
       }
     }

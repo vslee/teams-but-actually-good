@@ -1,4 +1,8 @@
-import { SettingsDefinition, OptionType } from "../types/types";
+import {
+  SettingsDefinition,
+  OptionType,
+  PluginStorageValue,
+} from "../types/types";
 
 const STORAGE_PREFIX = "teams-but-good:";
 const MAIN_SETTINGS_KEY = `${STORAGE_PREFIX}main`;
@@ -17,7 +21,10 @@ export async function getMainSetting(key: string): Promise<string | null> {
   }
 }
 
-export async function setMainSetting(key: string, value: any): Promise<void> {
+export async function setMainSetting(
+  key: string,
+  value: PluginStorageValue,
+): Promise<void> {
   try {
     const mainSettings = localStorage.getItem(MAIN_SETTINGS_KEY);
     const settings = mainSettings ? JSON.parse(mainSettings) : {};
@@ -33,7 +40,7 @@ export async function setMainSetting(key: string, value: any): Promise<void> {
  * Get all settings for a specific plugin
  * @param pluginName - The name of the plugin (e.g., "ChangeEmojiChooserToTenor")
  */
-export async function getPluginSettings<T = Record<string, any>>(
+export async function getPluginSettings<T = Record<string, PluginStorageValue>>(
   pluginName: string,
 ): Promise<T | null> {
   try {
@@ -51,7 +58,7 @@ export async function getPluginSettings<T = Record<string, any>>(
  */
 export async function setPluginSettings(
   pluginName: string,
-  settings: Record<string, any>,
+  settings: Record<string, PluginStorageValue>,
 ): Promise<void> {
   try {
     const key = `${PLUGIN_SETTINGS_PREFIX}${pluginName}`;
@@ -66,7 +73,7 @@ export async function setPluginSettings(
  */
 export async function updatePluginSettings(
   pluginName: string,
-  updates: Record<string, any>,
+  updates: Record<string, PluginStorageValue>,
 ): Promise<void> {
   const currentSettings = (await getPluginSettings(pluginName)) || {};
   await setPluginSettings(pluginName, { ...currentSettings, ...updates });
@@ -75,10 +82,10 @@ export async function updatePluginSettings(
 /**
  * Get a specific setting value for a plugin
  */
-export async function getPluginSetting<T = any>(
+export async function getPluginSetting(
   pluginName: string,
   key: string,
-): Promise<T | null> {
+): Promise<PluginStorageValue> {
   const settings = await getPluginSettings(pluginName);
   return settings?.[key] ?? null;
 }
@@ -89,7 +96,7 @@ export async function getPluginSetting<T = any>(
 export async function setPluginSetting(
   pluginName: string,
   key: string,
-  value: any,
+  value: PluginStorageValue,
 ): Promise<void> {
   await updatePluginSettings(pluginName, { [key]: value });
 }
@@ -158,15 +165,15 @@ const FALLBACK_DEFAULTS: Partial<Record<OptionType, unknown>> = {
 export async function initPluginSettings(
   pluginName: string,
   settingsDef: SettingsDefinition,
-): Promise<Record<string, unknown>> {
+): Promise<Record<string, PluginStorageValue>> {
   const existing = await getPluginSettings(pluginName);
   if (existing) return existing;
 
-  const defaultSettings: Record<string, unknown> = {};
+  const defaultSettings: Record<string, PluginStorageValue> = {};
 
   for (const [key, def] of Object.entries(settingsDef)) {
     if ("default" in def) {
-      defaultSettings[key] = def.default;
+      defaultSettings[key] = def.default as PluginStorageValue;
     } else if (def.type === OptionType.SELECT) {
       defaultSettings[key] =
         def.options.find((opt) => opt.default)?.value ?? null;

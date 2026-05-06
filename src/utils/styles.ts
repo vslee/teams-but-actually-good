@@ -52,9 +52,8 @@ export function injectStyles(
  * Load file and append a style element in the dom
  *
  * @export
- * @param {string} _path
  */
-export function loadStyle(_path: string) {
+export function loadStyle() {
   console.warn("loadStyle is deprecated, use injectStyles instead");
 }
 
