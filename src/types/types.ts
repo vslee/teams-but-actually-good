@@ -101,3 +101,5 @@ export type Author = {
   profileAvatarUrl?: string;
   socialMediaUrl?: string;
 };
+
+export type PluginStorageValue = string | number | boolean | object | null;

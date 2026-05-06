@@ -2,8 +2,12 @@ import { Plugin, registerPlugin } from "../interface";
 import { plugins } from "./plugin-registry";
 import { getPluginSetting, initPluginSettings } from "./storage";
 
-function isValidPlugin(obj: any): obj is Plugin {
-  return obj && typeof obj.name === "string" && Array.isArray(obj.patches);
+function isValidPlugin(obj: object): obj is Plugin {
+  return (
+    obj &&
+    typeof (obj as Plugin).name === "string" &&
+    Array.isArray((obj as Plugin).patches)
+  );
 }
 
 export default async function loadPlugins(): Promise<boolean> {
@@ -19,7 +23,7 @@ export default async function loadPlugins(): Promise<boolean> {
 
         plugin.enable =
           isPluginEnable !== null
-            ? isPluginEnable
+            ? (isPluginEnable as boolean)
             : plugin.enableByDefault === true;
 
         // Init settings from schema: loads stored values or saves defaults
