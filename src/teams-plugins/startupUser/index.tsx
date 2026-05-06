@@ -169,7 +169,7 @@ const startupUserPlugin: Plugin = {
       ],
     },*/
     {
-      find: /relationship:\"inaccessible\"\,showDelay:\w+\.channel/,
+      find: /relationship:"inaccessible",showDelay:\w+\.channel/,
       replacement: [
         {
           match: /(\w+\.useFragment\)\(\w+,)(\w+.conversation)\)/,

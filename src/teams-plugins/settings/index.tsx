@@ -28,10 +28,7 @@ const SettingsPlugin: Plugin = {
 
   addNewChildren(elementsProp: any) {
     const rootChildren = elementsProp?.children;
-    if (
-      !Array.isArray(rootChildren) ||
-      !elementsProp["aria-label"]
-    ) {
+    if (!Array.isArray(rootChildren) || !elementsProp["aria-label"]) {
       return elementsProp;
     }
 
@@ -66,15 +63,9 @@ const SettingsPlugin: Plugin = {
       },
     };
 
-    const newChildrenTwo = [
-      newChild,
-      ...categoryChildren,
-    ];
+    const newChildrenTwo = [newChild, ...categoryChildren];
 
-    const newChildrenOne = [
-      newChild,
-      ...navigationChildren,
-    ];
+    const newChildrenOne = [newChild, ...navigationChildren];
 
     const nextRootChildren = [...rootChildren];
     nextRootChildren[1] = {

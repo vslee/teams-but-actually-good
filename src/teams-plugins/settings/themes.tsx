@@ -88,7 +88,9 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
           state,
           parent: editorHostRef.current,
         });
-      } catch (err) {}
+      } catch (err) {
+        console.error("Failed to initialize CodeMirror editor:", err);
+      }
     });
 
     return () => {
