@@ -45,7 +45,7 @@ export interface PluginSettingNumberDef {
 
 export interface PluginSettingBigIntDef {
   type: OptionType.BIGINT;
-  default?: BigInt;
+  default?: bigint;
 }
 
 export interface PluginSettingBooleanDef {

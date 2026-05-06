@@ -6,6 +6,6 @@
 // This makes JSX work with Teams' bundled React while giving us full type support
 declare global {
   namespace JSX {
-    interface IntrinsicElements extends React.JSX.IntrinsicElements {}
+    type IntrinsicElements = React.JSX.IntrinsicElements;
   }
 }

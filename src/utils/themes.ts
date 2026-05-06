@@ -2,7 +2,7 @@ import { themeRegistry } from "../interface";
 import { getMainSetting } from "./storage";
 import { injectStyles } from "./styles";
 
-let theme: string | null = null;
+let theme: string | null | undefined;
 (async () => {
   theme = await getMainSetting("theme");
 })();
@@ -10,13 +10,10 @@ let theme: string | null = null;
 export async function themeManager() {
   if (!theme) return;
 
-  let css = "";
-
-  if (theme === "custom") {
-    css = (await getMainSetting("customCss")) || "";
-  } else {
-    css = themeRegistry[theme]?.css || "";
-  }
+  const css =
+    theme === "custom"
+      ? (await getMainSetting("customCss")) || ""
+      : themeRegistry[theme]?.css || "";
 
   injectStyles(css);
 

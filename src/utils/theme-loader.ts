@@ -7,7 +7,7 @@ function parseTheme(cssContent: string, index: number): Theme {
 
   if (headerMatch?.[1]) {
     const metadataRegex = /@([a-zA-Z]+)\s+(.+)/g;
-    let match: RegExpExecArray | null = null;
+    let match: RegExpExecArray | null;
 
     while ((match = metadataRegex.exec(headerMatch[1])) !== null) {
       const key = match[1].toLowerCase();
