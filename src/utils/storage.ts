@@ -173,7 +173,7 @@ export async function initPluginSettings(
 
   for (const [key, def] of Object.entries(settingsDef)) {
     if ("default" in def) {
-      defaultSettings[key] = def.default;
+      defaultSettings[key] = def.default as PluginStorageValue;
     } else if (def.type === OptionType.SELECT) {
       defaultSettings[key] =
         def.options.find((opt) => opt.default)?.value ?? null;

@@ -252,7 +252,7 @@ function proxyModuleFactory(
   const proxiedFactory = new Proxy(factory, {
     apply(target, thisArg, argArray) {
       // Check if already patched
-      if ((target as any)[SYM_ORIGINAL_FACTORY] != null) {
+      if ((target as PatchedModuleFactory)[SYM_ORIGINAL_FACTORY] != null) {
         return runPatchedFactory(
           target as PatchedModuleFactory,
           thisArg,

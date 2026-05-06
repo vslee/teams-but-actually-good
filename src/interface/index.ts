@@ -70,8 +70,8 @@ export function registerPlugin(plugin: Plugin) {
   });
 
   // Make plugin accessible globally for patched code
-  (window as any).__TEAMS_PLUGINS__ = (window as any).__TEAMS_PLUGINS__ || {};
-  (window as any).__TEAMS_PLUGINS__[plugin.name] = plugin;
+  window.__TEAMS_PLUGINS__ = window.__TEAMS_PLUGINS__ || {};
+  window.__TEAMS_PLUGINS__[plugin.name] = plugin;
 }
 
 export const themeRegistry: Record<string, Theme> = {};
