@@ -11,7 +11,10 @@ function ChannelSelectorComponent({
   const plugin = (window as any).__TEAMS_PLUGINS__?.[betterInputBar.name];
   const channels: Array<{ key: string; name: string }> =
     plugin?.availableInputButtons ?? [];
-  const selected: string[] = Array.isArray(value) ? value : [];
+  const selected: string[] =
+    Array.isArray(value) && value.length > 0
+      ? value
+      : channels.map((c: { key: string; name: string }) => c.key);
 
   if (channels.length === 0) {
     /** @jsx ReactLib.createElement */
@@ -39,7 +42,7 @@ function ChannelSelectorComponent({
         >
           <input
             type="checkbox"
-            checked={selected.length === 0 || selected.includes(key)}
+            checked={selected.includes(key)}
             onChange={() => {
               const next = selected.includes(key)
                 ? selected.filter((k: string) => k !== key)
