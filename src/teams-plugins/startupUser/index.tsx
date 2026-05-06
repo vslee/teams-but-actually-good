@@ -8,7 +8,9 @@ function UserSelectorComponent({
   ReactLib,
 }: IPluginOptionComponentProps) {
   void ReactLib;
-  const plugin = window.__TEAMS_PLUGINS__?.[startupUserPlugin.name];
+  const plugin = window.__TEAMS_PLUGINS__?.[startupUserPlugin.name] as
+    | StartupUserPlugin
+    | undefined;
   const users: Array<{ key: string; name: string }> =
     plugin?.availableInputButtons ?? [];
 
@@ -125,7 +127,15 @@ function setStartupUserInLocalStorage() {
   }
 }
 
-const startupUserPlugin: Plugin = {
+interface StartupUserPlugin extends Plugin {
+  availableInputButtons: Array<{ key: string; name: string }>;
+  saveUsersIdAndName(conversation: { id: string; title: string }): {
+    id: string;
+    title: string;
+  };
+}
+
+const startupUserPlugin: StartupUserPlugin = {
   name: "StartupUser",
   description:
     "Allow you to choose which user chat Teams will open on startup.",

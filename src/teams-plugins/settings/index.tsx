@@ -12,7 +12,27 @@ import Themes from "./themes";
 
 injectStyles(styles, "teams-but-good-settings");
 
-const SettingsPlugin: Plugin = {
+interface SettingsPluginType extends Plugin {
+  addNewChildren(elementsProp: {
+    children?: Array<{
+      key: string;
+      ref?: unknown;
+      props?: {
+        children?: Array<{
+          key: string;
+          ref?: unknown;
+          props?: Record<string, unknown>;
+        }>;
+        [key: string]: unknown;
+      };
+    }>;
+    "aria-label"?: string;
+  }): typeof elementsProp;
+  changeName(value: string): string;
+  addCustomContent(ReactLib: typeof React): React.JSX.Element;
+}
+
+const SettingsPlugin: SettingsPluginType = {
   name: "Settings",
   description: "Adds custom settings tabs to Teams settings panel",
   enableByDefault: true,

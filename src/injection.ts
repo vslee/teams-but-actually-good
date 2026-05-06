@@ -325,7 +325,7 @@ function patchFactory(
       continue;
     }
 
-    const patchPlugin = (patch as any).plugin;
+    const patchPlugin = patch.plugin;
     easyLogger(
       "info",
       `Module ${String(moduleId)} matches patch from ${patchPlugin}: ${patch.find}`,

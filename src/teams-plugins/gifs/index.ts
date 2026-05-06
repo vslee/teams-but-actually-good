@@ -127,7 +127,9 @@ async function fetchKiply(search: string): Promise<void> {
     kiplyCache.set(search, data);
 
     setTimeout(() => {
-      const plugin = window.__TEAMS_PLUGINS__?.["BetterGifs"];
+      const plugin = window.__TEAMS_PLUGINS__?.["BetterGifs"] as
+        | GifsPlugin
+        | undefined;
       plugin?.setUpdate?.((n: number) => n + 1);
     }, 0);
   } catch (err) {
@@ -163,7 +165,24 @@ function addEventListenerToInput() {
   });
 }
 
-const Gifs: Plugin = {
+type GifItem = {
+  fieldValues: Array<{ fieldName: string; fieldValue: string | number }>;
+  [key: string]: unknown;
+};
+
+type GifChild = { key: string; props: Record<string, unknown> };
+
+interface GifsPlugin extends Plugin {
+  setUpdate: ((...args: unknown[]) => void) | null;
+  isKiplyLoading(): boolean;
+  gifPicker(items: GifItem[], customSearchTerm?: string): GifItem[];
+  changeDefaultCategories(categories: GifChild[]): GifChild[];
+  defaultGifsSearch(children: GifChild[]): GifChild[];
+  manageGifsCategoryEmojis(children: GifChild[]): GifChild[];
+  setCategoryOpened(category: string): string;
+}
+
+const Gifs: GifsPlugin = {
   name: "BetterGifs",
   description: "Use Kiply for gifs.",
   setUpdate: null,
@@ -225,7 +244,7 @@ const Gifs: Plugin = {
     return mappedGifs;
   },
 
-  changeDefaultCategories(categories: Array<{ props: { src: string } }>) {
+  changeDefaultCategories(categories: GifChild[]) {
     categories[1].props.src =
       "https://static.klipy.com/ii/35ccce3d852f7995dd2da910f2abd795/77/6b/K1tmEAl8.webp";
     categories[2].props.src =
@@ -244,12 +263,12 @@ const Gifs: Plugin = {
     return categories;
   },
 
-  defaultGifsSearch(children: Array<{ props: { gif: unknown } }>) {
+  defaultGifsSearch(children: GifChild[]) {
     fetchKiply(currentSearchTerm || "cats");
 
-    let gifs = [];
+    const gifs: GifItem[] = [];
     for (const gif of children) {
-      gifs.push(gif.props.gif);
+      gifs.push(gif.props.gif as GifItem);
     }
 
     const kiplyGif = this.gifPicker(gifs, currentSearchTerm || "cats");
@@ -260,9 +279,7 @@ const Gifs: Plugin = {
     return children;
   },
 
-  manageGifsCategoryEmojis(
-    children: Array<{ key: string; props: { gif?: unknown; emoji?: unknown } }>,
-  ) {
+  manageGifsCategoryEmojis(children: GifChild[]) {
     if (children[0]?.key == "0" && children[0]?.props?.gif != null) {
       return this.defaultGifsSearch(children);
     }

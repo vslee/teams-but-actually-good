@@ -25,6 +25,7 @@ export interface PatchReplacement {
 export interface Patch {
   find: string | RegExp;
   replacement: PatchReplacement | PatchReplacement[];
+  plugin?: string;
 }
 
 export interface Plugin {
@@ -40,7 +41,6 @@ export interface Plugin {
   patches: Patch[];
   mainEntry?: () => void;
   onChangeObserved?: () => void;
-  [key: string]: any;
 }
 
 export interface Styles {
@@ -66,7 +66,7 @@ export function registerPlugin(plugin: Plugin) {
 
   // Add plugin name to each patch for reference
   plugin.patches.forEach((patch) => {
-    (patch as any).plugin = plugin.name;
+    patch.plugin = plugin.name;
   });
 
   // Make plugin accessible globally for patched code
