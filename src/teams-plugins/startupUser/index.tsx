@@ -150,8 +150,6 @@ const startupUserPlugin: StartupUserPlugin = {
   },
 
   saveUsersIdAndName(conversation: { id: string; title: string }) {
-    console.log(conversation);
-    console.log(conversation);
     if (!conversation.id || !conversation.title) {
       return conversation;
     }
@@ -159,7 +157,6 @@ const startupUserPlugin: StartupUserPlugin = {
     const id = rawId.includes("|")
       ? rawId.slice(rawId.indexOf("|") + 1)
       : rawId;
-    console.log(id);
     this.availableInputButtons.push({
       key: id,
       name: conversation.title,
