@@ -8,7 +8,7 @@ function UserSelectorComponent({
   ReactLib,
 }: IPluginOptionComponentProps) {
   void ReactLib;
-  const plugin = (window as any).__TEAMS_PLUGINS__?.[startupUserPlugin.name];
+  const plugin = window.__TEAMS_PLUGINS__?.[startupUserPlugin.name];
   const users: Array<{ key: string; name: string }> =
     plugin?.availableInputButtons ?? [];
 
@@ -139,7 +139,7 @@ const startupUserPlugin: Plugin = {
     },
   },
 
-  saveUsersIdAndName(conversation: any) {
+  saveUsersIdAndName(conversation: { id: string; title: string }) {
     console.log(conversation);
     console.log(conversation);
     if (!conversation.id || !conversation.title) {

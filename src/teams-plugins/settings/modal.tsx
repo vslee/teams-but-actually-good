@@ -5,6 +5,7 @@ import {
   OptionType,
   PluginSettingComponentDef,
   PluginSettingDef,
+  PluginStorageValue,
 } from "../../types/types";
 import { setPluginSetting } from "../../utils/storage";
 
@@ -51,8 +52,8 @@ function renderControl(
   ReactLib: typeof React,
   settingKey: string,
   def: PluginSettingDef,
-  value: unknown,
-  onChange: (newValue: unknown) => void,
+  value: PluginStorageValue,
+  onChange: (newValue: PluginStorageValue) => void,
 ): React.ReactNode {
   void ReactLib; // used by the @jsx pragma below for JSX element creation
   switch (def.type) {
@@ -199,7 +200,7 @@ function renderControl(
 
     case OptionType.COMPONENT: {
       const Comp = def.component as PluginSettingComponentDef["component"];
-      return ReactLib.createElement(Comp as any, {
+      return ReactLib.createElement(Comp, {
         setValue: onChange,
         option: def,
         value,
@@ -217,8 +218,8 @@ function renderField(
   ReactLib: typeof React,
   settingKey: string,
   def: PluginSettingDef,
-  value: unknown,
-  onChange: (newValue: unknown) => void,
+  value: PluginStorageValue,
+  onChange: (newValue: PluginStorageValue) => void,
 ): React.ReactNode {
   if (def.type === OptionType.CUSTOM) return null;
 
@@ -259,7 +260,11 @@ export default function SettingModal({
   );
   const [needsRestart, setNeedsRestart] = ReactLib.useState(false);
 
-  function handleChange(key: string, def: PluginSettingDef, newValue: unknown) {
+  function handleChange(
+    key: string,
+    def: PluginSettingDef,
+    newValue: PluginStorageValue,
+  ) {
     setValues((prev: Record<string, unknown>) => ({
       ...prev,
       [key]: newValue,
@@ -310,8 +315,12 @@ export default function SettingModal({
             <p className="tbg-setting-description">No configurable settings.</p>
           ) : (
             entries.map(([key, def]) =>
-              renderField(ReactLib, key, def, values[key], (v) =>
-                handleChange(key, def, v),
+              renderField(
+                ReactLib,
+                key,
+                def,
+                values[key] as PluginStorageValue,
+                (v) => handleChange(key, def, v as PluginStorageValue),
               ),
             )
           )}
