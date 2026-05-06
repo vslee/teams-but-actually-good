@@ -9,9 +9,12 @@ function ChannelSelectorComponent({
 }: IPluginOptionComponentProps) {
   void ReactLib;
   const plugin = (window as any).__TEAMS_PLUGINS__?.[betterAppBar.name];
-  const channels: Array<{ key: string; label: string }> =
+  const channels: Array<{ key: string; name: string }> =
     plugin?.availableChannels ?? [];
-  const selected: string[] = Array.isArray(value) ? value : [];
+  const selected: string[] =
+    Array.isArray(value) && value.length > 0
+      ? value
+      : channels.map((c: { key: string; name: string }) => c.key);
 
   if (channels.length === 0) {
     /** @jsx ReactLib.createElement */
@@ -22,10 +25,12 @@ function ChannelSelectorComponent({
     );
   }
 
+  console.log(channels);
+
   /** @jsx ReactLib.createElement */
   return (
     <div className="tbg-channel-selector">
-      {channels.map(({ key, label }: { key: string; label: string }) => (
+      {channels.map(({ key, name }: { key: string; name: string }) => (
         <label
           key={key}
           className="tbg-channel-option"
@@ -39,7 +44,7 @@ function ChannelSelectorComponent({
         >
           <input
             type="checkbox"
-            checked={selected.length === 0 || selected.includes(key)}
+            checked={selected.includes(key)}
             onChange={() => {
               const next = selected.includes(key)
                 ? selected.filter((k: string) => k !== key)
@@ -47,7 +52,7 @@ function ChannelSelectorComponent({
               setValue(next);
             }}
           />{" "}
-          {label}
+          {name}
         </label>
       ))}
     </div>
@@ -57,7 +62,7 @@ function ChannelSelectorComponent({
 const betterAppBar: Plugin = {
   name: "BetterAppBar",
   description: "Shows only selected channels in the channel list.",
-  availableChannels: [] as Array<{ key: string; label: string }>,
+  availableChannels: [] as Array<{ key: string; name: string }>,
   settingsDef: {
     selectedChannels: {
       type: OptionType.COMPONENT,
@@ -68,12 +73,6 @@ const betterAppBar: Plugin = {
   },
 
   filterChannels(items: any[]): any[] {
-    // Snapshot available channels for the settings UI
-    this.availableChannels = items.map((item: any) => ({
-      key: String(item?.key),
-      label: "", // no label is proved here, channel365AppInfo will update the label later when we have the app info
-    }));
-
     const selected: string[] = Array.isArray(this.settings?.selectedChannels)
       ? (this.settings.selectedChannels as string[])
       : [];
@@ -87,22 +86,22 @@ const betterAppBar: Plugin = {
     });
   },
 
-  channel365AppInfo(appInfo: any) {
-    // console.log("[BetterAppBar] channel365AppInfo:", appInfo);
-    // console.log(appInfo.id, appInfo.name);
-    // Update the app name in the available channels list for better display in settings
-    this.availableChannels = this.availableChannels.map(
-      (channel: { key: string; label: string }) => {
-        if (channel.key === appInfo.id) {
-          return {
-            key: channel.key,
-            label: appInfo.name,
-          };
-        }
-        return channel;
-      },
-    );
-    return appInfo;
+  saveAppInfo(children: any) {
+    if (
+      !children.props?.children?.[0]?.[0]?.props?.children?.props?.m365App?.id
+    ) {
+      return children;
+    }
+
+    const appChildrens = children.props.children[0];
+
+    for (const child of appChildrens) {
+      const m365App = child?.props?.children?.props?.m365App;
+      const key = String(m365App?.id ?? "");
+      if (!this.availableChannels.some((c: { key: string }) => c.key === key)) {
+        this.availableChannels.push({ key, name: m365App?.name ?? "" });
+      }
+    }
   },
 
   patches: [
@@ -113,17 +112,7 @@ const betterAppBar: Plugin = {
           match:
             /(let\{children:(\w+),id:\w+,items:\w+,strategy:\w+=\w+,disabled:\w+=!1\}=\w+;)/,
           replace:
-            "$1if($2?.props?.children?.[0]&&Array.isArray($2.props.children[0])){$2.props.children[0]=$self.filterChannels($2.props.children[0]);}",
-        },
-      ],
-    },
-    {
-      find: /===\"ThreeColumnView\"\?\w+\.button/,
-      replacement: [
-        {
-          match:
-            /(m365App:(\w+),getAccessibleNameWithShortcutText:\w+,onPinStateChange:\w+,onClicked:\w+,onContextMenu:\w+,onDidMount:\w+,linkedEntity:\w+,dragDropEnabled:\w+,enableMicaV2DesktopStyles:\w+,enableMicaV2WebStyles:\w+,enableMercuryDesignStyles:\w+,backgroundShade:\w+,isListItem:\w+,isUsingCustomThemeColor:\w+,enableVisualRefreshStyles:\w+,enableAppBarPeek:\w+,onMove:\w+,hideLabel:\w+=!1,enableListLayout:\w+,enableAgenticSquircleStyle:\w+,listSize:\w+\},\w+\)=>\{)/,
-          replace: "$1$self.channel365AppInfo($2);",
+            "$1$self.saveAppInfo($2);if($2?.props?.children?.[0]&&Array.isArray($2.props.children[0])){$2.props.children[0]=$self.filterChannels($2.props.children[0]);}",
         },
       ],
     },
