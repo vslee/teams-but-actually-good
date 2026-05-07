@@ -22,7 +22,7 @@ function ChannelSelectorComponent({
     /** @jsx ReactLib.createElement */
     return (
       <p className="tbg-setting-description">
-        No channels detected yet, enable the plugin first.
+        No Input buttons have been detected yet, enable the plugin first.
       </p>
     );
   }
