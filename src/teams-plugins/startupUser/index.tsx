@@ -103,7 +103,9 @@ function setStartupUserInLocalStorage() {
   const key = Object.keys(localStorage).find(
     (k) =>
       k.startsWith("tmp.react-web-client.") &&
-      k.includes("-appActiveEntitiesHistory-"),
+      k.includes(
+        "-appActiveEntitiesHistory-com.microsoft.teams.simple-collab-simplecollab",
+      ),
   );
 
   if (!key) {
