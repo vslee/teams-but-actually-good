@@ -1,6 +1,7 @@
 import { Plugin } from "../../interface";
 import { IPluginOptionComponentProps, OptionType } from "../../types/types";
 import * as React from "react";
+import { getPluginSetting } from "../../utils/storage";
 
 function UserSelectorComponent({
   setValue,
@@ -81,19 +82,11 @@ function UserSelectorComponent({
   );
 }
 
-function setStartupUserInLocalStorage() {
-  let selectedUserId: string | null = null;
-  try {
-    const pluginSettings = localStorage.getItem(
-      "teams-but-good:plugin:StartupUser",
-    );
-    if (pluginSettings) {
-      const parsed = JSON.parse(pluginSettings);
-      selectedUserId = parsed?.selectedButtons ?? null;
-    }
-  } catch {
-    /* ignore parse errors */
-  }
+async function setStartupUserInLocalStorage() {
+  let selectedUserId = await getPluginSetting(
+    startupUserPlugin.name,
+    "selectedButtons",
+  );
 
   if (!selectedUserId) {
     console.warn("[StartupUser] No user selected, skipping.");
