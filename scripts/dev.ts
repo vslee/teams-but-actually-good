@@ -342,7 +342,7 @@ async function startWatch(): Promise<void> {
 function watchDir(dir: string): void {
   let debounce: ReturnType<typeof setTimeout> | null = null;
 
-  fs.watch(dir, { persistent: true }, (event, filename) => {
+  fs.watch(dir, { persistent: true }, (_, filename) => {
     if (!filename) return;
     // Only care when a direct subdirectory changes (new plugin added/removed).
     // fs.watch fires for every file inside subdirs too; filter to top-level only.
