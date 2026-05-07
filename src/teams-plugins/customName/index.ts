@@ -114,7 +114,6 @@ async function applyNameEdits() {
   }
 
   await new Promise((res) => (tx.oncomplete = res));
-  console.log("displayName mis à jour !");
   db!.close();
 }
 
@@ -229,7 +228,6 @@ const customName: CustomNamePlugin = {
   renderCustomNameButton(props, createElement, component, icon) {
     const onClick = (e?: MouseEvent) => {
       e?.stopPropagation();
-      console.log("Props:", props.conversationData.internalId);
       this.showModal(props.conversationData.internalId);
     };
     return createElement(component, {
