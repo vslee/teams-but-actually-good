@@ -1,6 +1,7 @@
 import { Plugin } from "../../interface";
 import { IPluginOptionComponentProps, OptionType } from "../../types/types";
 import * as React from "react";
+import { getPluginSetting } from "../../utils/storage";
 
 function UserSelectorComponent({
   setValue,
@@ -81,19 +82,11 @@ function UserSelectorComponent({
   );
 }
 
-function setStartupUserInLocalStorage() {
-  let selectedUserId: string | null = null;
-  try {
-    const pluginSettings = localStorage.getItem(
-      "teams-but-good:plugin:StartupUser",
-    );
-    if (pluginSettings) {
-      const parsed = JSON.parse(pluginSettings);
-      selectedUserId = parsed?.selectedButtons ?? null;
-    }
-  } catch {
-    /* ignore parse errors */
-  }
+async function setStartupUserInLocalStorage() {
+  let selectedUserId = await getPluginSetting(
+    startupUserPlugin.name,
+    "selectedButtons",
+  );
 
   if (!selectedUserId) {
     console.warn("[StartupUser] No user selected, skipping.");
@@ -103,7 +96,9 @@ function setStartupUserInLocalStorage() {
   const key = Object.keys(localStorage).find(
     (k) =>
       k.startsWith("tmp.react-web-client.") &&
-      k.includes("-appActiveEntitiesHistory-"),
+      k.includes(
+        "-appActiveEntitiesHistory-com.microsoft.teams.simple-collab-simplecollab",
+      ),
   );
 
   if (!key) {
@@ -150,8 +145,6 @@ const startupUserPlugin: StartupUserPlugin = {
   },
 
   saveUsersIdAndName(conversation: { id: string; title: string }) {
-    console.log(conversation);
-    console.log(conversation);
     if (!conversation.id || !conversation.title) {
       return conversation;
     }
@@ -159,7 +152,6 @@ const startupUserPlugin: StartupUserPlugin = {
     const id = rawId.includes("|")
       ? rawId.slice(rawId.indexOf("|") + 1)
       : rawId;
-    console.log(id);
     this.availableInputButtons.push({
       key: id,
       name: conversation.title,

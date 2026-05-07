@@ -27,8 +27,6 @@ function ChannelSelectorComponent({
     );
   }
 
-  console.log(channels);
-
   /** @jsx ReactLib.createElement */
   return (
     <div className="tbg-channel-selector">
