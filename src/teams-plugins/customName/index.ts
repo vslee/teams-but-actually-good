@@ -1,17 +1,19 @@
 import { Plugin } from "../../interface";
-import { injectStyles } from "../../utils/styles";
-import settingsStyles from "../settings/index.css";
+import { getPluginSetting, setPluginSetting } from "../../utils/storage";
 
-injectStyles(settingsStyles, "teams-but-good-settings");
+type UserInfo = Array<{
+  id: string;
+  customName: string;
+  defaultName: string;
+}>;
 
-const myId = "8:orgid:9f5e3bbe-0b73-48da-bbce-3210cef4b5d5";
-const newName = "Dojian";
+let userList: UserInfo = [];
 
 interface CustomNamePlugin extends Plugin {
-  showModal(selectedId: string): void;
+  showModal(internalId: string): void;
   renderCustomNameButton(
     props: { selectedId: string; conversationData: { internalId: string } },
-    createElement: (type: unknown, props: Record<string, unknown>) => unknown,
+    createElement: (type: unknown, props?: Record<string, unknown>) => unknown,
     component: unknown,
     icon: unknown,
   ): unknown;
@@ -21,13 +23,27 @@ type ConversationRecord = {
   chatTitle: {
     avatarUsersInfo: {
       displayName: string;
-      mri: string;
     }[];
     shortTitle: string;
   };
+  id: string;
 };
 
-async function editNames() {
+async function main() {
+  userList = (await getPluginSetting(customName.name, "userList")) as UserInfo;
+
+  if (!userList) {
+    userList = [];
+  }
+
+  await getAllUsersFromDB();
+
+  await setPluginSetting(customName.name, "userList", userList);
+
+  await applyNameEdits();
+}
+
+async function getConversationDB() {
   const allDbs = await indexedDB.databases();
   const target = allDbs.find((db) => {
     if (!db.name) return false;
@@ -36,7 +52,7 @@ async function editNames() {
 
   if (!target) {
     console.error("DB introuvable");
-    return;
+    return null;
   }
 
   const db: IDBDatabase = await new Promise((resolve, reject) => {
@@ -49,7 +65,13 @@ async function editNames() {
     };
   });
 
-  const tx = db.transaction("conversations", "readwrite");
+  return db;
+}
+
+async function getAllUsersFromDB() {
+  const db = await getConversationDB();
+
+  const tx = db!.transaction("conversations", "readonly");
   const store = tx.objectStore("conversations");
   const records: ConversationRecord[] = await new Promise(
     (res) =>
@@ -58,27 +80,66 @@ async function editNames() {
 
   for (const record of records) {
     if (!record?.chatTitle?.avatarUsersInfo?.[0]?.displayName) continue;
-    if (record.chatTitle.avatarUsersInfo[0].mri !== myId) continue;
-    record.chatTitle.avatarUsersInfo[0].displayName = newName;
-    record.chatTitle.shortTitle = newName;
+    const userInfo = record.chatTitle.avatarUsersInfo[0];
+    if (userList.some((user) => user.id === record.id)) continue;
+
+    userList.push({
+      id: record.id,
+      customName: "",
+      defaultName: userInfo.displayName,
+    });
+  }
+}
+
+async function applyNameEdits() {
+  const db = await getConversationDB();
+
+  const tx = db!.transaction("conversations", "readwrite");
+  const store = tx.objectStore("conversations");
+  const records: ConversationRecord[] = await new Promise(
+    (res) =>
+      (store.getAll().onsuccess = (e) => res((e.target as IDBRequest).result)),
+  );
+
+  for (const record of records) {
+    if (!record?.chatTitle?.avatarUsersInfo?.[0]?.displayName) continue;
+
+    const user = userList.find((user) => user.id === record.id);
+    if (!user) continue;
+
+    record.chatTitle.avatarUsersInfo[0].displayName =
+      user.customName || user.defaultName;
+    record.chatTitle.shortTitle = user.customName || user.defaultName;
     store.put(record);
   }
 
   await new Promise((res) => (tx.oncomplete = res));
   console.log("displayName mis à jour !");
-  db.close();
+  db!.close();
 }
 
 const customName: CustomNamePlugin = {
   name: "CustomName",
   description: "Change the name of people in Teams.",
-  mainEntry: editNames,
+  mainEntry: main,
 
-  showModal(selectedId: string) {
+  showModal(internalId: string) {
+    const user = userList.find((u) => u.id === internalId);
+    if (!user) {
+      console.error("User not found by ID", internalId);
+      return;
+    }
     // Tear down any stale dialog so the DOM stays fresh
     document.getElementById("tbg-customname-dialog")?.remove();
 
     const close = () => backdrop.remove();
+
+    const handleSave = async () => {
+      setPluginSetting(customName.name, "userList", userList);
+      await applyNameEdits();
+      close();
+      window.location.reload();
+    };
 
     const backdrop = document.createElement("div");
     backdrop.id = "tbg-customname-dialog";
@@ -103,7 +164,7 @@ const customName: CustomNamePlugin = {
 
     const title = document.createElement("span");
     title.className = "tbg-modal-title";
-    title.textContent = "Edit display name";
+    title.textContent = `Edit display name of ${user.defaultName}`;
 
     const closeBtn = document.createElement("button");
     closeBtn.className = "tbg-modal-close";
@@ -121,8 +182,14 @@ const customName: CustomNamePlugin = {
     input.className = "tbg-input";
     input.type = "text";
     input.placeholder = "New display name";
+    input.value = user.customName || user.defaultName;
 
     body.appendChild(input);
+
+    const restartNotice = document.createElement("span");
+    restartNotice.className = "tbg-setting-restart";
+    restartNotice.textContent = "Changes will apply after restarting Teams.";
+    body.appendChild(restartNotice);
 
     // Footer
     const footer = document.createElement("div");
@@ -131,17 +198,21 @@ const customName: CustomNamePlugin = {
     const saveBtn = document.createElement("button");
     saveBtn.className = "tbg-button-primary";
     saveBtn.style.marginBottom = "5px";
-    saveBtn.textContent = "Save";
-    saveBtn.addEventListener("click", () => {
-      console.log("[CustomName] new name:", input.value, "for", selectedId);
-      close();
+    saveBtn.textContent = "Save and Restart";
+    saveBtn.addEventListener("click", async () => {
+      user.customName = input.value.trim();
+
+      handleSave();
     });
 
     const resetBtn = document.createElement("button");
     resetBtn.className = "tbg-button-secondary";
-    resetBtn.textContent = "Reset";
-    resetBtn.addEventListener("click", () => {
+    resetBtn.textContent = "Reset and Restart";
+    resetBtn.addEventListener("click", async () => {
       input.value = "";
+      user.customName = "";
+
+      handleSave();
     });
 
     footer.append(saveBtn, resetBtn);
@@ -159,7 +230,7 @@ const customName: CustomNamePlugin = {
     const onClick = (e?: MouseEvent) => {
       e?.stopPropagation();
       console.log("Props:", props.conversationData.internalId);
-      this.showModal(props.selectedId);
+      this.showModal(props.conversationData.internalId);
     };
     return createElement(component, {
       icon: createElement(icon, {}),
