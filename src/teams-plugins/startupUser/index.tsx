@@ -82,13 +82,29 @@ function UserSelectorComponent({
   );
 }
 
+function applyStartupUser(key: string, selectedUserId: string) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return;
+    const userHistory = JSON.parse(raw);
+    userHistory.headerEntity.id = selectedUserId;
+    userHistory.mainEntity.id = selectedUserId;
+    // Bypass the proxy to avoid infinite loop
+    _originalSetItem.call(localStorage, key, JSON.stringify(userHistory));
+  } catch (error) {
+    console.error("[StartupUser] Error updating user history:", error);
+  }
+}
+
+let _originalSetItem = localStorage.setItem.bind(localStorage);
+
 async function setStartupUserInLocalStorage() {
   let selectedUserId = await getPluginSetting(
     startupUserPlugin.name,
     "selectedButtons",
   );
 
-  if (!selectedUserId) {
+  if (!selectedUserId || typeof selectedUserId !== "string") {
     console.warn("[StartupUser] No user selected, skipping.");
     return;
   }
@@ -106,20 +122,17 @@ async function setStartupUserInLocalStorage() {
     return;
   }
 
-  let userHistory = key ? JSON.parse(localStorage.getItem(key) || "{}") : null;
+  // Apply immediately
+  applyStartupUser(key, selectedUserId);
 
-  if (!userHistory) {
-    console.warn("[StartupUser] No user history found in localStorage.");
-    return;
-  }
-
-  try {
-    userHistory.headerEntity.id = selectedUserId;
-    userHistory.mainEntity.id = selectedUserId;
-    localStorage.setItem(key, JSON.stringify(userHistory));
-  } catch (error) {
-    console.error("[StartupUser] Error updating user history:", error);
-  }
+  // Intercept any subsequent writes Teams makes to this key and re-apply
+  _originalSetItem = localStorage.setItem.bind(localStorage);
+  localStorage.setItem = function (k: string, value: string) {
+    _originalSetItem.call(localStorage, k, value);
+    if (k === key) {
+      applyStartupUser(key, selectedUserId);
+    }
+  };
 }
 
 interface StartupUserPlugin extends Plugin {
