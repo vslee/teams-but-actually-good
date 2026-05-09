@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build-extensions:
     runs-on: ubuntu-latest
@@ -33,15 +37,16 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           SHA256="$(shasum -a 256 dist/injection.js | awk '{print $1}')"
           PUBLISHED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          jq -n \
+            --arg version "$VERSION" \
+            --arg sha256 "$SHA256" \
+            --arg published_at "$PUBLISHED_AT" \
+            --arg notes "Release ${GITHUB_REF_NAME}" \
+            '{version:$version,sha256:$sha256,published_at:$published_at,notes:$notes}' \
+            > dist/injection.meta.json
 
-          cat > dist/injection.meta.json <<EOF
-          {
-            "version": "${VERSION}",
-            "sha256": "${SHA256}",
-            "published_at": "${PUBLISHED_AT}",
-            "notes": "Release ${GITHUB_REF_NAME}"
-          }
-          EOF
+      - name: Create source archive
+        run: git archive HEAD --format=zip -o dist/source.zip
 
       - name: Upload extensions
         uses: actions/upload-artifact@v4
@@ -52,6 +57,12 @@ jobs:
             dist/extension-firefox.zip
             dist/injection.js
             dist/injection.meta.json
+
+      - name: Upload source archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-archive
+          path: dist/source.zip
 
   # Build desktop apps
   build-desktop:
@@ -83,6 +94,11 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
+
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
 
       - name: Install Linux deps
         if: matrix.os == 'ubuntu-22.04'
@@ -205,6 +221,48 @@ jobs:
         with:
           name: safari-extension
           path: dist/safari-extension-macos.zip
+
+  publish-stores:
+    needs: [build-extensions]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download extensions
+        uses: actions/download-artifact@v4
+        with:
+          name: extensions
+          path: dist/
+
+      - name: Download source archive
+        uses: actions/download-artifact@v4
+        with:
+          name: source-archive
+          path: dist/
+
+      - name: Publish to Chrome Web Store
+        uses: wdzeng/chrome-extension@v1
+        with:
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          zip-path: dist/extension-chrome.zip
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+
+      - name: Publish to Firefox Add-ons
+        uses: wdzeng/firefox-addon@v1
+        with:
+          addon-guid: teams-but-good@leonimust
+          xpi-path: dist/extension-firefox.zip
+          jwt-issuer: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          jwt-secret: ${{ secrets.FIREFOX_JWT_SECRET }}
+          source-file-path: dist/source.zip
+
+      - name: Publish to Microsoft Edge Add-ons
+        uses: wdzeng/edge-addon@v2
+        with:
+          product-id: ${{ secrets.EDGE_PRODUCT_ID }}
+          zip-path: dist/extension-chrome.zip
+          api-key: ${{ secrets.EDGE_API_KEY }}
+          client-id: ${{ secrets.EDGE_CLIENT_ID }}
 
   attach-extensions:
     needs: [build-desktop, build-extensions, build-safari]
