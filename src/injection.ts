@@ -516,11 +516,11 @@ window.addEventListener("DOMContentLoaded", () => {
   // Inject stylle / other stuff
   injectStyles(notificationStyles, "tbg-notification-styles");
   themeManager();
-  injectNotificationModal(
+  /*injectNotificationModal(
     "TeamsPatcher Injection Complete",
     "All systems go!",
-    { duration: 3000 },
-  );
+    { duration: 30000, appName: "Test name" },
+  );*/
 
   document.documentElement?.setAttribute("data-tbg-injection", "ready");
   easyLogger("info", "TypeScript Injection Successful!");

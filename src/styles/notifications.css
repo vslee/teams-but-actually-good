@@ -11,16 +11,16 @@
 
 .tbg-notification {
   display: flex;
-  align-items: stretch;
-  min-width: 280px;
-  max-width: 360px;
-  border-radius: var(--borderRadiusMedium, 6px);
-  box-shadow: var(--shadow16, 0 8px 16px rgba(0, 0, 0, 0.18));
-  background: var(--colorNeutralBackground1, #fff);
-  border: 1px solid var(--colorNeutralStroke2, #e0e0e0);
+  flex-direction: column;
+  min-width: 300px;
+  max-width: 380px;
+  border-radius: var(--borderRadiusLarge, 8px);
+  box-shadow: var(--shadow16, 0 8px 24px rgba(0, 0, 0, 0.28));
+  background: var(--colorBrandForegroundOnLightSelected, #7b2fb8);
   overflow: hidden;
   pointer-events: all;
   animation: tbg-notification-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  color: #fff;
 }
 
 .tbg-notification.tbg-notification-out {
@@ -55,15 +55,73 @@
   }
 }
 
-.tbg-notification-accent {
-  width: 4px;
+.tbg-notification-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 8px 0 12px;
+}
+
+.tbg-notification-app-icon {
+  display: flex;
+  align-items: center;
   flex-shrink: 0;
-  background: var(--colorBrandForegroundOnLightSelected, #8b2fc9);
+  opacity: 0.9;
+}
+
+.tbg-notification-app-name {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.85;
+  flex: 1;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tbg-notification-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  line-height: 1;
+  flex-shrink: 0;
+  border-radius: var(--borderRadiusSmall, 4px);
+  transition: background 0.15s, color 0.15s;
+}
+
+.tbg-notification-close:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.tbg-notification-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px 14px 12px;
+}
+
+.tbg-notification-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .tbg-notification-body {
   flex: 1;
-  padding: 12px 10px 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -72,34 +130,15 @@
 
 .tbg-notification-title {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--colorNeutralForeground1, #242424);
+  font-weight: 700;
+  color: #fff;
   line-height: 1.3;
   word-break: break-word;
 }
 
 .tbg-notification-message {
   font-size: 12px;
-  color: var(--colorNeutralForeground2, #424242);
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1.4;
   word-break: break-word;
-}
-
-.tbg-notification-close {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 10px 10px 0 0;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--colorNeutralForeground3, #616161);
-  font-size: 14px;
-  line-height: 1;
-  flex-shrink: 0;
-  transition: color 0.15s;
-}
-
-.tbg-notification-close:hover {
-  color: var(--colorNeutralForeground1, #242424);
 }
