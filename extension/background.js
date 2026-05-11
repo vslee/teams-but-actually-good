@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Background script for Teams but (actually) good.
  *
