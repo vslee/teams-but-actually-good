@@ -13,6 +13,7 @@ import { themeManager } from "./utils/themes";
 import { injectNotificationModal } from "./utils/notifications";
 import { injectStyles } from "./utils/styles";
 import notificationStyles from "./styles/notifications.css";
+import { getMainSetting, setMainSetting } from "./utils/storage";
 
 document.documentElement?.setAttribute("data-tbg-injection", "booting");
 
@@ -521,6 +522,17 @@ window.addEventListener("DOMContentLoaded", () => {
     "All systems go!",
     { duration: 30000, appName: "Test name" },
   );*/
+
+  getMainSetting("firstTimeInjection").then((value) => {
+    if (value === null) {
+      injectNotificationModal(
+        "Welcome to Teams but (actually) good!",
+        "It looks like this is your first time using the extension. Feel free to explore the settings and customize your experience. Join our Discord for support and updates!",
+        { duration: 20000 },
+      );
+      setMainSetting("firstTimeInjection", false);
+    }
+  });
 
   document.documentElement?.setAttribute("data-tbg-injection", "ready");
   easyLogger("info", "TypeScript Injection Successful!");
