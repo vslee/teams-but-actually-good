@@ -166,6 +166,29 @@
         transform: translateX(17px);
         background: #0a0a0a;
       }
+
+      .clear-btn {
+        padding: 5px 12px;
+        background: transparent;
+        border: 1px solid #3a3a3a;
+        border-radius: 6px;
+        color: #fca5a5;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+        flex-shrink: 0;
+      }
+
+      .clear-btn:hover {
+        background: rgba(252, 165, 165, 0.08);
+        border-color: #fca5a5;
+      }
+
+      .clear-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     </style>
   </head>
   <body>
@@ -219,6 +242,15 @@
             <small>Use Chrome for development</small>
           </div>
         </div>
+      </div>
+
+      <!-- Reset Teams cache -->
+      <div class="row">
+        <div class="row-label">
+          Reset Teams Cache
+          <small>Clear localStorage &amp; IndexedDB, then reload</small>
+        </div>
+        <button class="clear-btn" id="clearCacheBtn">Clear</button>
       </div>
 
       <div class="info-rows">

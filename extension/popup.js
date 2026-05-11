@@ -7,6 +7,7 @@ const currentVersionValue = document.getElementById("currentVersionValue");
 const latestVersionValue = document.getElementById("latestVersionValue");
 const activeStatusValue = document.getElementById("activeStatusValue");
 const injectionStatusValue = document.getElementById("injectionStatusValue");
+const clearCacheBtn = document.getElementById("clearCacheBtn");
 
 const META_URL = "https://github.com/LeonimusTTV/teams-but-actually-good/releases/latest/download/injection.meta.json";
 const RELEASES_API_URL = "https://api.github.com/repos/LeonimusTTV/teams-but-actually-good/releases/latest";
@@ -172,3 +173,60 @@ updateRuntimeStatus();
 
 // Clear the update badge now that the user has opened the popup.
 chrome.action.setBadgeText({ text: "" });
+
+clearCacheBtn.addEventListener("click", async () => {
+  clearCacheBtn.disabled = true;
+  clearCacheBtn.textContent = "Clearing\u2026";
+
+  try {
+    const tab = await getActiveTab();
+
+    if (!tab || !isTeamsUrl(tab.url)) {
+      clearCacheBtn.textContent = "Not on Teams";
+      setTimeout(() => {
+        clearCacheBtn.textContent = "Clear";
+        clearCacheBtn.disabled = false;
+      }, 2000);
+      return;
+    }
+
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      world: "MAIN",
+      func: async () => {
+        const TBG_PREFIX = "teams-but-good:";
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && !key.startsWith(TBG_PREFIX)) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach((key) => localStorage.removeItem(key));
+        if (typeof indexedDB !== "undefined" && typeof indexedDB.databases === "function") {
+          const dbs = await indexedDB.databases();
+          await Promise.all(
+            dbs.map(
+              ({ name }) =>
+                new Promise((resolve) => {
+                  const req = indexedDB.deleteDatabase(name);
+                  req.onsuccess = resolve;
+                  req.onerror = resolve;
+                  req.onblocked = resolve;
+                })
+            )
+          );
+        }
+      },
+    });
+
+    clearCacheBtn.textContent = "Reloading\u2026";
+    await chrome.tabs.reload(tab.id, { bypassCache: true });
+  } catch {
+    clearCacheBtn.textContent = "Failed";
+    setTimeout(() => {
+      clearCacheBtn.textContent = "Clear";
+      clearCacheBtn.disabled = false;
+    }, 2000);
+  }
+});
