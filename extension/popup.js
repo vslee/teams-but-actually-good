@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const extensionToggle = document.getElementById("extensionToggle");
 const devModeToggle = document.getElementById("devModeToggle");
 const autoReloadToggle = document.getElementById("autoReloadToggle");
