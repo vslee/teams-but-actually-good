@@ -10,6 +10,9 @@ import {
 import PluginLoader from "./utils/plugin-loader";
 import ThemeLoader from "./utils/theme-loader";
 import { themeManager } from "./utils/themes";
+import { injectNotificationModal } from "./utils/notifications";
+import { injectStyles } from "./utils/styles";
+import notificationStyles from "./styles/notifications.css";
 
 document.documentElement?.setAttribute("data-tbg-injection", "booting");
 
@@ -510,7 +513,14 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Inject stylle / other stuff
+  injectStyles(notificationStyles, "tbg-notification-styles");
   themeManager();
+  injectNotificationModal(
+    "TeamsPatcher Injection Complete",
+    "All systems go!",
+    { duration: 3000 },
+  );
 
   document.documentElement?.setAttribute("data-tbg-injection", "ready");
   easyLogger("info", "TypeScript Injection Successful!");

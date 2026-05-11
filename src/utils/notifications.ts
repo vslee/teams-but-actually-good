@@ -1,0 +1,169 @@
+import { injectStyles } from "./styles";
+
+const STYLES_ID = "tbg-notification-styles";
+const CONTAINER_ID = "tbg-notification-container";
+
+const CSS = `
+#${CONTAINER_ID} {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.tbg-notification {
+  display: flex;
+  align-items: stretch;
+  min-width: 280px;
+  max-width: 360px;
+  border-radius: var(--borderRadiusMedium, 6px);
+  box-shadow: var(--shadow16, 0 8px 16px rgba(0,0,0,0.18));
+  background: var(--colorNeutralBackground1, #fff);
+  border: 1px solid var(--colorNeutralStroke2, #e0e0e0);
+  overflow: hidden;
+  pointer-events: all;
+  animation: tbg-notification-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tbg-notification.tbg-notification-out {
+  animation: tbg-notification-out 0.2s ease forwards;
+}
+
+@keyframes tbg-notification-in {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes tbg-notification-out {
+  from { opacity: 1; transform: translateX(0); max-height: 200px; margin-bottom: 0; }
+  to   { opacity: 0; transform: translateX(32px); max-height: 0; margin-bottom: -8px; }
+}
+
+.tbg-notification-accent {
+  width: 4px;
+  flex-shrink: 0;
+  background: var(--colorBrandForegroundOnLightSelected, #8b2fc9);
+}
+
+.tbg-notification-body {
+  flex: 1;
+  padding: 12px 10px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.tbg-notification-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--colorNeutralForeground1, #242424);
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.tbg-notification-message {
+  font-size: 12px;
+  color: var(--colorNeutralForeground2, #424242);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.tbg-notification-close {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 10px 10px 0 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--colorNeutralForeground3, #616161);
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.tbg-notification-close:hover {
+  color: var(--colorNeutralForeground1, #242424);
+}
+`;
+
+function getOrCreateContainer(): HTMLElement {
+  let container = document.getElementById(CONTAINER_ID);
+  if (!container) {
+    container = document.createElement("div");
+    container.id = CONTAINER_ID;
+    const mountTarget =
+      document.querySelector<HTMLElement>(".fui-FluentProvider") ??
+      document.body;
+    mountTarget.appendChild(container);
+  }
+  return container;
+}
+
+function dismiss(toast: HTMLElement) {
+  toast.classList.add("tbg-notification-out");
+  toast.addEventListener("animationend", () => toast.remove(), { once: true });
+}
+
+export interface NotificationOptions {
+  /** Auto-dismiss delay in ms. Default 4000. Set to 0 to disable. */
+  duration?: number;
+}
+
+export function injectNotificationModal(
+  title: string,
+  message?: string,
+  options: NotificationOptions = {},
+) {
+  const { duration = 4000 } = options;
+
+  injectStyles(CSS, STYLES_ID);
+
+  const container = getOrCreateContainer();
+
+  // Toast
+  const toast = document.createElement("div");
+  toast.className = "tbg-notification";
+  toast.setAttribute("role", "alert");
+  toast.setAttribute("aria-live", "polite");
+
+  // Accent bar
+  const accent = document.createElement("div");
+  accent.className = "tbg-notification-accent";
+
+  // Body
+  const body = document.createElement("div");
+  body.className = "tbg-notification-body";
+
+  const titleEl = document.createElement("span");
+  titleEl.className = "tbg-notification-title";
+  titleEl.textContent = title;
+  body.appendChild(titleEl);
+
+  if (message) {
+    const msgEl = document.createElement("span");
+    msgEl.className = "tbg-notification-message";
+    msgEl.textContent = message;
+    body.appendChild(msgEl);
+  }
+
+  // Close button
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "tbg-notification-close";
+  closeBtn.setAttribute("aria-label", "Dismiss notification");
+  closeBtn.textContent = "✕";
+  closeBtn.addEventListener("click", () => dismiss(toast));
+
+  toast.append(accent, body, closeBtn);
+  container.appendChild(toast);
+
+  if (duration > 0) {
+    setTimeout(() => dismiss(toast), duration);
+  }
+}
