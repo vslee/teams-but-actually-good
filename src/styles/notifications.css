@@ -16,7 +16,7 @@
   max-width: 380px;
   border-radius: var(--borderRadiusLarge, 8px);
   box-shadow: var(--shadow16, 0 8px 24px rgba(0, 0, 0, 0.28));
-  background: var(--colorBrandForegroundOnLightSelected, #7b2fb8);
+  background: var(--colorBrandForegroundOnLightSelected, #444791);
   overflow: hidden;
   pointer-events: all;
   animation: tbg-notification-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
