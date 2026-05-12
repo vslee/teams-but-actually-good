@@ -9,6 +9,7 @@ import SettingModal from "./modal";
 import { Devs } from "../../data/devs";
 import { OptionType } from "../../types/types";
 import Themes from "./themes";
+import Testing from "./testing";
 
 injectStyles(styles, "teams-but-good-settings");
 
@@ -282,6 +283,7 @@ const SettingsPlugin: SettingsPluginType = {
             "boolean" &&
           pluginRegistry["Settings"].settings.enableThemes,
         ) && <Themes ReactLib={ReactLib} />}
+        <Testing ReactLib={ReactLib} />
       </div>
     );
   },
