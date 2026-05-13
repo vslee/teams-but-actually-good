@@ -8,6 +8,7 @@ const latestVersionValue = document.getElementById("latestVersionValue");
 const activeStatusValue = document.getElementById("activeStatusValue");
 const injectionStatusValue = document.getElementById("injectionStatusValue");
 const clearCacheBtn = document.getElementById("clearCacheBtn");
+const clearTbagCacheBtn = document.getElementById("clearTbagCacheBtn");
 
 const META_URL = "https://github.com/LeonimusTTV/teams-but-actually-good/releases/latest/download/injection.meta.json";
 const RELEASES_API_URL = "https://api.github.com/repos/LeonimusTTV/teams-but-actually-good/releases/latest";
@@ -173,6 +174,52 @@ updateRuntimeStatus();
 
 // Clear the update badge now that the user has opened the popup.
 chrome.action.setBadgeText({ text: "" });
+
+clearTbagCacheBtn.addEventListener("click", async () => {
+  clearTbagCacheBtn.disabled = true;
+  clearTbagCacheBtn.textContent = "Clearing\u2026";
+
+  try {
+    const tab = await getActiveTab();
+
+    if (!tab || !isTeamsUrl(tab.url)) {
+      clearTbagCacheBtn.textContent = "Not on Teams";
+      setTimeout(() => {
+        clearTbagCacheBtn.textContent = "Clear";
+        clearTbagCacheBtn.disabled = false;
+      }, 2000);
+      return;
+    }
+
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      world: "MAIN",
+      func: () => {
+        const TBG_PREFIX = "teams-but-good:";
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith(TBG_PREFIX)) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach((key) => localStorage.removeItem(key));
+      },
+    });
+
+    clearTbagCacheBtn.textContent = "Cleared";
+    setTimeout(() => {
+      clearTbagCacheBtn.textContent = "Clear";
+      clearTbagCacheBtn.disabled = false;
+    }, 2000);
+  } catch {
+    clearTbagCacheBtn.textContent = "Failed";
+    setTimeout(() => {
+      clearTbagCacheBtn.textContent = "Clear";
+      clearTbagCacheBtn.disabled = false;
+    }, 2000);
+  }
+});
 
 clearCacheBtn.addEventListener("click", async () => {
   clearCacheBtn.disabled = true;
