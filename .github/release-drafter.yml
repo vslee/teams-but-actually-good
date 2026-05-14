@@ -45,6 +45,7 @@ version-resolver:
       - "breaking"
   minor:
     labels:
+      - "feat"
       - "feature"
       - "enhancement"
   patch:
