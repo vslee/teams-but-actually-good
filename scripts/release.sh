@@ -26,7 +26,13 @@ git commit -m "chore: release v$VERSION"
 git push origin "$BRANCH"
 
 gh pr create --title "chore: release v$VERSION" --body "Release v$VERSION" --base main --head "$BRANCH"
+
+echo "Waiting for checks to register..."
+while ! gh pr checks 2>/dev/null | grep -q .; do
+  sleep 3
+done
 gh pr checks --watch
+
 gh pr merge --merge --delete-branch
 
 git checkout main
