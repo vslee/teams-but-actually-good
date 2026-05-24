@@ -12,11 +12,10 @@ A browser extension (and optional Tauri desktop wrapper) that patches Microsoft 
 ## Features
 
 - Easy to install and use
-- Extension available in for Chromium based browser, firefox based browser and Safari
+- Extension available for Chromium-based browsers (Edge included), firefox based browser and Safari
 - Custom themes
 - Custom plugins
-- Maintenaned
-- Removed Teams telemetry and analytics (broken for now :c)
+- Maintained
 
 ## Documentation
 
@@ -24,7 +23,7 @@ The documentation is available here at https://docs.teamsbutactuallygood.dev
 
 ## Discord server
 
-todo :3
+*In construction*
 
 ## Star History
 
@@ -42,8 +41,8 @@ Thanks a lot to [Vencord](https://github.com/Vendicated/Vencord) which gave me t
 
 ## Logo
 
-Yes the Logo is made with AI, I'm not good enough nor did wanted at the time of doing it to pay someone for that logo (monies is low), but I'm always open for someone to redo the current logo themself (I can pay a bit if needed ^^)
+The logo was AI-generated. Contributions of an original logo are welcome!
 
 ## Information
 
-This is a client-side mod. It doesn't violate Teams' terms of service. Use your judgment in corporate environments.
+This is a client-side mod with no server-side component. Use at your own discretion in corporate environments.
