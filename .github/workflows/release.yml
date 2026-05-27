@@ -214,7 +214,8 @@ jobs:
       - name: Package macOS Safari app
         run: |
           mkdir -p dist
-          zip -r "dist/safari-extension-macos.zip" "$RUNNER_TEMP/safari-export/Teams but (actually) good.app"
+          cd "$RUNNER_TEMP/safari-export"
+          zip -r "$GITHUB_WORKSPACE/dist/safari-extension-macos.zip" "Teams but (actually) good.app"
 
       - name: Upload Safari artifact
         uses: actions/upload-artifact@v4
