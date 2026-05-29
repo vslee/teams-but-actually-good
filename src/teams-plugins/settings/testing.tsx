@@ -39,6 +39,23 @@ export default function Testing({ ReactLib }: { ReactLib: typeof React }) {
           </div>
         </div>
       </div>
+      <div className="tbg-plugin-container">
+        <div className="tbg-plugin-header">
+          <span className="tbg-plugin-name">
+            Reload Teams (useful for the Tauri app)
+          </span>
+          <div className="tbg-plugin-controls">
+            <button
+              className="tbg-button-secondary"
+              onClick={() => {
+                window.location.reload();
+              }}
+            >
+              Reload
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
