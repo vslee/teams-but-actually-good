@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::fs;
 use std::path::PathBuf;
+use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
+use tauri::tray::TrayIconBuilder;
 use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
 use tauri_plugin_notification::NotificationExt;
 use tauri_plugin_updater::UpdaterExt;
@@ -237,6 +239,63 @@ pub fn run() {
             .initialization_script(&js_injection)
             .user_agent(_user_agent)
             .build()?;
+
+            let clear_tbag = MenuItem::with_id(app, "clear_tbag", "Clear TBAG Cache", true, None::<&str>)?;
+            let clear_teams = MenuItem::with_id(app, "clear_teams", "Clear Teams Cache", true, None::<&str>)?;
+            let sep = PredefinedMenuItem::separator(app)?;
+            let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+            let tray_menu = Menu::with_items(app, &[&clear_tbag, &clear_teams, &sep, &quit_item])?;
+
+            if let Some(icon) = app.default_window_icon() {
+                TrayIconBuilder::new()
+                    .icon(icon.clone())
+                    .menu(&tray_menu)
+                    .show_menu_on_left_click(true)
+                    .on_menu_event(|app, event| match event.id.as_ref() {
+                        "clear_tbag" => {
+                            if let Ok((inj, meta)) = cached_paths(app) {
+                                let _ = std::fs::remove_file(&inj);
+                                let _ = std::fs::remove_file(&meta);
+                            }
+                            let _ = app
+                                .notification()
+                                .builder()
+                                .title("Teams but (actually) good")
+                                .body("TBAG cache cleared. Patch will be re-downloaded on next launch.")
+                                .show();
+                        }
+                        "clear_teams" => {
+                            if let Some(window) = app.get_webview_window("main") {
+                                let _ = window.eval(r#"
+                                    (async () => {
+                                        try { localStorage.clear(); } catch(e) {}
+                                        try { sessionStorage.clear(); } catch(e) {}
+                                        try {
+                                            const regs = await navigator.serviceWorker.getRegistrations();
+                                            await Promise.all(regs.map(r => r.unregister()));
+                                        } catch(e) {}
+                                        try {
+                                            const keys = await caches.keys();
+                                            await Promise.all(keys.map(k => caches.delete(k)));
+                                        } catch(e) {}
+                                        try {
+                                            const dbs = await indexedDB.databases();
+                                            await Promise.all(dbs.map(db => new Promise(res => {
+                                                const req = indexedDB.deleteDatabase(db.name);
+                                                req.onsuccess = res;
+                                                req.onerror = res;
+                                            })));
+                                        } catch(e) {}
+                                        window.location.href = 'https://teams.microsoft.com/v2/?clientType=chrome';
+                                    })();
+                                "#);
+                            }
+                        }
+                        "quit" => app.exit(0),
+                        _ => {}
+                    })
+                    .build(app)?;
+            }
 
             Ok(())
         })
