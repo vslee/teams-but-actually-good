@@ -1,5 +1,7 @@
 import { Plugin } from "../../interface";
+import { IPluginOptionComponentProps, OptionType } from "../../types/types";
 import { getPluginSetting, setPluginSetting } from "../../utils/storage";
+import * as React from "react";
 
 type UserInfo = Array<{
   id: string;
@@ -8,6 +10,7 @@ type UserInfo = Array<{
 }>;
 
 let userList: UserInfo = [];
+let pollingInterval: ReturnType<typeof setInterval> | null = null;
 
 interface CustomNamePlugin extends Plugin {
   showModal(internalId: string): void;
@@ -25,6 +28,7 @@ type ConversationRecord = {
       displayName: string;
     }[];
     shortTitle: string;
+    longTitle: string;
   };
   id: string;
 };
@@ -36,11 +40,50 @@ async function main() {
     userList = [];
   }
 
+  const db = await getConversationDB();
+
+  // check if the db is accessible, if not we can't do much so we just return and hope the user restarts Teams or opens the right view to make it accessible, which will trigger the name edits to be applied through the watcher
+  if (!db) {
+    return;
+  }
+
   await getAllUsersFromDB();
 
   await setPluginSetting(customName.name, "userList", userList);
 
   await applyNameEdits();
+
+  startWatching();
+}
+
+// small polling to detect changes in the conversation list and apply name edits, since there's no event we can subscribe to for that
+async function startWatching() {
+  if (pollingInterval) return;
+
+  let lastSnapshot = "";
+
+  pollingInterval = setInterval(async () => {
+    const db = await getConversationDB();
+    const tx = db!.transaction("conversations", "readonly");
+    const store = tx.objectStore("conversations");
+    const records: ConversationRecord[] = await new Promise(
+      (res) =>
+        (store.getAll().onsuccess = (e) =>
+          res((e.target as IDBRequest).result)),
+    );
+    db!.close();
+
+    // small hash to see if anything changed since last check, to avoid unnecessary writes to the DB
+    const snapshot = records
+      .map((r) => r?.chatTitle?.avatarUsersInfo?.[0]?.displayName)
+      .join("|");
+
+    if (snapshot !== lastSnapshot) {
+      lastSnapshot = snapshot;
+      console.log("Changes detected, applying name edits...");
+      await applyNameEdits();
+    }
+  }, 2000);
 }
 
 async function getConversationDB() {
@@ -91,7 +134,7 @@ async function getAllUsersFromDB() {
   }
 }
 
-async function applyNameEdits() {
+async function applyNameEdits(reset: boolean = false) {
   const db = await getConversationDB();
 
   const tx = db!.transaction("conversations", "readwrite");
@@ -107,9 +150,15 @@ async function applyNameEdits() {
     const user = userList.find((user) => user.id === record.id);
     if (!user) continue;
 
-    record.chatTitle.avatarUsersInfo[0].displayName =
-      user.customName || user.defaultName;
-    record.chatTitle.shortTitle = user.customName || user.defaultName;
+    record.chatTitle.avatarUsersInfo[0].displayName = reset
+      ? user.defaultName
+      : user.customName || user.defaultName;
+    record.chatTitle.shortTitle = reset
+      ? user.defaultName
+      : user.customName || user.defaultName;
+    record.chatTitle.longTitle = reset
+      ? user.defaultName
+      : user.customName || user.defaultName;
     store.put(record);
   }
 
@@ -117,10 +166,35 @@ async function applyNameEdits() {
   db!.close();
 }
 
+function resetButton({ ReactLib }: IPluginOptionComponentProps) {
+  void ReactLib;
+
+  const handleReset = async () => {
+    console.log("Resetting custom names...");
+    await applyNameEdits(true);
+    setPluginSetting(customName.name, "userList", []);
+    userList = [];
+    window.location.reload();
+  };
+
+  /** @jsx ReactLib.createElement */
+  return (
+    <button className="tbg-button-primary" onClick={handleReset}>
+      Reset all custom names (requires reload)
+    </button>
+  );
+}
+
 const customName: CustomNamePlugin = {
   name: "CustomName",
   description: "Change the name of people in Teams.",
   mainEntry: main,
+  settingsDef: {
+    resetButton: {
+      type: OptionType.COMPONENT,
+      component: resetButton,
+    },
+  },
 
   showModal(internalId: string) {
     const user = userList.find((u) => u.id === internalId);
@@ -137,7 +211,7 @@ const customName: CustomNamePlugin = {
       setPluginSetting(customName.name, "userList", userList);
       await applyNameEdits();
       close();
-      window.location.reload();
+      // window.location.reload();
     };
 
     const backdrop = document.createElement("div");
@@ -197,7 +271,7 @@ const customName: CustomNamePlugin = {
     const saveBtn = document.createElement("button");
     saveBtn.className = "tbg-button-primary";
     saveBtn.style.marginBottom = "5px";
-    saveBtn.textContent = "Save and Restart";
+    saveBtn.textContent = "Save and close";
     saveBtn.addEventListener("click", async () => {
       user.customName = input.value.trim();
 
@@ -206,7 +280,7 @@ const customName: CustomNamePlugin = {
 
     const resetBtn = document.createElement("button");
     resetBtn.className = "tbg-button-secondary";
-    resetBtn.textContent = "Reset and Restart";
+    resetBtn.textContent = "Reset and close";
     resetBtn.addEventListener("click", async () => {
       input.value = "";
       user.customName = "";
