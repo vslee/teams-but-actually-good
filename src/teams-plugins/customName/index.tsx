@@ -2,6 +2,8 @@ import { Plugin } from "../../interface";
 import { IPluginOptionComponentProps, OptionType } from "../../types/types";
 import { getPluginSetting, setPluginSetting } from "../../utils/storage";
 import * as React from "react";
+import userSVGUrl from "../../svgs/user.svg";
+import createIcon from "../../utils/icon";
 
 type UserInfo = Array<{
   id: string;
@@ -16,9 +18,8 @@ interface CustomNamePlugin extends Plugin {
   showModal(internalId: string): void;
   renderCustomNameButton(
     props: { selectedId: string; conversationData: { internalId: string } },
-    createElement: (type: unknown, props?: Record<string, unknown>) => unknown,
-    component: unknown,
-    icon: unknown,
+    createElement: typeof React.createElement,
+    component: string,
   ): unknown;
 }
 
@@ -299,13 +300,14 @@ const customName: CustomNamePlugin = {
     input.focus();
   },
 
-  renderCustomNameButton(props, createElement, component, icon) {
+  renderCustomNameButton(props, createElement, component) {
     const onClick = (e?: MouseEvent) => {
       e?.stopPropagation();
       this.showModal(props.conversationData.internalId);
     };
+
     return createElement(component, {
-      icon: createElement(icon, {}),
+      icon: createIcon(userSVGUrl, createElement),
       onClick,
       "data-testid": "edit-display-name-menu-item",
       children: "Edit display name",
@@ -320,7 +322,7 @@ const customName: CustomNamePlugin = {
           match:
             /(return\(0,(\w+\.\w+)\)\((\w+\.\w+),{icon:\(0,\w+\.\w+\)\((\w+\.\w+),{}\),onClick:(\w+),"data-testid":"chat-manage-apps-menu-item",children:(\w+)}\)};)/,
           replace:
-            "$1const customNameButton=i=>$self.renderCustomNameButton(i,$2,$3,$4);",
+            "$1const customNameButton=i=>$self.renderCustomNameButton(i,$2,$3);",
         },
         {
           match:
