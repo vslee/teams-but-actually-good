@@ -305,14 +305,21 @@ const SettingsPlugin: SettingsPluginType = {
         replace: "=>$self.addCustomContent($2),$1",
       },
     },
-    // Allow you to change the displayed name of the settings tab
-    // by modifying the local files with the translation key
     {
       find: /app_title:"{{title}}",/,
       replacement: {
         match: /(app_title:"{{title}}",)/,
         replace: '$1plugin_settings:"Teams But (actually) Good Settings",',
       },
+    },
+    {
+      find: '("framework","accessibility_juno");return(0',
+      replacement: [
+        {
+          match: /(\[\w+\.\w+\.TeamsLabs]:(\w+\.\w+))/,
+          replace: "$1,['plugin_settings']:$2",
+        },
+      ],
     },
   ],
 };
