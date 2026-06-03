@@ -4,6 +4,7 @@ import { getPluginSetting, setPluginSetting } from "../../utils/storage";
 import * as React from "react";
 import userSVGUrl from "../../svgs/user.svg";
 import createIcon from "../../utils/icon";
+import { injectNotificationModal } from "../../utils/notifications";
 
 type UserInfo = Array<{
   id: string;
@@ -211,6 +212,10 @@ const customName: CustomNamePlugin = {
     const handleSave = async () => {
       setPluginSetting(customName.name, "userList", userList);
       await applyNameEdits();
+      injectNotificationModal(
+        "Display name updated",
+        "Your changes have been saved. Please restart Teams to see the changes.",
+      );
       close();
       // window.location.reload();
     };
