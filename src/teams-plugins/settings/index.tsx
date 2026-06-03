@@ -274,6 +274,8 @@ const SettingsPlugin: SettingsPluginType = {
               ReactLib={ReactLib}
               plugin={activePlugin}
               onClose={() => setActivePlugin(null)}
+              needRestart={needRestart}
+              setNeedRestart={setNeedRestart}
             />
           )}
         </div>
