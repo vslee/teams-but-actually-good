@@ -5,6 +5,7 @@ import * as React from "react";
 import userSVGUrl from "../../svgs/user.svg";
 import createIcon from "../../utils/icon";
 import { injectNotificationModal } from "../../utils/notifications";
+import { Devs } from "../../data/devs";
 
 type UserInfo = Array<{
   id: string;
@@ -190,6 +191,7 @@ function resetButton({ ReactLib }: IPluginOptionComponentProps) {
 const customName: CustomNamePlugin = {
   name: "CustomName",
   description: "Change the name of people in Teams.",
+  author: Devs.LeonimusT,
   mainEntry: main,
   settingsDef: {
     resetButton: {

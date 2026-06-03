@@ -2,6 +2,7 @@ import { Plugin } from "../../interface";
 import { IPluginOptionComponentProps, OptionType } from "../../types/types";
 import * as React from "react";
 import { getPluginSetting } from "../../utils/storage";
+import { Devs } from "../../data/devs";
 
 function UserSelectorComponent({
   setValue,
@@ -147,6 +148,7 @@ const startupUserPlugin: StartupUserPlugin = {
   name: "StartupUser",
   description:
     "Allow you to choose which user chat Teams will open on startup.",
+  author: Devs.LeonimusT,
   availableInputButtons: [] as Array<{ key: string; name: string }>,
   settingsDef: {
     selectedButtons: {

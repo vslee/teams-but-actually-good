@@ -1,3 +1,4 @@
+import { Devs } from "../../data/devs";
 import { Plugin } from "../../interface";
 
 function simulateActivity() {
@@ -25,6 +26,7 @@ function keepUserOnline() {
 const status: Plugin = {
   name: "NeverGoIdle",
   description: "Always show that you're online.",
+  author: Devs.LeonimusT,
   patches: [],
   mainEntry: keepUserOnline,
 };

@@ -1,3 +1,4 @@
+import { Devs } from "../../data/devs";
 import { Plugin } from "../../interface";
 import { KiplyGifResponse } from "../../types/types";
 
@@ -187,6 +188,7 @@ interface GifsPlugin extends Plugin {
 const betterGifs: GifsPlugin = {
   name: "BetterGifs",
   description: "Use Kiply for gifs.",
+  author: Devs.LeonimusT,
   setUpdate: null,
   setUpdateUnifiedGifPicker: null,
 
