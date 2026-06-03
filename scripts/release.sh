@@ -37,6 +37,5 @@ gh pr merge --merge --delete-branch
 
 git checkout main
 git pull origin main
-git branch -d "$BRANCH"
 git tag "v$VERSION"
 git push origin "v$VERSION"
