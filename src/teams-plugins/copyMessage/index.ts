@@ -33,7 +33,6 @@ const copyMessage: copyMessagePlugin = {
   settingsDef: {
     copyMessageFormat: {
       type: OptionType.SELECT,
-      restartNeeded: true,
       options: [
         { label: "Plain text", value: "plain", default: true },
         { label: "HTML", value: "html" },
