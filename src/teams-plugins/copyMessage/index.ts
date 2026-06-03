@@ -2,22 +2,27 @@ import { Plugin } from "../../interface";
 import createIcon from "../../utils/icon";
 import userSVGUrl from "../../svgs/user.svg";
 import * as React from "react";
+import { injectNotificationModal } from "../../utils/notifications";
 
 interface copyMessagePlugin extends Plugin {
   renderCopyMessageButton(
     props: {
-      actionMenuProps: any;
-      menuItemProps: any;
-      MenuItemComponent: any;
-      biTelemetry: any;
+      actionMenuProps: { message: { content: string } };
+      menuItemProps: React.HTMLAttributes<HTMLElement>;
+      MenuItemComponent: React.PropsWithChildren;
     },
-    composent: (cProps: any) => unknown,
+    composent: (cProps: {
+      wrapperElement: React.PropsWithChildren;
+      wrapperElementProps: {
+        onClick: (e?: MouseEvent) => void;
+      };
+    }) => unknown,
   ): unknown;
 
   renderCopyMessageComposent(
     createElement: typeof React.createElement,
-    wrapperElement: any,
-    wrapperElementProps: any,
+    wrapperElement: React.HTMLElementType,
+    wrapperElementProps: React.PropsWithChildren,
   ): unknown;
 }
 
@@ -31,15 +36,20 @@ const copyMessage: copyMessagePlugin = {
 
     const onClick = (e?: MouseEvent) => {
       e?.stopPropagation();
-      const text = k?.content ?? k?.body ?? "";
+      const text = k?.content ?? "";
       navigator.clipboard.writeText(text);
-      console.log("Copied:", text);
+      injectNotificationModal(
+        "Copied to clipboard",
+        "Message was successfully copied to clipboard.",
+      );
     };
 
     return composent({
       wrapperElement: MenuItemComponent,
-      wrapperElementProps: menuItemProps,
-      onClick,
+      wrapperElementProps: {
+        ...menuItemProps,
+        onClick,
+      },
     });
   },
 
@@ -48,19 +58,12 @@ const copyMessage: copyMessagePlugin = {
     wrapperElement,
     wrapperElementProps,
   ) {
-    // wrapperElement peut être undefined si appelé depuis copyMessageButton directement
     const Wrapper = wrapperElement ?? "div";
-
-    const onClick = (e?: MouseEvent) => {
-      e?.stopPropagation();
-      console.log("Copy message composent clicked");
-    };
 
     return createElement(Wrapper, {
       ...wrapperElementProps,
       content: "Copy message",
       icon: createIcon(userSVGUrl, createElement),
-      onClick,
       "data-tid": "message-action-copy-content",
       floated: "right",
       disabled: false,
@@ -75,23 +78,36 @@ const copyMessage: copyMessagePlugin = {
       replacement: [
         {
           match:
-            /(\((\w+),{\.\.\.\w+,content:\w+,"data-tid":"message-actions-copy-link",floated:"right",onClick:\w+,disabled:\w+,icon:\(0,(\w+\.\w+)\)\(\w+\.\w+,{}\),title:\w+,"aria-label":\w+}\)})/,
+            /(\((\w+),{\.\.\.\w+,content:\w+,"data-tid":"message-actions-copy-link",floated:"right",onClick:\w+,disabled:\w+,icon:\(0,(\w+)\.(\w+)\)\(\w+\.\w+,{}\),title:\w+,"aria-label":\w+}\)})/,
           replace:
-            "$1,copyMessageButtonComposent=(cProps)=>$self.renderCopyMessageComposent(cProps.wrapperElement,cProps.wrapperElementProps)",
+            "$1,copyMessageButtonComposent=(cProps)=>$self.renderCopyMessageComposent($3.$4,cProps.wrapperElement,cProps.wrapperElementProps)",
         },
         {
           match:
             /((\w+\.\w+)\)\(\w+,{onClick:\w+,wrapperElement:(\w+),wrapperElementProps:(\w+),biTelemetry:\w+,isChat:\w+,channelType:\w+,messageType:\w+\.__typename,skillType:\w+\.botMetadata\?\.botTelemetryMessageType\?\?void 0,messageId:(\w+)\.id\?\?void 0,replyTo:\w+\.botMetadata\?\.replyToId\?\?void 0}\):null},)/,
           replace:
-            "$1copyMessageButton=(i)=>$self.renderCopyMessageButton($2,i,copyMessageButtonComposent),",
+            "$1copyMessageButton=(i)=>$self.renderCopyMessageButton(i,copyMessageButtonComposent),",
         },
         {
           match:
             /({id:"copy-link",Component:\w+,hasDivider:!1,shouldRender:(\w+)},)/,
           replace:
-            '{id:"copy-link",Component:copyMessageButton,hasDivider:!1,shouldRender:$2},',
+            '$1{id:"copy-message",Component:copyMessageButton,hasDivider:!1,shouldRender:$2},',
+        },
+        {
+          match:
+            /(\w+)=\((\w+),(\w+)\)=>\3\.filter\((\w+)=>\2\.includes\(\4\.id\)\)/,
+          replace:
+            '$1=($2,$3)=>$3.filter($4=>$2.includes($4.id)||$4.id==="copy-message")',
         },
       ],
+    },
+    {
+      find: 'reply","follow","forward"',
+      replacement: {
+        match: /(reply","follow","forward")/,
+        replace: '$1,"copy-message",',
+      },
     },
   ],
 };
