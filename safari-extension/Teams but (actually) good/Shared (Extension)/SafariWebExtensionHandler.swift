@@ -2,7 +2,7 @@
 //  SafariWebExtensionHandler.swift
 //  Shared (Extension)
 //
-//  Created by Leo on 29.05.26.
+//  Created by Leo on 03.06.26.
 //
 
 import SafariServices
