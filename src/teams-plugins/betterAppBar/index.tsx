@@ -1,3 +1,4 @@
+import { Devs } from "../../data/devs";
 import { Plugin } from "../../interface";
 import { IPluginOptionComponentProps, OptionType } from "../../types/types";
 import * as React from "react";
@@ -80,6 +81,7 @@ interface BetterAppBarPlugin extends Plugin {
 const betterAppBar: BetterAppBarPlugin = {
   name: "BetterAppBar",
   description: "Shows only selected channels in the channel list.",
+  author: Devs.LeonimusT,
   availableChannels: [] as Array<{ key: string; name: string }>,
   settingsDef: {
     selectedChannels: {

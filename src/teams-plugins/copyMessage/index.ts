@@ -4,6 +4,7 @@ import copySVGUrl from "../../svgs/copy.svg";
 import * as React from "react";
 import { injectNotificationModal } from "../../utils/notifications";
 import { OptionType } from "../../types/types";
+import { Devs } from "../../data/devs";
 
 interface copyMessagePlugin extends Plugin {
   renderCopyMessageButton(
@@ -30,6 +31,7 @@ interface copyMessagePlugin extends Plugin {
 const copyMessage: copyMessagePlugin = {
   name: "CopyMessage",
   description: "Allow you to copy messages.",
+  author: Devs.LeonimusT,
   settingsDef: {
     copyMessageFormat: {
       type: OptionType.SELECT,

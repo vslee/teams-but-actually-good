@@ -1,3 +1,4 @@
+import { Devs } from "../../data/devs";
 import { Plugin } from "../../interface";
 import { IPluginOptionComponentProps, OptionType } from "../../types/types";
 import * as React from "react";
@@ -68,6 +69,7 @@ interface BetterInputBarPlugin extends Plugin {
 const betterInputBar: BetterInputBarPlugin = {
   name: "BetterInputBar",
   description: "Remove useless buttons from the input bar.",
+  author: Devs.LeonimusT,
   availableInputButtons: [] as Array<{ key: string; name: string }>,
   settingsDef: {
     selectedButtons: {
