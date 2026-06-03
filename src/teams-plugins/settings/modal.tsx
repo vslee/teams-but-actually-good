@@ -13,6 +13,8 @@ interface SettingModalProps {
   ReactLib: typeof React;
   plugin: Plugin;
   onClose(): void;
+  needRestart?: boolean;
+  setNeedRestart?: (need: boolean) => void;
 }
 
 function renderAuthors(
@@ -254,11 +256,12 @@ export default function SettingModal({
   ReactLib,
   plugin,
   onClose,
+  needRestart,
+  setNeedRestart,
 }: SettingModalProps) {
   const [values, setValues] = ReactLib.useState<Record<string, unknown>>(
     plugin.settings ?? {},
   );
-  const [needsRestart, setNeedsRestart] = ReactLib.useState(false);
 
   function handleChange(
     key: string,
@@ -273,7 +276,7 @@ export default function SettingModal({
     if (plugin.settings) plugin.settings[key] = newValue;
     def.onChange?.(newValue);
     if (def.type !== OptionType.CUSTOM && def.restartNeeded)
-      setNeedsRestart(true);
+      setNeedRestart?.(true);
   }
 
   function handleBackdropClick(e: React.MouseEvent<HTMLDivElement>) {
@@ -326,7 +329,7 @@ export default function SettingModal({
           )}
         </div>
         <div className="tbg-modal-footer">
-          {needsRestart ? (
+          {needRestart ? (
             <button
               className="tbg-button-primary"
               onClick={() => window.location.reload()}
