@@ -131,7 +131,7 @@ async function fetchKiply(search: string): Promise<void> {
         | GifsPlugin
         | undefined;
       plugin?.setUpdate?.((n: number) => n + 1);
-      plugin?.setConsentUpdate?.((n: number) => n + 1);
+      plugin?.setUpdateUnifiedGifPicker?.((n: number) => n + 1);
     }, 0);
   } catch (err) {
     console.error("[BetterGifs] fetch failed:", err);
@@ -175,7 +175,7 @@ type GifChild = { key: string; props: Record<string, unknown> };
 
 interface GifsPlugin extends Plugin {
   setUpdate: ((...args: unknown[]) => void) | null;
-  setConsentUpdate: ((...args: unknown[]) => void) | null;
+  setUpdateUnifiedGifPicker: ((...args: unknown[]) => void) | null;
   isKiplyLoading(): boolean;
   gifPicker(items: GifItem[], customSearchTerm?: string): GifItem[];
   changeDefaultCategories(categories: GifChild[]): GifChild[];
@@ -188,7 +188,7 @@ const betterGifs: GifsPlugin = {
   name: "BetterGifs",
   description: "Use Kiply for gifs.",
   setUpdate: null,
-  setConsentUpdate: null,
+  setUpdateUnifiedGifPicker: null,
 
   isKiplyLoading(): boolean {
     return (
@@ -333,7 +333,7 @@ const betterGifs: GifsPlugin = {
         {
           match: /(\w+)(\.useEffect\()/,
           replace:
-            "($self._r2=$1.useState(0),$self.setConsentUpdate=$self._r2[1]),$1$2",
+            "($self._r2=$1.useState(0),$self.setUpdateUnifiedGifPicker=$self._r2[1]),$1$2",
         },
       ],
     },
