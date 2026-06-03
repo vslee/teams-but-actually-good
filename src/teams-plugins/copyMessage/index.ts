@@ -1,6 +1,6 @@
 import { Plugin } from "../../interface";
 import createIcon from "../../utils/icon";
-import userSVGUrl from "../../svgs/user.svg";
+import copySVGUrl from "../../svgs/copy.svg";
 import * as React from "react";
 import { injectNotificationModal } from "../../utils/notifications";
 import { OptionType } from "../../types/types";
@@ -90,7 +90,7 @@ const copyMessage: copyMessagePlugin = {
     return createElement(Wrapper, {
       ...wrapperElementProps,
       content: "Copy message",
-      icon: createIcon(userSVGUrl, createElement),
+      icon: createIcon(copySVGUrl, createElement),
       "data-tid": "message-action-copy-content",
       floated: "right",
       disabled: false,
