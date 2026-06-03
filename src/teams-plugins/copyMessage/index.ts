@@ -3,6 +3,7 @@ import createIcon from "../../utils/icon";
 import userSVGUrl from "../../svgs/user.svg";
 import * as React from "react";
 import { injectNotificationModal } from "../../utils/notifications";
+import { OptionType } from "../../types/types";
 
 interface copyMessagePlugin extends Plugin {
   renderCopyMessageButton(
@@ -29,15 +30,40 @@ interface copyMessagePlugin extends Plugin {
 const copyMessage: copyMessagePlugin = {
   name: "CopyMessage",
   description: "Allow you to copy messages.",
+  settingsDef: {
+    copyMessageFormat: {
+      type: OptionType.SELECT,
+      options: [
+        { label: "Plain text", value: "plain", default: true },
+        { label: "HTML", value: "html" },
+      ],
+      description: "Format to copy message content.",
+    },
+  },
 
   renderCopyMessageButton(props, composent) {
     const { actionMenuProps, menuItemProps, MenuItemComponent } = props;
     const { message: k } = actionMenuProps;
 
+    const stripHtml = (html: string) => {
+      if (!html) return "";
+      return html
+        .replace(/<img[^>]*\balt="([^"]*)"[^>]*\/?>/gi, "$1")
+        .replace(/<[^>]*>/g, "")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'");
+    };
+
     const onClick = (e?: MouseEvent) => {
       e?.stopPropagation();
       const text = k?.content ?? "";
-      navigator.clipboard.writeText(text);
+      const textFormated =
+        this.settings?.copyMessageFormat === "html" ? text : stripHtml(text);
+      navigator.clipboard.writeText(textFormated);
       injectNotificationModal(
         "Copied to clipboard",
         "Message was successfully copied to clipboard.",
