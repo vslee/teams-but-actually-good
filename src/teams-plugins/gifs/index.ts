@@ -131,6 +131,7 @@ async function fetchKiply(search: string): Promise<void> {
         | GifsPlugin
         | undefined;
       plugin?.setUpdate?.((n: number) => n + 1);
+      plugin?.setConsentUpdate?.((n: number) => n + 1);
     }, 0);
   } catch (err) {
     console.error("[BetterGifs] fetch failed:", err);
@@ -174,6 +175,7 @@ type GifChild = { key: string; props: Record<string, unknown> };
 
 interface GifsPlugin extends Plugin {
   setUpdate: ((...args: unknown[]) => void) | null;
+  setConsentUpdate: ((...args: unknown[]) => void) | null;
   isKiplyLoading(): boolean;
   gifPicker(items: GifItem[], customSearchTerm?: string): GifItem[];
   changeDefaultCategories(categories: GifChild[]): GifChild[];
@@ -182,10 +184,11 @@ interface GifsPlugin extends Plugin {
   setCategoryOpened(category: string): string;
 }
 
-const Gifs: GifsPlugin = {
+const betterGifs: GifsPlugin = {
   name: "BetterGifs",
   description: "Use Kiply for gifs.",
   setUpdate: null,
+  setConsentUpdate: null,
 
   isKiplyLoading(): boolean {
     return (
@@ -284,15 +287,6 @@ const Gifs: GifsPlugin = {
       return this.defaultGifsSearch(children);
     }
 
-    /*if (children[0]?.props?.emoji != null) {
-      console.log(
-        "[BetterGifs] manageGifsCategoryEmojis called with:",
-        children,
-      );
-
-      return this.addEmojis(children);
-    }*/
-
     if (children[0]?.key != "") return children;
 
     return this.changeDefaultCategories(children);
@@ -333,9 +327,19 @@ const Gifs: GifsPlugin = {
         replace: "$2.children=$self.manageGifsCategoryEmojis($2.children);$1",
       },
     },
+    {
+      find: '="unified_picker_gifs_section_title',
+      replacement: [
+        {
+          match: /(\w+)(\.useEffect\()/,
+          replace:
+            "($self._r2=$1.useState(0),$self.setConsentUpdate=$self._r2[1]),$1$2",
+        },
+      ],
+    },
   ],
 
   mainEntry: addEventListenerToInput,
 };
 
-export default Gifs;
+export default betterGifs;
