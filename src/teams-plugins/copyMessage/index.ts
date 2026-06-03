@@ -107,13 +107,7 @@ const copyMessage: copyMessagePlugin = {
           match:
             /(\((\w+),{\.\.\.\w+,content:\w+,"data-tid":"message-actions-copy-link",floated:"right",onClick:\w+,disabled:\w+,icon:\(0,(\w+)\.(\w+)\)\(\w+\.\w+,{}\),title:\w+,"aria-label":\w+}\)})/,
           replace:
-            "$1,copyMessageButtonComposent=(cProps)=>$self.renderCopyMessageComposent($3.$4,cProps.wrapperElement,cProps.wrapperElementProps)",
-        },
-        {
-          match:
-            /((\w+\.\w+)\)\(\w+,{onClick:\w+,wrapperElement:(\w+),wrapperElementProps:(\w+),biTelemetry:\w+,isChat:\w+,channelType:\w+,messageType:\w+\.__typename,skillType:\w+\.botMetadata\?\.botTelemetryMessageType\?\?void 0,messageId:(\w+)\.id\?\?void 0,replyTo:\w+\.botMetadata\?\.replyToId\?\?void 0}\):null},)/,
-          replace:
-            "$1copyMessageButton=(i)=>$self.renderCopyMessageButton(i,copyMessageButtonComposent),",
+            "$1,copyMessageButtonComposent=(cProps)=>$self.renderCopyMessageComposent($3.$4,cProps.wrapperElement,cProps.wrapperElementProps),copyMessageButton=(i)=>$self.renderCopyMessageButton(i,copyMessageButtonComposent)",
         },
         {
           match:
@@ -125,7 +119,7 @@ const copyMessage: copyMessagePlugin = {
           match:
             /(\w+)=\((\w+),(\w+)\)=>\3\.filter\((\w+)=>\2\.includes\(\4\.id\)\)/,
           replace:
-            '$1=($2,$3)=>$3.filter($4=>$2.includes($4.id)||$4.id==="copy-message")',
+            '$1=($2,$3)=>$3.filter($4=>$2.includes($4.id)||($4.id==="copy-message"&&$2.includes("copy-link")))',
         },
       ],
     },
