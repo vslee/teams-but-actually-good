@@ -22,11 +22,11 @@ function keepUserOnline() {
   setInterval(simulateActivity, 30_000);
 }
 
-const Status: Plugin = {
+const status: Plugin = {
   name: "NeverGoIdle",
   description: "Always show that you're online.",
   patches: [],
   mainEntry: keepUserOnline,
 };
 
-export default Status;
+export default status;

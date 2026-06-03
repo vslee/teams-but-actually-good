@@ -33,7 +33,7 @@ interface SettingsPluginType extends Plugin {
   addCustomContent(ReactLib: typeof React): React.JSX.Element;
 }
 
-const SettingsPlugin: SettingsPluginType = {
+const settingsPlugin: SettingsPluginType = {
   name: "Settings",
   description: "Adds custom settings tabs to Teams settings panel",
   enableByDefault: true,
@@ -326,4 +326,4 @@ const SettingsPlugin: SettingsPluginType = {
   ],
 };
 
-export default SettingsPlugin;
+export default settingsPlugin;
