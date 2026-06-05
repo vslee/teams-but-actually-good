@@ -45,6 +45,12 @@ const settingsPlugin: SettingsPluginType = {
       default: true,
       restartNeeded: true,
     },
+    enableTesting: {
+      type: OptionType.BOOLEAN,
+      description: "Enable testing section",
+      default: true,
+      restartNeeded: true,
+    },
   },
 
   addNewChildren(elementsProp: {
@@ -280,12 +286,17 @@ const settingsPlugin: SettingsPluginType = {
           )}
         </div>
         {Boolean(
-          pluginRegistry["Settings"]?.settings &&
-          typeof pluginRegistry["Settings"].settings.enableThemes ===
+          pluginRegistry[settingsPlugin.name]?.settings &&
+          typeof pluginRegistry[settingsPlugin.name].settings?.enableThemes ===
             "boolean" &&
-          pluginRegistry["Settings"].settings.enableThemes,
+          pluginRegistry[settingsPlugin.name].settings?.enableThemes,
         ) && <Themes ReactLib={ReactLib} />}
-        <Testing ReactLib={ReactLib} />
+        {Boolean(
+          pluginRegistry[settingsPlugin.name]?.settings &&
+          typeof pluginRegistry[settingsPlugin.name].settings?.enableTesting ===
+            "boolean" &&
+          pluginRegistry[settingsPlugin.name].settings?.enableTesting,
+        ) && <Testing ReactLib={ReactLib} />}
       </div>
     );
   },
