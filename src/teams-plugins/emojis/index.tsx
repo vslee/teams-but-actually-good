@@ -38,6 +38,7 @@ function buildHTMLForEmoji(objectId: string, viewUrl: string, label = "emoji") {
     `<img`,
     `  src="${viewUrl}"`,
     `  width="64" height="64"`,
+    `  style="width: 20px; height: 20px;"`,
     `  data-image-type="standard"`,
     `  data-image-mode="single"`,
     `  itemscope="image/png"`,
@@ -161,10 +162,10 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
 
     uploadCustomEmoji(teamsToken, emoji)
       .then(async ({ html }) => {
-        let emojiList = (await getPluginSetting(
+        emojiList = (await getPluginSetting(
           customEmojis.name,
           "emojiList",
-        )) as EmojiList | null;
+        )) as EmojiList;
 
         if (!Array.isArray(emojiList)) emojiList = [];
 
