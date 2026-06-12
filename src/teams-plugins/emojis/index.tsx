@@ -5,7 +5,8 @@ import { getPluginSetting, setPluginSetting } from "../../utils/storage";
 
 type EmojiList = Array<{
   name: string;
-  html: string;
+  objectId: string;
+  viewUrl: string;
 }>;
 
 let emojiList: EmojiList = [];
@@ -14,6 +15,7 @@ interface customEmojisPlugin extends Plugin {
   replaceTextByEmoji(payload: {
     variables: { message: { content: string } };
   }): object;
+  buildHTMLForEmoji(objectId: string, viewUrl: string, label: string): string;
 }
 
 const getAsyncgwConfig = () => ({
@@ -30,27 +32,6 @@ async function getUserList() {
   if (!Array.isArray(emojiList)) {
     emojiList = [];
   }
-}
-
-function buildHTMLForEmoji(objectId: string, viewUrl: string, label = "emoji") {
-  return [
-    `<readonly aria-label="${label}" contenteditable="false" itemtype="http://schema.skype.com/Sticker" title="${label}">`,
-    `<img`,
-    `  src="${viewUrl}"`,
-    `  width="64" height="64"`,
-    `  style="width: 20px; height: 20px;"`,
-    `  data-image-type="standard"`,
-    `  data-image-mode="single"`,
-    `  itemscope="image/png"`,
-    `  itemtype="http://schema.skype.com/AMSImage"`,
-    `  alt="Sticker image, ${label}"`,
-    `  id="${objectId}"`,
-    `  itemid="${objectId}"`,
-    `  href="${viewUrl}"`,
-    `  target-src="${viewUrl}"`,
-    `>`,
-    `</readonly>`,
-  ].join("");
 }
 
 async function uploadCustomEmoji(
@@ -135,7 +116,6 @@ async function uploadCustomEmoji(
   const result = {
     objectId,
     viewUrl,
-    html: buildHTMLForEmoji(objectId, viewUrl),
   };
   return result;
 }
@@ -161,7 +141,7 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
     console.log(emoji.name, emoji.size, emoji.type);
 
     uploadCustomEmoji(teamsToken, emoji)
-      .then(async ({ html }) => {
+      .then(async ({ objectId, viewUrl }) => {
         emojiList = (await getPluginSetting(
           customEmojis.name,
           "emojiList",
@@ -169,7 +149,7 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
 
         if (!Array.isArray(emojiList)) emojiList = [];
 
-        emojiList.push({ name: emojiName, html });
+        emojiList.push({ name: emojiName, objectId, viewUrl });
 
         setPluginSetting(customEmojis.name, "emojiList", emojiList);
       })
@@ -213,16 +193,34 @@ const customEmojis: customEmojisPlugin = {
     },
   },
 
+  buildHTMLForEmoji(objectId, viewUrl, label = "emoji") {
+    return [
+      `<span title="${label}" type="${label}">`,
+      `<img`,
+      `  src="${viewUrl}"`,
+      `  itemid="tbag;${objectId}"`,
+      `  itemscope=""`,
+      `  itemtype="http://schema.skype.com/Emoji"`,
+      `  alt="${label}"`,
+      `  style="width:20px;height:20px"`,
+      `>`,
+      `</span>`,
+    ].join("");
+  },
+
   replaceTextByEmoji(payload) {
     if (!payload.variables?.message?.content) return payload;
     const message = payload.variables.message;
 
     if (!Array.isArray(emojiList)) return payload;
 
-    emojiList.forEach(({ name, html }) => {
+    emojiList.forEach(({ name, objectId, viewUrl }) => {
       const shortcode = `:${name}:`;
       if (message.content.includes(shortcode)) {
-        message.content = message.content.replace(shortcode, html);
+        message.content = message.content.replace(
+          shortcode,
+          this.buildHTMLForEmoji(objectId, viewUrl, name),
+        );
       }
     });
     return payload;
@@ -237,6 +235,13 @@ const customEmojis: customEmojisPlugin = {
         match:
           /(this.sendMessage=\w+=>\w+\({requestId:\w+\.requestId,rendererId:\w+\.rendererId,windowId:\w+\.windowId,payload:)(\w+\.request),/,
         replace: "$1$self.replaceTextByEmoji($2),",
+      },
+    },
+    {
+      find: "?.emojiPickerConfigurationViewModel??{},[",
+      replacement: {
+        match: /=\w+\|\|!\w+\|\|!\w+/,
+        replace: "=false",
       },
     },
   ],
