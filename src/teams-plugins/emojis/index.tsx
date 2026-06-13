@@ -7,6 +7,7 @@ type EmojiList = Array<{
   name: string;
   objectId: string;
   viewUrl: string;
+  base64Image: string;
 }>;
 
 interface customEmojisPlugin extends Plugin {
@@ -138,9 +139,17 @@ async function uploadCustomEmoji(
 
   const viewUrl = `${asnycgwBaseUrl}/v1/objects/${objectId}/views/imgo`;
 
+  const bytes = new Uint8Array(imageBytes);
+  let binary = "";
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  const base64Image = `data:image/png;base64,${btoa(binary)}`;
+
   const result = {
     objectId,
     viewUrl,
+    base64Image,
   };
   return result;
 }
@@ -173,7 +182,7 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
     setStatus("uploading");
 
     uploadCustomEmoji(teamsToken, emoji)
-      .then(async ({ objectId, viewUrl }) => {
+      .then(async ({ objectId, viewUrl, base64Image }) => {
         emojiList = (await getPluginSetting(
           customEmojis.name,
           "emojiList",
@@ -181,7 +190,7 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
 
         if (!Array.isArray(emojiList)) emojiList = [];
 
-        emojiList.push({ name: emojiName, objectId, viewUrl });
+        emojiList.push({ name: emojiName, objectId, viewUrl, base64Image });
 
         setPluginSetting(customEmojis.name, "emojiList", emojiList);
         setStatus("success");
@@ -319,6 +328,102 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
   );
 }
 
+function emojiListComponent({ ReactLib }: IPluginOptionComponentProps) {
+  void ReactLib;
+  const [list, setList] = ReactLib.useState<EmojiList>([]);
+
+  ReactLib.useEffect(() => {
+    getPluginSetting(customEmojis.name, "emojiList").then((stored) => {
+      if (Array.isArray(stored)) setList(stored as EmojiList);
+    });
+  }, []);
+
+  /** @jsx ReactLib.createElement */
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <span className="tbg-setting-name">Your Emojis</span>
+      {list.length === 0 ? (
+        <p
+          className="tbg-setting-description"
+          style={{ textAlign: "center", padding: "8px 0", margin: 0 }}
+        >
+          No custom emojis uploaded yet.
+        </p>
+      ) : (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(64px, 1fr))",
+            gap: "8px",
+            maxHeight: "200px",
+            overflowY: "auto",
+            padding: "4px 2px",
+          }}
+        >
+          {list.map((entry) => (
+            <div
+              key={entry.objectId}
+              title={`:${entry.name}:`}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "4px",
+                padding: "6px 4px",
+                background: "var(--colorNeutralBackground3)",
+                border: "1px solid var(--colorNeutralStroke2)",
+                borderRadius: "var(--borderRadiusMedium)",
+                overflow: "hidden",
+              }}
+            >
+              {entry.base64Image ? (
+                <img
+                  src={entry.base64Image}
+                  alt={entry.name}
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    objectFit: "contain",
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "var(--colorNeutralBackground4)",
+                    borderRadius: "var(--borderRadiusSmall)",
+                    fontSize: "10px",
+                    color: "var(--colorNeutralForeground3)",
+                  }}
+                >
+                  ?
+                </div>
+              )}
+              <span
+                style={{
+                  fontSize: "10px",
+                  color: "var(--colorNeutralForeground2)",
+                  width: "100%",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                :{entry.name}:
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const customEmojis: customEmojisPlugin = {
   name: "CustomEmojis",
   description: "Add custom emojis to your chat.",
@@ -326,6 +431,10 @@ const customEmojis: customEmojisPlugin = {
     customEmojiUploader: {
       type: OptionType.COMPONENT,
       component: uploadCustomEmojiComponent,
+    },
+    customEmojiList: {
+      type: OptionType.COMPONENT,
+      component: emojiListComponent,
     },
   },
 
