@@ -253,7 +253,6 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 
-// background.ts
 const syncAsyncgwToken = async () => {
   chrome.cookies.getAll(
     { domain: 'asyncgw.teams.microsoft.com', name: 'authtoken_asm' },
@@ -261,20 +260,17 @@ const syncAsyncgwToken = async () => {
       if (!cookies[0]) return
 
       const token = cookies[0].value
-      const baseUrl = `https:/${cookies[0].domain}`
 
-      // Injecte directement dans le sessionStorage des onglets Teams
       const tabs = await chrome.tabs.query({ url: '*://teams.microsoft.com/*' })
       for (const tab of tabs) {
         if (!tab.id) continue
         chrome.scripting.executeScript({
           target: { tabId: tab.id },
-          func: (token, baseUrl) => {
+          func: (token) => {
             token = token.replace("%20", " ")
             sessionStorage.setItem('tbag_asyncgw_token', token)
-            sessionStorage.setItem('tbag_asyncgw_base_url', baseUrl)
           },
-          args: [token, baseUrl]
+          args: [token]
         })
       }
     }
@@ -291,7 +287,6 @@ chrome.cookies.onChanged.addListener(({ cookie, removed }) => {
           target: { tabId: tab.id },
           func: () => {
             sessionStorage.removeItem('tbag_asyncgw_token')
-            sessionStorage.removeItem('tbag_asyncgw_base_url')
           }
         }))
       })

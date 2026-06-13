@@ -9,19 +9,47 @@ type EmojiList = Array<{
   viewUrl: string;
 }>;
 
-let emojiList: EmojiList = [];
-
 interface customEmojisPlugin extends Plugin {
   replaceTextByEmoji(payload: {
     variables: { message: { content: string } };
   }): object;
   buildHTMLForEmoji(objectId: string, viewUrl: string, label: string): string;
+  // logStuff(stuff: string | object): string | object;
 }
 
-const getAsyncgwConfig = () => ({
-  token: sessionStorage.getItem("tbag_asyncgw_token"),
-  baseUrl: sessionStorage.getItem("tbag_asyncgw_base_url"),
-});
+const getAsyncgwConfig = () => sessionStorage.getItem("tbag_asyncgw_token");
+let emojiList: EmojiList = [];
+let asnycgwBaseUrl: string = "https://ch-prod.asyncgw.teams.microsoft.com";
+
+async function main() {
+  await getUserList();
+
+  const key = Object.keys(localStorage).find(
+    (k) => k.startsWith("tmp.auth.") && k.includes("Discover.SKYPE-TOKEN"),
+  );
+
+  if (!key) {
+    console.warn("[CustomEmojis] No Skype TMP Auth found in localStorage.");
+    return;
+  }
+
+  const skypeAuthInfo = JSON.parse(localStorage.getItem(key) || "{}");
+
+  if (!skypeAuthInfo?.item) {
+    console.warn("[CustomEmojis] No items found in Skype Auth Info.");
+    return;
+  }
+
+  const item = skypeAuthInfo?.item;
+
+  if (!item?.regionGtms?.ams) {
+    console.warn("[CustomEmojis] No AMS GTM found in Skype Auth Info.");
+    return;
+  }
+
+  asnycgwBaseUrl = item.regionGtms.ams;
+  console.log("[CustomEmojis] Discovered asyncgw base URL:", asnycgwBaseUrl);
+}
 
 async function getUserList() {
   emojiList = (await getPluginSetting(
@@ -43,33 +71,30 @@ async function uploadCustomEmoji(
 
   // TODO need to find how the "ch-prod" is determined, different region does exist like us-prod
   // get an id that is used to uplaod the image
-  const createRes = await fetch(
-    "https://ch-prod.asyncgw.teams.microsoft.com/v1/objects/",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `${token}`,
-        "content-type": "application/json",
-        "x-ams-post-sharing-mode": "Inline",
-        "x-ms-client-version": "1415/26051416715",
-        "x-ms-migration": "True",
-        "x-ms-test-user": "False",
-        "ms-cv": crypto.randomUUID(),
-        Referer: "https://teams.microsoft.com/",
-        "sec-ch-ua": '"Chromium";v="149", "Not)A;Brand";v="24"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"macOS"',
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) MicrosoftTeams/24163.3404.3220.4317 Chrome/118.0.5993.117 Electron/27.1.3 Safari/537.36",
-      },
-      body: JSON.stringify({
-        type: "pish/image",
-        permissions: { [conversationId]: ["read"] },
-        sharingMode: "Inline",
-        filename: `${crypto.randomUUID()}-tbag-custom-emoji.png`,
-      }),
+  const createRes = await fetch(`${asnycgwBaseUrl}/v1/objects/`, {
+    method: "POST",
+    headers: {
+      Authorization: `${token}`,
+      "content-type": "application/json",
+      "x-ams-post-sharing-mode": "Inline",
+      "x-ms-client-version": "1415/26051416715",
+      "x-ms-migration": "True",
+      "x-ms-test-user": "False",
+      "ms-cv": crypto.randomUUID(),
+      Referer: "https://teams.microsoft.com/",
+      "sec-ch-ua": '"Chromium";v="149", "Not)A;Brand";v="24"',
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": '"macOS"',
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) MicrosoftTeams/24163.3404.3220.4317 Chrome/118.0.5993.117 Electron/27.1.3 Safari/537.36",
     },
-  );
+    body: JSON.stringify({
+      type: "pish/image",
+      permissions: { [conversationId]: ["read"] },
+      sharingMode: "Inline",
+      filename: `${crypto.randomUUID()}-tbag-custom-emoji.png`,
+    }),
+  });
 
   if (!createRes.ok) {
     throw new Error(
@@ -88,7 +113,7 @@ async function uploadCustomEmoji(
 
   // upload the image
   const putRes = await fetch(
-    `https://ch-prod.asyncgw.teams.microsoft.com/v1/objects/${objectId}/content/imgpsh`,
+    `${asnycgwBaseUrl}/v1/objects/${objectId}/content/imgpsh`,
     {
       method: "PUT",
       headers: {
@@ -111,7 +136,7 @@ async function uploadCustomEmoji(
 
   console.log("[CustomEmoji] Upload successful!");
 
-  const viewUrl = `https://ch-prod.asyncgw.teams.microsoft.com/v1/objects/${objectId}/views/imgo`;
+  const viewUrl = `${asnycgwBaseUrl}/v1/objects/${objectId}/views/imgo`;
 
   const result = {
     objectId,
@@ -133,12 +158,11 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
   };
 
   const handleSendClick = async () => {
-    const { token: teamsToken } = getAsyncgwConfig();
-    console.log(teamsToken);
+    const teamsToken = getAsyncgwConfig();
+
     if (emojiName.trim() === "") return;
     if (!teamsToken) return;
     if (!emoji) return;
-    console.log(emoji.name, emoji.size, emoji.type);
 
     uploadCustomEmoji(teamsToken, emoji)
       .then(async ({ objectId, viewUrl }) => {
@@ -226,7 +250,7 @@ const customEmojis: customEmojisPlugin = {
     return payload;
   },
 
-  mainEntry: getUserList,
+  mainEntry: main,
 
   patches: [
     {
