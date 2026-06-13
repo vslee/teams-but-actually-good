@@ -1,15 +1,20 @@
 import React from "react";
-import testingUrl from "../../svgs/testing.svg";
-import { injectNotificationModal } from "../../utils/notifications";
+import syncSVGURL from "../../svgs/sync.svg";
+// import { injectNotificationModal } from "../../utils/notifications";
 
 export default function Sync({ ReactLib }: { ReactLib: typeof React }) {
   void ReactLib;
-  const handleTestNotification = () => {
+  /*const handleTestNotification = () => {
     injectNotificationModal(
       "Test Notification",
       "This is a test notifiation that will last for 5 seconds",
       { duration: 5000 },
     );
+  };*/
+
+  const handleUploadSettings = () => {
+    // TODO implement the upload settings logic
+    window.open("http://localhost:3001/v1/sync/upload", "_blank")?.focus();
   };
 
   /** @jsx ReactLib.createElement */
@@ -17,7 +22,7 @@ export default function Sync({ ReactLib }: { ReactLib: typeof React }) {
     <div className="tbg-container">
       <div className="tbg-default-display-flex">
         <img
-          src={testingUrl}
+          src={syncSVGURL}
           style={{
             height: "17px",
             filter: "brightness(0) invert(1)",
@@ -48,6 +53,33 @@ export default function Sync({ ReactLib }: { ReactLib: typeof React }) {
           Test Login
         </button>
       </div>
+      <div className="tbg-plugin-container">
+        <button className="tbg-button-primary" onClick={handleUploadSettings}>
+          Upload Settings
+        </button>
+        <button
+          className="tbg-button-secondary"
+          onClick={() =>
+            window
+              .open("http://localhost:3001/v1/isLoggedIn", "_blank")
+              ?.focus()
+          }
+        >
+          Download Settings
+        </button>
+      </div>
+      <span className="tbg-setting-restart">
+        If you've any question on how the syncing works, please refer to the{" "}
+        <a
+          href="https://docs.teamsbutactuallygood.dev/TODO"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: "underline", color: "inherit" }}
+        >
+          documentation
+        </a>
+        .
+      </span>
     </div>
   );
 }
