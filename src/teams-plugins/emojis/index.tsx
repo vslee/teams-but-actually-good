@@ -149,12 +149,18 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
   void ReactLib;
   const [emojiName, setEmojiName] = ReactLib.useState("");
   const [emoji, setEmoji] = ReactLib.useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = ReactLib.useState<string | null>(null);
+  const [status, setStatus] = ReactLib.useState<
+    "idle" | "uploading" | "success" | "error"
+  >("idle");
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setEmoji(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    setStatus("idle");
   };
 
   const handleSendClick = async () => {
@@ -163,6 +169,8 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
     if (emojiName.trim() === "") return;
     if (!teamsToken) return;
     if (!emoji) return;
+
+    setStatus("uploading");
 
     uploadCustomEmoji(teamsToken, emoji)
       .then(async ({ objectId, viewUrl }) => {
@@ -176,33 +184,137 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
         emojiList.push({ name: emojiName, objectId, viewUrl });
 
         setPluginSetting(customEmojis.name, "emojiList", emojiList);
+        setStatus("success");
+        setEmojiName("");
+        setEmoji(null);
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(null);
       })
       .catch((err) => {
         console.error("Failed to upload emoji:", err);
+        setStatus("error");
       });
   };
 
+  const canSubmit =
+    emojiName.trim() !== "" && emoji !== null && getAsyncgwConfig() !== null;
+
   /** @jsx ReactLib.createElement */
   return (
-    <div>
-      <label htmlFor="customEmojiName">
-        Emoji Name: (will be used like that :name:)
-      </label>
-      <input
-        id="customEmojiName"
-        type="text"
-        placeholder="nods"
-        value={emojiName}
-        onChange={(e) => setEmojiName(e.target.value)}
-      />
-      <label htmlFor="customEmojiUploader">Upload Custom Emoji:</label>
-      <input
-        type="file"
-        accept="image/png"
-        id="customEmojiUploader"
-        onChange={handleFileUpload}
-      />
-      <button onClick={handleSendClick}>Send</button>
+    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+      <div className="tbg-setting-row">
+        <div className="tbg-setting-label">
+          <span className="tbg-setting-name">Emoji Name</span>
+          <span className="tbg-setting-description">
+            Used as :name: shortcode in chat
+          </span>
+        </div>
+        <div className="tbg-setting-control">
+          <input
+            className="tbg-input"
+            type="text"
+            placeholder="nods"
+            value={emojiName}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setEmojiName(e.target.value);
+              setStatus("idle");
+            }}
+          />
+        </div>
+      </div>
+      <div className="tbg-setting-row">
+        <div className="tbg-setting-label">
+          <span className="tbg-setting-name">Image File</span>
+          <span className="tbg-setting-description">
+            {emoji ? emoji.name : "PNG images only"}
+          </span>
+        </div>
+        <div className="tbg-setting-control">
+          <label style={{ cursor: "pointer" }}>
+            <span
+              className="tbg-button-secondary"
+              style={{
+                display: "inline-block",
+                width: "auto",
+                padding: "5px 12px",
+                cursor: "pointer",
+                fontSize: "12px",
+              }}
+            >
+              {emoji ? "Change\u2026" : "Browse\u2026"}
+            </span>
+            <input
+              type="file"
+              accept="image/png"
+              style={{ display: "none" }}
+              onChange={handleFileUpload}
+            />
+          </label>
+        </div>
+      </div>
+      {previewUrl && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            padding: "8px 10px",
+            background: "var(--colorNeutralBackground3)",
+            border: "1px solid var(--colorNeutralStroke2)",
+            borderRadius: "var(--borderRadiusMedium)",
+          }}
+        >
+          <img
+            src={previewUrl}
+            alt="emoji preview"
+            style={{
+              width: "32px",
+              height: "32px",
+              objectFit: "contain",
+              borderRadius: "var(--borderRadiusSmall)",
+              flexShrink: 0,
+            }}
+          />
+          <span
+            style={{
+              fontSize: "13px",
+              color: "var(--colorNeutralForeground1)",
+            }}
+          >
+            {emojiName.trim() ? `:${emojiName.trim()}:` : "(set a name above)"}
+          </span>
+        </div>
+      )}
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        <button
+          className="tbg-button-primary"
+          disabled={!canSubmit || status === "uploading"}
+          onClick={handleSendClick}
+          style={{
+            opacity: !canSubmit || status === "uploading" ? 0.6 : 1,
+            cursor:
+              !canSubmit || status === "uploading" ? "not-allowed" : "pointer",
+          }}
+        >
+          {status === "uploading" ? "Uploading\u2026" : "Upload Emoji"}
+        </button>
+        {status === "success" && (
+          <span
+            style={{
+              fontSize: "12px",
+              color: "var(--colorPaletteGreenForeground1, #107c10)",
+              textAlign: "center",
+            }}
+          >
+            Emoji uploaded successfully!
+          </span>
+        )}
+        {status === "error" && (
+          <span className="tbg-setting-restart" style={{ textAlign: "center" }}>
+            Upload failed. Check the console for details.
+          </span>
+        )}
+      </div>
     </div>
   );
 }
