@@ -7,7 +7,6 @@ type EmojiList = Array<{
   name: string;
   objectId: string;
   viewUrl: string;
-  base64Image: string;
 }>;
 
 interface customEmojisPlugin extends Plugin {
@@ -139,17 +138,9 @@ async function uploadCustomEmoji(
 
   const viewUrl = `${asnycgwBaseUrl}/v1/objects/${objectId}/views/imgo`;
 
-  const bytes = new Uint8Array(imageBytes);
-  let binary = "";
-  for (let i = 0; i < bytes.byteLength; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  const base64Image = `data:image/png;base64,${btoa(binary)}`;
-
   const result = {
     objectId,
     viewUrl,
-    base64Image,
   };
   return result;
 }
@@ -182,7 +173,7 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
     setStatus("uploading");
 
     uploadCustomEmoji(teamsToken, emoji)
-      .then(async ({ objectId, viewUrl, base64Image }) => {
+      .then(async ({ objectId, viewUrl }) => {
         emojiList = (await getPluginSetting(
           customEmojis.name,
           "emojiList",
@@ -190,7 +181,7 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
 
         if (!Array.isArray(emojiList)) emojiList = [];
 
-        emojiList.push({ name: emojiName, objectId, viewUrl, base64Image });
+        emojiList.push({ name: emojiName, objectId, viewUrl });
 
         setPluginSetting(customEmojis.name, "emojiList", emojiList);
         setStatus("success");
@@ -333,12 +324,44 @@ function emojiListComponent({ ReactLib }: IPluginOptionComponentProps) {
   const [list, setList] = ReactLib.useState<EmojiList>([]);
   const [editingId, setEditingId] = ReactLib.useState<string | null>(null);
   const [editingName, setEditingName] = ReactLib.useState("");
+  const [srcMap, setSrcMap] = ReactLib.useState<Record<string, string>>({});
 
   ReactLib.useEffect(() => {
     getPluginSetting(customEmojis.name, "emojiList").then((stored) => {
       if (Array.isArray(stored)) setList(stored as EmojiList);
     });
   }, []);
+
+  ReactLib.useEffect(() => {
+    const token = getAsyncgwConfig();
+    if (!token || list.length === 0) return;
+
+    const createdUrls: string[] = [];
+    let cancelled = false;
+
+    Promise.all(
+      list.map(async (entry) => {
+        try {
+          const res = await fetch(entry.viewUrl, {
+            headers: { Authorization: token },
+          });
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          createdUrls.push(url);
+          return [entry.objectId, url] as const;
+        } catch {
+          return [entry.objectId, entry.viewUrl] as const;
+        }
+      }),
+    ).then((entries) => {
+      if (!cancelled) setSrcMap(Object.fromEntries(entries));
+    });
+
+    return () => {
+      cancelled = true;
+      createdUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [list]);
 
   async function saveList(next: EmojiList) {
     await setPluginSetting(customEmojis.name, "emojiList", next);
@@ -441,9 +464,9 @@ function emojiListComponent({ ReactLib }: IPluginOptionComponentProps) {
                 ✕
               </button>
 
-              {entry.base64Image ? (
+              {srcMap[entry.objectId] ? (
                 <img
-                  src={entry.base64Image}
+                  src={srcMap[entry.objectId]}
                   alt={entry.name}
                   title={`:${entry.name}:`}
                   style={{
