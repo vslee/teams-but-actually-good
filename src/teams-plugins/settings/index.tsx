@@ -10,6 +10,7 @@ import { Devs } from "../../data/devs";
 import { OptionType } from "../../types/types";
 import Themes from "./themes";
 import Testing from "./testing";
+import Sync from "./sync";
 
 injectStyles(styles, "teams-but-good-settings");
 
@@ -297,6 +298,7 @@ const settingsPlugin: SettingsPluginType = {
             "boolean" &&
           pluginRegistry[settingsPlugin.name].settings?.enableTesting,
         ) && <Testing ReactLib={ReactLib} />}
+        <Sync ReactLib={ReactLib} />
       </div>
     );
   },
