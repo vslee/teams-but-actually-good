@@ -334,6 +334,14 @@ const settingsPlugin: SettingsPluginType = {
         },
       ],
     },
+    // to show the custom emojis, so user don't need to enable the custom emoji plugin
+    {
+      find: "?.emojiPickerConfigurationViewModel??{},[",
+      replacement: {
+        match: /=\w+\|\|!\w+\|\|!\w+/,
+        replace: "=false",
+      },
+    },
   ],
 };
 
