@@ -331,12 +331,39 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
 function emojiListComponent({ ReactLib }: IPluginOptionComponentProps) {
   void ReactLib;
   const [list, setList] = ReactLib.useState<EmojiList>([]);
+  const [editingId, setEditingId] = ReactLib.useState<string | null>(null);
+  const [editingName, setEditingName] = ReactLib.useState("");
 
   ReactLib.useEffect(() => {
     getPluginSetting(customEmojis.name, "emojiList").then((stored) => {
       if (Array.isArray(stored)) setList(stored as EmojiList);
     });
   }, []);
+
+  async function saveList(next: EmojiList) {
+    await setPluginSetting(customEmojis.name, "emojiList", next);
+    emojiList = next;
+    setList(next);
+  }
+
+  function startEdit(entry: EmojiList[number]) {
+    setEditingId(entry.objectId);
+    setEditingName(entry.name);
+  }
+
+  async function commitEdit(objectId: string) {
+    const trimmed = editingName.trim();
+    if (!trimmed) return;
+    const next = list.map((e) =>
+      e.objectId === objectId ? { ...e, name: trimmed } : e,
+    );
+    await saveList(next);
+    setEditingId(null);
+  }
+
+  async function deleteEntry(objectId: string) {
+    await saveList(list.filter((e) => e.objectId !== objectId));
+  }
 
   /** @jsx ReactLib.createElement */
   return (
@@ -353,7 +380,7 @@ function emojiListComponent({ ReactLib }: IPluginOptionComponentProps) {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(64px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
             gap: "8px",
             maxHeight: "200px",
             overflowY: "auto",
@@ -363,7 +390,6 @@ function emojiListComponent({ ReactLib }: IPluginOptionComponentProps) {
           {list.map((entry) => (
             <div
               key={entry.objectId}
-              title={`:${entry.name}:`}
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -374,20 +400,62 @@ function emojiListComponent({ ReactLib }: IPluginOptionComponentProps) {
                 border: "1px solid var(--colorNeutralStroke2)",
                 borderRadius: "var(--borderRadiusMedium)",
                 overflow: "hidden",
+                position: "relative",
               }}
             >
+              {/* delete button */}
+              <button
+                title="Delete emoji"
+                onClick={() => deleteEntry(entry.objectId)}
+                style={{
+                  position: "absolute",
+                  top: "2px",
+                  right: "2px",
+                  width: "16px",
+                  height: "16px",
+                  padding: 0,
+                  border: "none",
+                  background: "transparent",
+                  cursor: "pointer",
+                  color: "var(--colorNeutralForeground3)",
+                  fontSize: "12px",
+                  lineHeight: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "var(--borderRadiusSmall)",
+                }}
+                onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  (e.currentTarget as HTMLButtonElement).style.color =
+                    "var(--colorPaletteDarkOrangeForeground2, #a80000)";
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                    "var(--colorNeutralBackground4)";
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  (e.currentTarget as HTMLButtonElement).style.color =
+                    "var(--colorNeutralForeground3)";
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                    "transparent";
+                }}
+              >
+                ✕
+              </button>
+
               {entry.base64Image ? (
                 <img
                   src={entry.base64Image}
                   alt={entry.name}
+                  title={`:${entry.name}:`}
                   style={{
                     width: "32px",
                     height: "32px",
                     objectFit: "contain",
+                    marginTop: "6px",
                   }}
                 />
               ) : (
                 <div
+                  title={`:${entry.name}:`}
                   style={{
                     width: "32px",
                     height: "32px",
@@ -398,24 +466,67 @@ function emojiListComponent({ ReactLib }: IPluginOptionComponentProps) {
                     borderRadius: "var(--borderRadiusSmall)",
                     fontSize: "10px",
                     color: "var(--colorNeutralForeground3)",
+                    marginTop: "6px",
                   }}
                 >
                   ?
                 </div>
               )}
-              <span
-                style={{
-                  fontSize: "10px",
-                  color: "var(--colorNeutralForeground2)",
-                  width: "100%",
-                  textAlign: "center",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                :{entry.name}:
-              </span>
+
+              {editingId === entry.objectId ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "3px",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    className="tbg-input"
+                    style={{
+                      fontSize: "10px",
+                      padding: "2px 4px",
+                      minWidth: 0,
+                      width: "100%",
+                      boxSizing: "border-box",
+                    }}
+                    value={editingName}
+                    autoFocus
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setEditingName(e.target.value)
+                    }
+                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                      if (e.key === "Enter") commitEdit(entry.objectId);
+                      if (e.key === "Escape") setEditingId(null);
+                    }}
+                  />
+                  <button
+                    className="tbg-button-primary"
+                    style={{ padding: "2px 0", fontSize: "10px" }}
+                    onClick={() => commitEdit(entry.objectId)}
+                  >
+                    Save
+                  </button>
+                </div>
+              ) : (
+                <span
+                  title="Click to rename"
+                  onClick={() => startEdit(entry)}
+                  style={{
+                    fontSize: "10px",
+                    color: "var(--colorNeutralForeground2)",
+                    width: "100%",
+                    textAlign: "center",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    cursor: "pointer",
+                  }}
+                >
+                  :{entry.name}:
+                </span>
+              )}
             </div>
           ))}
         </div>
