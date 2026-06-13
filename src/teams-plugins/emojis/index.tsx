@@ -543,6 +543,19 @@ const customEmojis: customEmojisPlugin = {
       type: OptionType.COMPONENT,
       component: uploadCustomEmojiComponent,
     },
+    emojiDisplayMode: {
+      type: OptionType.SELECT,
+      description:
+        "Select how custom emojis are displayed in chat messages. (people might not see the emoji without TBAG! If that's the case select 'Show as an emoji' or ask your contacts to install TBAG too)",
+      options: [
+        {
+          value: "emoji",
+          label: "Show as an emoji",
+          default: true,
+        },
+        { value: "image", label: "Show as an image" },
+      ],
+    },
     customEmojiList: {
       type: OptionType.COMPONENT,
       component: emojiListComponent,
@@ -550,18 +563,40 @@ const customEmojis: customEmojisPlugin = {
   },
 
   buildHTMLForEmoji(objectId, viewUrl, label = "emoji") {
-    return [
-      `<span title="${label}" type="${label}">`,
-      `<img`,
-      `  src="${viewUrl}"`,
-      `  itemid="tbag;${objectId}"`,
-      `  itemscope=""`,
-      `  itemtype="http://schema.skype.com/Emoji"`,
-      `  alt="${label}"`,
-      `  style="width:20px;height:20px"`,
-      `>`,
-      `</span>`,
-    ].join("");
+    let html;
+
+    if (this.settings?.emojiDisplayMode === "image") {
+      html = [
+        `<img`,
+        `  src="${viewUrl}"`,
+        `  width="64" height="64"`,
+        `  data-image-type="standard"`,
+        `  data-image-mode="single"`,
+        `  itemscope="image/png"`,
+        `  itemtype="http://schema.skype.com/AMSImage"`,
+        `  alt="Sticker image, ${label}"`,
+        `  id="${objectId}"`,
+        `  itemid="${objectId}"`,
+        `  href="${viewUrl}"`,
+        `  target-src="${viewUrl}"`,
+        `>`,
+      ].join("");
+    } else {
+      html = [
+        `<span title="${label}" type="${label}">`,
+        `<img`,
+        `  src="${viewUrl}"`,
+        `  itemid="tbag;${objectId}"`,
+        `  itemscope=""`,
+        `  itemtype="http://schema.skype.com/CustomEmoji"`,
+        `  alt="${label}"`,
+        `  style="width:20px;height:20px"`,
+        `>`,
+        `</span>`,
+      ].join("");
+    }
+
+    return html;
   },
 
   replaceTextByEmoji(payload) {
@@ -591,13 +626,6 @@ const customEmojis: customEmojisPlugin = {
         match:
           /(this.sendMessage=\w+=>\w+\({requestId:\w+\.requestId,rendererId:\w+\.rendererId,windowId:\w+\.windowId,payload:)(\w+\.request),/,
         replace: "$1$self.replaceTextByEmoji($2),",
-      },
-    },
-    {
-      find: "?.emojiPickerConfigurationViewModel??{},[",
-      replacement: {
-        match: /=\w+\|\|!\w+\|\|!\w+/,
-        replace: "=false",
       },
     },
   ],
