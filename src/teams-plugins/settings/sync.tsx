@@ -167,6 +167,12 @@ export default function Sync({ ReactLib }: { ReactLib: typeof React }) {
   const [showDownloadModal, setShowDownloadModal] = ReactLib.useState(false);
 
   const handleUploadSettings = async () => {
+    const confirm = window.confirm(
+      "Uploading settings will overwrite any existing settings in the cloud with your current local settings. Are you sure you want to proceed?",
+    );
+
+    if (!confirm) return;
+
     const allSettings = await getAllPluginSettings();
 
     window
