@@ -228,7 +228,7 @@ export default function Sync({ ReactLib }: { ReactLib: typeof React }) {
         <span className="tbg-setting-restart">
           If you've any question on how the syncing works, please refer to the{" "}
           <a
-            href="https://docs.teamsbutactuallygood.dev/TODO"
+            href="https://docs.teamsbutactuallygood.dev/sync"
             target="_blank"
             rel="noopener noreferrer"
             style={{ textDecoration: "underline", color: "inherit" }}
