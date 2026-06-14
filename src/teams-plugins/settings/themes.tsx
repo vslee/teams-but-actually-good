@@ -1,6 +1,5 @@
 import React from "react";
 import { basicSetup, EditorView } from "codemirror";
-import { EditorState } from "@codemirror/state";
 import { css } from "@codemirror/lang-css";
 import { oneDark } from "@codemirror/theme-one-dark";
 import windowUrl from "../../svgs/window.svg";
@@ -64,7 +63,7 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
       }
 
       try {
-        const state = EditorState.create({
+        editorViewRef.current = new EditorView({
           doc: initialDoc,
           extensions: [
             basicSetup,
@@ -82,10 +81,6 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
               ".cm-scroller": { overflow: "auto" },
             }),
           ],
-        });
-
-        editorViewRef.current = new EditorView({
-          state,
           parent: editorHostRef.current,
         });
       } catch (err) {
