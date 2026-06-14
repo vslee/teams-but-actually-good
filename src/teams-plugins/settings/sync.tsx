@@ -7,7 +7,7 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { setPluginSettings, setMainSettings } from "../../utils/storage";
 import { PluginStorageValue } from "../../types/types";
 
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = "https://api.teamsbutactuallygood.dev";
 const API_VERSION = "v1";
 
 function DownloadModal({
