@@ -7,6 +7,7 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { setPluginSettings, setMainSettings } from "../../utils/storage";
 import { PluginStorageValue } from "../../types/types";
 
+// http://localhost:3001
 const BASE_URL = "https://api.teamsbutactuallygood.dev";
 const API_VERSION = "v1";
 
@@ -175,12 +176,20 @@ export default function Sync({ ReactLib }: { ReactLib: typeof React }) {
 
     const allSettings = await getAllPluginSettings();
 
-    window
-      .open(
-        `${BASE_URL}/${API_VERSION}/sync/upload?data=${encodeURIComponent(JSON.stringify(allSettings))}`,
-        "_blank",
-      )
-      ?.focus();
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = `${BASE_URL}/${API_VERSION}/sync/upload`;
+    form.target = "_blank";
+
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "data";
+    input.value = JSON.stringify(allSettings);
+
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
   };
 
   /** @jsx ReactLib.createElement */
