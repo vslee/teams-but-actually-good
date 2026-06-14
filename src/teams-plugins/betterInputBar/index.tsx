@@ -83,12 +83,15 @@ const betterInputBar: BetterInputBarPlugin = {
   filterInputBarItems(inputBarDataId: string, inputBarTitle: string) {
     if (!inputBarDataId || !inputBarTitle) return true;
 
+    inputBarDataId = inputBarDataId
+      .replace("newMessageCommands-", "")
+      .replace("sendMessageCommands-", "");
+
     // check if key already exists, if not add it to
     if (
       !this.availableInputButtons.some(
         (btn: { key: string; name: string }) => btn.key === inputBarDataId,
-      ) &&
-      inputBarDataId.startsWith("send")
+      )
     ) {
       console.log(
         `[BetterInputBar] Adding input bar item to available buttons: ${inputBarTitle} (${inputBarDataId})`,
