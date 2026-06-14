@@ -36,6 +36,29 @@ export async function setMainSetting(
   }
 }
 
+export async function setMainSettings(
+  settings: Record<string, PluginStorageValue>,
+): Promise<void> {
+  try {
+    const key = `${MAIN_SETTINGS_KEY}`;
+    localStorage.setItem(key, JSON.stringify(settings));
+  } catch (error) {
+    console.error(`[Storage] Error setting main settings:`, error);
+  }
+}
+
+export async function getAllMainSettings(): Promise<
+  Record<string, PluginStorageValue>
+> {
+  try {
+    const mainSettings = localStorage.getItem(MAIN_SETTINGS_KEY);
+    return mainSettings ? JSON.parse(mainSettings) : {};
+  } catch (error) {
+    console.error("[Storage] Error getting all main settings:", error);
+    return {};
+  }
+}
+
 /**
  * Get all settings for a specific plugin
  * @param pluginName - The name of the plugin (e.g., "ChangeEmojiChooserToTenor")
@@ -131,6 +154,36 @@ export async function getAllPluginNames(): Promise<string[]> {
   }
 
   return pluginNames;
+}
+
+/**
+ * Return in a json all the settings from plugins + main
+ *
+ * @export
+ * @return {*}  {Promise<
+ *   Record<string, Record<string, PluginStorageValue>>
+ * >}
+ */
+export async function getAllPluginSettings(): Promise<
+  Record<string, Record<string, PluginStorageValue>>
+> {
+  const allSettings: Record<string, Record<string, PluginStorageValue>> = {};
+  const pluginNames = await getAllPluginNames();
+
+  for (const pluginName of pluginNames) {
+    const settings = await getPluginSettings(pluginName);
+    if (settings) {
+      allSettings[pluginName] = settings;
+    }
+  }
+
+  const mainSettings = await getAllMainSettings();
+
+  if (mainSettings) {
+    allSettings["main"] = mainSettings;
+  }
+
+  return allSettings;
 }
 
 /**
