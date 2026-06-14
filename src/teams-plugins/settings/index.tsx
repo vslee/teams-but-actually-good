@@ -292,13 +292,13 @@ const settingsPlugin: SettingsPluginType = {
             "boolean" &&
           pluginRegistry[settingsPlugin.name].settings?.enableThemes,
         ) && <Themes ReactLib={ReactLib} />}
+        <Sync ReactLib={ReactLib} />
         {Boolean(
           pluginRegistry[settingsPlugin.name]?.settings &&
           typeof pluginRegistry[settingsPlugin.name].settings?.enableTesting ===
             "boolean" &&
           pluginRegistry[settingsPlugin.name].settings?.enableTesting,
         ) && <Testing ReactLib={ReactLib} />}
-        <Sync ReactLib={ReactLib} />
       </div>
     );
   },
