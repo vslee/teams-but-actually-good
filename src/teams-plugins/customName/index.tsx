@@ -129,6 +129,9 @@ async function getAllUsersFromDB() {
     const userInfo = record.chatTitle.avatarUsersInfo[0];
     if (userList.some((user) => user.id === record.id)) continue;
 
+    if (record.id.includes("@thread.v2") || record.id.includes(":metting_"))
+      continue;
+
     userList.push({
       id: record.id,
       customName: "",
