@@ -2,6 +2,7 @@ import { Plugin } from "../../interface";
 import { IPluginOptionComponentProps, OptionType } from "../../types/types";
 import * as React from "react";
 import { getPluginSetting, setPluginSetting } from "../../utils/storage";
+import { Devs } from "../../data/devs";
 
 type EmojiList = Array<{
   name: string;
@@ -561,6 +562,7 @@ function emojiListComponent({ ReactLib }: IPluginOptionComponentProps) {
 const customEmojis: customEmojisPlugin = {
   name: "CustomEmojis",
   description: "Add custom emojis to your chat.",
+  author: Devs.LeonimusT,
   settingsDef: {
     customEmojiUploader: {
       type: OptionType.COMPONENT,
