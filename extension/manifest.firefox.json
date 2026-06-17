@@ -20,7 +20,6 @@
     "storage",
     "scripting",
     "cookies",
-    "scripting",
     "tabs"
   ],
   "host_permissions": [
