@@ -62,6 +62,7 @@ function DownloadModal({
 
                   setPluginData(pluginData.data);
                   setNeedRestart(true);
+                  setErrorMessage(null);
                 } catch (error) {
                   console.error("Invalid JSON:", error);
                   setErrorMessage("Invalid JSON structure.");
