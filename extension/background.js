@@ -279,7 +279,11 @@ const syncAsyncgwToken = async () => {
 
 syncAsyncgwToken()
 
-chrome.cookies.onChanged.addListener(({ cookie, removed }) => {
+chrome.cookies.onChanged.addListener((changeInfo) => {
+  if (!changeInfo) return;
+  const { cookie, removed } = changeInfo;
+  if (!cookie) return;
+
   if (cookie.name === 'authtoken_asm' && cookie.domain.includes('asyncgw')) {
     removed
       ? chrome.tabs.query({ url: '*://teams.microsoft.com/*' }, (tabs) => {

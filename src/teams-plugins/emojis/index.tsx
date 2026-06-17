@@ -152,8 +152,15 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
   const [emoji, setEmoji] = ReactLib.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = ReactLib.useState<string | null>(null);
   const [status, setStatus] = ReactLib.useState<
-    "idle" | "uploading" | "success" | "error"
+    "idle" | "uploading" | "success" | "error" | "no_token"
   >("idle");
+
+  ReactLib.useEffect(() => {
+    const token = getAsyncgwConfig();
+    if (!token) {
+      setStatus("no_token");
+    }
+  }, []);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -168,7 +175,10 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
     const teamsToken = getAsyncgwConfig();
 
     if (emojiName.trim() === "") return;
-    if (!teamsToken) return;
+    if (!teamsToken) {
+      setStatus("no_token");
+      return;
+    }
     if (!emoji) return;
 
     setStatus("uploading");
@@ -289,17 +299,28 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
         <button
           className="tbg-button-primary"
-          disabled={!canSubmit || status === "uploading"}
+          disabled={
+            !canSubmit || status === "uploading" || status === "no_token"
+          }
           onClick={handleSendClick}
           style={{
-            opacity: !canSubmit || status === "uploading" ? 0.6 : 1,
+            opacity:
+              !canSubmit || status === "uploading" || status === "no_token"
+                ? 0.6
+                : 1,
             cursor:
-              !canSubmit || status === "uploading" ? "not-allowed" : "pointer",
+              !canSubmit || status === "uploading" || status === "no_token"
+                ? "not-allowed"
+                : "pointer",
           }}
         >
-          {status === "uploading" ? "Uploading\u2026" : "Upload Emoji"}
+          {status === "uploading"
+            ? "Uploading\u2026"
+            : status === "no_token"
+              ? "No Teams Token found"
+              : "Upload Emoji"}
         </button>
-        {status === "success" && (
+        {status === "success" ? (
           <span
             style={{
               fontSize: "12px",
@@ -309,11 +330,26 @@ function uploadCustomEmojiComponent({ ReactLib }: IPluginOptionComponentProps) {
           >
             Emoji uploaded successfully!
           </span>
-        )}
-        {status === "error" && (
+        ) : status === "error" ? (
           <span className="tbg-setting-restart" style={{ textAlign: "center" }}>
             Upload failed. Check the console for details.
           </span>
+        ) : (
+          status === "no_token" && (
+            <span
+              className="tbg-setting-restart"
+              style={{ textAlign: "center" }}
+            >
+              No Teams token found. Check the{" "}
+              <a
+                style={{ textDecoration: "underline", color: "inherit" }}
+                href="https://docs.teamsbutactuallygood.dev/sync"
+              >
+                doc's FAQ
+              </a>{" "}
+              for more info.
+            </span>
+          )
         )}
       </div>
     </div>
