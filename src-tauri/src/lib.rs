@@ -214,7 +214,7 @@ pub fn run() {
         .setup(|app| {
             let js_injection = load_verified_cached_injection(&app.handle().clone())
                 .unwrap_or_else(|| include_str!("../../dist/injection.js").to_string());
-            let _user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.3800.70";
+            // let _user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.3800.70";
 
             let handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
@@ -237,7 +237,7 @@ pub fn run() {
             .min_inner_size(800.0, 600.0)
             .center()
             .initialization_script(&js_injection)
-            .user_agent(_user_agent)
+            //.user_agent(_user_agent)
             .build()?;
 
             let clear_tbag = MenuItem::with_id(app, "clear_tbag", "Clear TBAG Cache", true, None::<&str>)?;
