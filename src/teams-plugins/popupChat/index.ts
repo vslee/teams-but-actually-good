@@ -25,14 +25,19 @@ const popupChat: PopupChatPlugin = {
       // In Tauri, window.open with a features string is not handled like a browser popup.
       // Use the Tauri WebviewWindow API to create a proper new window instead.
       if (window.__TAURI__) {
+        console.log("Opening chat in popup using Tauri WebviewWindow API");
         const { WebviewWindow } = window.__TAURI__.webviewWindow;
-        new WebviewWindow(`chat-popup-${Date.now()}`, {
+        const win = new WebviewWindow(`chat-popup-${Date.now()}`, {
           url,
           width: 600,
           height: 800,
           title: "Chat",
         });
+        win.once("tauri://error", (e) => {
+          console.error("Failed to open chat popup:", e);
+        });
       } else {
+        console.log("Opening chat in popup using window.open");
         window.open(url, "_blank", "width=600,height=800");
       }
     };
