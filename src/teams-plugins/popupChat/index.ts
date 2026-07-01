@@ -27,14 +27,11 @@ const popupChat: PopupChatPlugin = {
       if (window.__TAURI__) {
         console.log("Opening chat in popup using Tauri WebviewWindow API");
         const { WebviewWindow } = window.__TAURI__.webviewWindow;
-        const win = new WebviewWindow(`chat-popup-${Date.now()}`, {
+        new WebviewWindow(`chat-popup-${Date.now()}`, {
           url,
           width: 600,
           height: 800,
           title: "Chat",
-        });
-        win.once("tauri://error", (e) => {
-          console.error("Failed to open chat popup:", e);
         });
       } else {
         console.log("Opening chat in popup using window.open");
