@@ -28,23 +28,35 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    attributes:
+      label: "Platform"
+      description: "How are you using Teams but (actually) good?"
+      options:
+        - "Browser extension - Chrome / Edge / Brave / other Chromium browser"
+        - "Browser extension - Firefox"
+        - "Browser extension - Safari"
+        - "Desktop app (Tauri)"
+    validations:
+      required: true
+
   - type: input
     attributes:
-      label: "Extension version"
+      label: "App/Extension version"
       description: |
-        1. Open your browser's extension manager
-        2. Find "Teams but (actually) good"
-        3. The version number is displayed there
-      placeholder: "0.1.0"
+        - Browser extension: click the extension icon to open the popup, the version is shown under "Current Version"
+        - Desktop app: check the version of the installer/release you downloaded from GitHub, or Settings > About in the app
+      placeholder: "0.4.2"
     validations:
       required: true
 
   - type: input
     attributes:
       label: "Browser name and version"
+      description: "Leave blank if you're using the desktop app."
       placeholder: "Chrome 136"
     validations:
-      required: true
+      required: false
 
   - type: input
     attributes:
@@ -56,7 +68,7 @@ body:
   - type: checkboxes
     attributes:
       label: "Browser Beta"
-      description: "Are you currently on the beta version of your browser?"
+      description: "Are you currently on the beta version of your browser? Not applicable to the desktop app."
       options:
         - label: "Yes"
           required: false
