@@ -1,9 +1,7 @@
 import React from "react";
 import syncSVGURL from "../../svgs/sync.svg";
 import { getAllPluginSettings } from "../../utils/storage";
-import { basicSetup, EditorView } from "codemirror";
-import { json } from "@codemirror/lang-json";
-import { oneDark } from "@codemirror/theme-one-dark";
+import type { EditorView } from "codemirror";
 import { setPluginSettings, setMainSettings } from "../../utils/storage";
 import { PluginStorageValue } from "../../types/types";
 
@@ -38,6 +36,19 @@ function DownloadModal({
       let initialDoc = `{"main": {"firstTimeInjection": false}}`;
 
       try {
+        // Loaded dynamically so CodeMirror (which reads document.documentElement
+        // at module-eval time) never runs before the DOM is actually ready -
+        // required on Windows/WebView2 where the Tauri init script executes
+        // before document.documentElement exists.
+        const [{ basicSetup, EditorView }, { json }, { oneDark }] =
+          await Promise.all([
+            import("codemirror"),
+            import("@codemirror/lang-json"),
+            import("@codemirror/theme-one-dark"),
+          ]);
+
+        if (!editorHostRef.current) return;
+
         editorViewRef.current = new EditorView({
           doc: initialDoc,
           extensions: [

@@ -1,7 +1,5 @@
 import React from "react";
-import { basicSetup, EditorView } from "codemirror";
-import { css } from "@codemirror/lang-css";
-import { oneDark } from "@codemirror/theme-one-dark";
+import type { EditorView } from "codemirror";
 import windowUrl from "../../svgs/window.svg";
 import { getMainSetting, setMainSetting } from "../../utils/storage";
 import { themeRegistry } from "../../interface";
@@ -63,6 +61,19 @@ export default function Themes({ ReactLib }: { ReactLib: typeof React }) {
       }
 
       try {
+        // Loaded dynamically so CodeMirror (which reads document.documentElement
+        // at module-eval time) never runs before the DOM is actually ready -
+        // required on Windows/WebView2 where the Tauri init script executes
+        // before document.documentElement exists.
+        const [{ basicSetup, EditorView }, { css }, { oneDark }] =
+          await Promise.all([
+            import("codemirror"),
+            import("@codemirror/lang-css"),
+            import("@codemirror/theme-one-dark"),
+          ]);
+
+        if (!active || !editorHostRef.current) return;
+
         editorViewRef.current = new EditorView({
           doc: initialDoc,
           extensions: [

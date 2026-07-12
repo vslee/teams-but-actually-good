@@ -214,18 +214,29 @@ pub fn run() {
         .setup(|app| {
             let js_injection = load_verified_cached_injection(&app.handle().clone())
                 .unwrap_or_else(|| include_str!("../../dist/injection.js").to_string());
-            // let _user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.3800.70";
+            let _user_agent = if cfg!(target_os = "windows") {
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.3800.70"
+            } else if cfg!(target_os = "linux") {
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.3800.70"
+            } else {
+                // macOS
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.3800.70"
+            };
 
             let handle = app.handle().clone();
-            tauri::async_runtime::spawn(async move {
-                if let Err(err) = refresh_injection_from_github(handle.clone()).await {
-                    eprintln!("injection hot-update failed: {err}");
-                }
 
-                if let Err(err) = check_app_update(handle).await {
-                    eprintln!("binary update check failed: {err}");
-                }
-            });
+            if !cfg!(debug_assertions) {  
+                println!("Checking for updates in the background...\n");
+                tauri::async_runtime::spawn(async move {
+                    if let Err(err) = refresh_injection_from_github(handle.clone()).await {
+                        eprintln!("injection hot-update failed: {err}");
+                    }
+
+                    if let Err(err) = check_app_update(handle).await {
+                        eprintln!("binary update check failed: {err}");
+                    }
+                });
+            }
 
             WebviewWindowBuilder::new(
                 app,
@@ -237,7 +248,7 @@ pub fn run() {
             .min_inner_size(800.0, 600.0)
             .center()
             .initialization_script(&js_injection)
-            //.user_agent(_user_agent)
+            .user_agent(_user_agent)
             .build()?;
 
             let clear_tbag = MenuItem::with_id(app, "clear_tbag", "Clear TBAG Cache", true, None::<&str>)?;
@@ -295,6 +306,13 @@ pub fn run() {
                         _ => {}
                     })
                     .build(app)?;
+            }
+
+            #[cfg(debug_assertions)] // only include this code on debug builds to open the dev console
+            {
+                let window: tauri::WebviewWindow = app.get_webview_window("main").unwrap();
+                window.open_devtools();
+                window.close_devtools();
             }
 
             Ok(())

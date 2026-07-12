@@ -5,8 +5,14 @@
   "windows": [
     "main"
   ],
+  "remote": {
+    "urls": [
+      "https://teams.microsoft.com/*"
+    ]
+  },
   "permissions": [
     "core:default",
+    "core:webview:allow-create-webview-window",
     "opener:default"
   ]
 }
