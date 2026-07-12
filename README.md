@@ -23,15 +23,15 @@ The documentation is available here at https://docs.teamsbutactuallygood.dev
 
 ## Discord server
 
-*In construction*
+_In construction_
 
 ## Star History
 
 <a href="https://www.star-history.com/?repos=LeonimusTTV%2Fteams-but-actually-good&type=timeline&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=LeonimusTTV/teams-but-actually-good&type=timeline&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=LeonimusTTV/teams-but-actually-good&type=timeline&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/image?repos=LeonimusTTV/teams-but-actually-good&type=timeline&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=LeonimusTTV/teams-but-actually-good&type=timeline&theme=dark&legend=top-left&sealed_token=EMlFKV6qZ6PfqCg_h-1fE5yaNuX_iktTZcSHP5W0FEJRJkrwtSdrU6SvHZ8szj9nc23wNzMJ5UNi5BcZud4qwBvOMGP4OuwRA2N2aBmcfu5FDJSRd1NWRg" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=LeonimusTTV/teams-but-actually-good&type=timeline&legend=top-left&sealed_token=EMlFKV6qZ6PfqCg_h-1fE5yaNuX_iktTZcSHP5W0FEJRJkrwtSdrU6SvHZ8szj9nc23wNzMJ5UNi5BcZud4qwBvOMGP4OuwRA2N2aBmcfu5FDJSRd1NWRg" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=LeonimusTTV/teams-but-actually-good&type=timeline&legend=top-left&sealed_token=EMlFKV6qZ6PfqCg_h-1fE5yaNuX_iktTZcSHP5W0FEJRJkrwtSdrU6SvHZ8szj9nc23wNzMJ5UNi5BcZud4qwBvOMGP4OuwRA2N2aBmcfu5FDJSRd1NWRg" />
  </picture>
 </a>
 
