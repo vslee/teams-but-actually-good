@@ -2,7 +2,7 @@ import React from "react";
 import { Devs } from "../../data/devs";
 import { Plugin } from "../../interface";
 import createIcon from "../../utils/icon";
-import userSVGUrl from "../../svgs/user.svg";
+import linkSVGUrl from "../../svgs/link.svg";
 
 interface PopupChatPlugin extends Plugin {
   renderCustomNameButton(
@@ -40,7 +40,7 @@ const popupChat: PopupChatPlugin = {
     };
 
     return createElement(component, {
-      icon: createIcon(userSVGUrl, createElement),
+      icon: createIcon(linkSVGUrl, createElement),
       onClick,
       "data-testid": "open-chat-in-popup-button",
       children: "Open chat in popup",
