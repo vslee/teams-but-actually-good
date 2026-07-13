@@ -240,6 +240,7 @@ jobs:
           path: dist/
 
       - name: Publish to Chrome Web Store
+        continue-on-error: true
         uses: wdzeng/chrome-extension@v1
         with:
           extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
@@ -249,6 +250,7 @@ jobs:
           refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
 
       - name: Publish to Firefox Add-ons
+        continue-on-error: true
         uses: wdzeng/firefox-addon@v1
         with:
           addon-guid: teams-but-good@leonimust
@@ -258,6 +260,7 @@ jobs:
           source-file-path: dist/source.zip
 
       - name: Publish to Microsoft Edge Add-ons
+        continue-on-error: true
         uses: wdzeng/edge-addon@v2
         with:
           product-id: ${{ secrets.EDGE_PRODUCT_ID }}
