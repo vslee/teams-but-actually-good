@@ -1,0 +1,20 @@
+{
+  "name": "Teams but (actually) good",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node",
+  "features": {
+    "ghcr.io/shyim/devcontainers-features/bun": {},
+    "ghcr.io/devcontainers/features/rust": {},
+    "ghcr.io/olivierlemasle/devcontainers-features/tauri": {}
+  },
+  "postCreateCommand": "bun install && bun run generate",
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": [
+        "oven.bun-vscode",
+        "rust-lang.rust-analyzer",
+        "tauri-apps.tauri-vscode"
+      ]
+    }
+  }
+}
