@@ -1,0 +1,43 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build:frontend",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "build"],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "Generates plugin/theme registries and bundles the injection script"
+    },
+    {
+      "label": "watch:frontend",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "watch"],
+      "isBackground": true,
+      "problemMatcher": [],
+      "detail": "Starts the esbuild watch mode and dev reload server"
+    },
+    {
+      "label": "cargo:build",
+      "type": "shell",
+      "command": "cargo",
+      "args": ["build", "--manifest-path=./src-tauri/Cargo.toml"],
+      "problemMatcher": ["$rustc"],
+      "dependsOn": "build:frontend",
+      "detail": "Compiles the Tauri Rust backend after building the frontend"
+    },
+    {
+      "label": "tauri:dev",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "dev"],
+      "problemMatcher": [],
+      "detail": "Runs the Tauri dev environment (builds frontend first)"
+    }
+  ]
+}
