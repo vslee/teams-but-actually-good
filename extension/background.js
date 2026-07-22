@@ -35,10 +35,12 @@ const UPDATE_CHECK_ALARM = "tbg-update-check";
 const UPDATE_CHECK_INTERVAL_MINUTES = 240; // every 4 hours
 const CONTENT_SCRIPT_ID = "tbg-injection";
 const ONBOARDING_USAGE_URL = "https://docs.teamsbutactuallygood.dev/usage";
-const TEAMS_WEB_APP_URL = "https://teams.microsoft.com/";
+const TEAMS_WEB_APP_URL = "https://teams.cloud.microsoft/";
 const RELEASES_API_URL = "https://api.github.com/repos/LeonimusTTV/teams-but-actually-good/releases/latest";
 const META_URL = "https://github.com/LeonimusTTV/teams-but-actually-good/releases/latest/download/injection.meta.json";
 const TEAMS_MATCHES = [
+  "*://teams.cloud.microsoft/*",
+  "*://*.teams.cloud.microsoft/*",
   "*://teams.microsoft.com/*",
   "*://*.teams.microsoft.com/*",
 ];
@@ -261,7 +263,7 @@ const syncAsyncgwToken = async () => {
 
       const token = cookies[0].value
 
-      const tabs = await chrome.tabs.query({ url: '*://teams.microsoft.com/*' })
+      const tabs = await chrome.tabs.query({ url: TEAMS_MATCHES })
       for (const tab of tabs) {
         if (!tab.id) continue
         chrome.scripting.executeScript({
@@ -286,7 +288,7 @@ chrome.cookies.onChanged.addListener((changeInfo) => {
 
   if (cookie.name === 'authtoken_asm' && cookie.domain.includes('asyncgw')) {
     removed
-      ? chrome.tabs.query({ url: '*://teams.microsoft.com/*' }, (tabs) => {
+      ? chrome.tabs.query({ url: TEAMS_MATCHES }, (tabs) => {
         tabs.forEach(tab => tab.id && chrome.scripting.executeScript({
           target: { tabId: tab.id },
           func: () => {

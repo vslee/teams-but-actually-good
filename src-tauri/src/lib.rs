@@ -241,7 +241,7 @@ pub fn run() {
             WebviewWindowBuilder::new(
                 app,
                 "main",
-                WebviewUrl::External("https://teams.microsoft.com/v2/?clientType=chrome".parse().unwrap()),
+                WebviewUrl::External("https://teams.cloud.microsoft/v2/?clientType=chrome".parse().unwrap()),
             )
             .title("Teams But (actually) Good")
             .inner_size(1800.0, 800.0)
@@ -297,7 +297,7 @@ pub fn run() {
                                                 req.onerror = res;
                                             })));
                                         } catch(e) {}
-                                        window.location.href = 'https://teams.microsoft.com/v2/?clientType=chrome';
+                                        window.location.href = 'https://teams.cloud.microsoft/v2/?clientType=chrome';
                                     })();
                                 "#);
                             }
