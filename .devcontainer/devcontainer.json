@@ -8,7 +8,11 @@
     "ghcr.io/devcontainers/features/github-cli": {},
     "ghcr.io/devcontainers/features/desktop-lite": {}
   },
-  "postCreateCommand": "sudo chown -R $(id -u):$(id -g) /usr/local/cargo/registry ${containerWorkspaceFolder}/src-tauri/target && bun install && bun run generate",
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb"
+  },
+  "postCreateCommand": "sudo chown -R $(id -u):$(id -g) /usr/local/cargo/registry ${containerWorkspaceFolder}/src-tauri/target && sudo apt-get update && sudo apt-get install -y gdb && bun install && bun run generate",
   "mounts": [
     {
       "type": "volume",
@@ -37,7 +41,9 @@
         "oven.bun-vscode",
         "rust-lang.rust-analyzer",
         "tauri-apps.tauri-vscode",
-        "dbaeumer.vscode-eslint"
+        "dbaeumer.vscode-eslint",
+        "vadimcn.vscode-lldb",
+        "ms-vscode.cpptools"
       ]
     }
   }
