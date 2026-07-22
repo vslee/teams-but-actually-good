@@ -1,0 +1,14 @@
+{
+  // Tames rust-analyzer's memory/CPU footprint. The src-tauri crate pulls in a very
+  // large dependency graph (tauri/wry/webkit bindings, reqwest, etc.), and running
+  // full-parallelism indexing at the same time as a `cargo build` (e.g. from
+  // launch.json's preLaunchTask) can exhaust memory in constrained environments
+  // (devcontainers, Codespaces, low-RAM machines), causing the language server to be
+  // killed (SIGTERM) and repeatedly restarted.
+  "rust-analyzer.numThreads": 2,
+  "rust-analyzer.cachePriming.numThreads": 1,
+  "rust-analyzer.procMacro.processes": 1,
+  // Keep rust-analyzer's own check/build-script runs in a separate target dir so they
+  // don't contend for the Cargo.lock/target lock with manual `cargo build` runs.
+  "rust-analyzer.cargo.targetDir": true
+}
