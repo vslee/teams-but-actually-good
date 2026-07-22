@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Tauri Core Development (CodeLLDB)",
+      "cargo": {
+        "args": [
+          "build",
+          "--manifest-path=./src-tauri/Cargo.toml"
+        ]
+      },
+      "preLaunchTask": "build:frontend"
+    },
+    {
+      "type": "cppdbg",
+      "request": "launch",
+      "name": "Tauri Core Development (GDB)",
+      "program": "${workspaceRoot}/src-tauri/target/debug/teams-but-actually-good",
+      "args": [],
+      "cwd": "${workspaceRoot}/src-tauri",
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "cargo:build"
+    }
+  ]
+}
