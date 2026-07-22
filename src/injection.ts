@@ -14,6 +14,7 @@ import { injectNotificationModal } from "./utils/notifications";
 import { injectStyles } from "./utils/styles";
 import notificationStyles from "./styles/notifications.css";
 import { getMainSetting, setMainSetting } from "./utils/storage";
+import { isSupportedTeamsHostname } from "./utils/teams-hostnames";
 
 document.documentElement?.setAttribute("data-tbg-injection", "booting");
 
@@ -490,7 +491,7 @@ new MutationObserver(() => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-  if (!window.location.hostname.includes("teams.microsoft.com")) {
+  if (!isSupportedTeamsHostname(window.location.hostname)) {
     easyLogger("info", `Skipping injection on ${window.location.hostname}`);
     return;
   }

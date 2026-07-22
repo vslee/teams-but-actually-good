@@ -15,6 +15,8 @@
     "https://github.com/*",
     "https://api.github.com/*",
     "https://release-assets.githubusercontent.com/*",
+    "*://teams.cloud.microsoft/*",
+    "*://*.teams.cloud.microsoft/*",
     "*://teams.microsoft.com/*",
     "*://*.teams.microsoft.com/*",
     "ws://localhost/*",
