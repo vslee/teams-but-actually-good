@@ -3,6 +3,6 @@ const SUPPORTED_TEAMS_HOSTNAMES = new Set([
   "teams.cloud.microsoft",
 ]);
 
-export function isSupportedTeamsHostname(hostname) {
+export function isSupportedTeamsHostname(hostname: string): boolean {
   return SUPPORTED_TEAMS_HOSTNAMES.has(String(hostname).toLowerCase());
 }
